@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name">Siteswap Generator</string>
+
+
+    <string name="main_activity__settings">SITESWAP_GENERATOR_MAIN_ACTIVITY_SETTINGS</string>
+    <string name="main_activity__settings_number_of_objects">NUMBER_OF_OBJECTS</string>
+    <string name="main_activity__settings_period_length">PERIOD_LENGTH</string>
+    <string name="main_activity__settings_max_throw">MAX_THROW</string>
+    <string name="main_activity__settings_min_throw">MIN_THROW</string>
+    <string name="main_activity__settings_number_of_jugglers">NUMBER_OF_JUGGLERS</string>
+    <string name="main_activity__settings_max_results">MAX_RESULTS</string>
+    <string name="main_activity__settings_timeout">TIMEOUT</string>
+
+    <string name="main_activity__number_of_objects">Number of Objects:</string>
+    <string name="main_activity__period_length">Period Length:</string>
+    <string name="main_activity__max_throw">Max Throw</string>
+    <string name="main_activity__min_throw">Min Throw:</string>
+    <string name="main_activity__number_of_jugglers">Number of Jugglers:</string>
+    <string name="main_activity__max_results">Max Results:</string>
+    <string name="main_activity__timeout">Timeout [s]:</string>
+
+    <string name="main_activity__applied_filters">Applied Filters:</string>
+    <string name="main_activity__include_zaps">include zaps</string>
+
+    <string-array name="main_activity__filter_types">
+        <item>Global pattern filter</item>
+        <item>Local pattern filter</item>
+        <item>Quantity filter</item>
+        <item>Compatibility filter</item>
+    </string-array>
+
+    <string name="main_activity__add_filter_button">Add</string>
+    <string name="main_activity__generate_siteswaps_button">Generate Siteswaps</string>
+
+    <string name="main_activity__saved_filter_list">FILTER_LIST</string>
+    <string name="main_activity__invalid_input_value">Invalid Input Value</string>
+
+    <string name="show_siteswaps__title">Found %d Siteswaps</string>
+    <string name="show_siteswaps__title_timeout">Found %d Siteswaps after Timeout</string>
+    <string name="show_siteswaps__title_loading">Generating Siteswaps ...</string>
+    <string name="show_siteswaps__saved_is_no_timeout">IS_NO_TIMEOUT</string>
+    <string name="show_siteswaps__saved_siteswap_generator">SITESWAP_GENERATOR</string>
+
+    <string name="intent__siteswap_number_of_objects">NUMBER_OF_OBECTS</string>
+    <string name="intent__siteswap_period_length">PERIOD_LENGTH</string>
+    <string name="intent__siteswap_max_throw">MAX_THROW</string>
+    <string name="intent__siteswap_min_throw">MIN_THROW</string>
+    <string name="intent__siteswap_number_of_jugglers">NUMBER_OF_JUGGLERS</string>
+    <string name="intent__siteswap_filter_list">FILTER_LIST</string>
+    <string name="intent__siteswap_max_results">MAX_RESULTS</string>
+    <string name="intent__siteswap_calculation_timeout">CALCULATION_TIMEOUT</string>
+    <string name="intent__siteswap_generator">SITESWAP_GENERATOR</string>
+    <string name="title_activity_siteswap_detailed">SiteswapDetailed</string>
+
+</resources>
