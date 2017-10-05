@@ -19,14 +19,16 @@
     <string name="main_activity__max_results">Max Results:</string>
     <string name="main_activity__timeout">Timeout [s]:</string>
 
-    <string name="main_activity__applied_filters">Applied Filters:</string>
-    <string name="main_activity__include_zaps">include zaps</string>
+    <string name="main_activity__applied_filters">Filters:</string>
+    <string name="main_activity__include_zaps">zaps</string>
+    <string name="main_activity__include_holds">holds</string>
 
     <string-array name="main_activity__filter_types">
         <item>Global pattern filter</item>
         <item>Local pattern filter</item>
         <item>Quantity filter</item>
-        <item>Compatibility filter</item>
+        <item>Global interface filter</item>
+        <item>Local interface filter</item>
     </string-array>
 
     <string name="main_activity__add_filter_button">Add</string>
