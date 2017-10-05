@@ -6,13 +6,10 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import siteswaplib.SiteswapGenerator;
 import siteswaplib.Siteswap;
-import siteswaplib.Filter;
 
 public class ShowSiteswaps extends AppCompatActivity {
 
@@ -34,7 +31,7 @@ public class ShowSiteswaps extends AppCompatActivity {
             mNoTimeout = savedInstanceState.getBoolean(getString(R.string.show_siteswaps__saved_is_no_timeout));
             mGenerator = (SiteswapGenerator) savedInstanceState.getSerializable(
                     getString(R.string.show_siteswaps__saved_siteswap_generator));
-            mSiteswapList = mGenerator.getFilteredSiteswaps();
+            mSiteswapList = mGenerator.getSiteswaps();
 
         }
         else {
@@ -71,7 +68,7 @@ public class ShowSiteswaps extends AppCompatActivity {
     }
 
     private void loadSiteswaps() {
-        mSiteswapList = mGenerator.getFilteredSiteswaps();
+        mSiteswapList = mGenerator.getSiteswaps();
         ArrayAdapter adapter = new ArrayAdapter<Siteswap>(
                 ShowSiteswaps.this, android.R.layout.simple_list_item_1, mSiteswapList);
         mSiteswapListView.setAdapter(adapter);

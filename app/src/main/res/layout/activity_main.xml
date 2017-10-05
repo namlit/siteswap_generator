@@ -208,25 +208,23 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingRight="20dp"
-                        android:text="@string/main_activity__include_zaps" />
+                        android:text="@string/main_activity__include_zaps"
+                        android:onClick="onCheckboxClicked" />
 
                     <CheckBox
                         android:id="@+id/include_holds_checkbox"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingRight="20dp"
-                        android:text="@string/main_activity__include_holds" />
+                        android:text="@string/main_activity__include_holds"
+                        android:onClick="onCheckboxClicked" />
+
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/filter_list_layout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"></LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:orientation="horizontal">
 
                     <Spinner
@@ -243,6 +241,12 @@
                         android:text="@string/main_activity__add_filter_button" />
 
                 </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/filter_list_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"></LinearLayout>
 
             </LinearLayout>
         </ScrollView>

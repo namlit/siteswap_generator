@@ -1,49 +1,47 @@
 package siteswaplib;
 
-import java.io.Serializable;
-
 public class QuantityFilter extends Filter {
 
 	public enum Type {GREATER_EQUAL, SMALLER_EQUAL, EQUAL}
 	
-	private Type type;
-	private char filterValue;
-	private int thresholdValue;
+	private Type mType;
+	private char mFilterValue;
+	private int mThresholdValue;
 	
 	public QuantityFilter(char filterValue, Type type, int threshold) {
-		this.filterValue = filterValue;
-		this.type = type;
-		this.thresholdValue = threshold;
+		this.mFilterValue = filterValue;
+		this.mType = type;
+		this.mThresholdValue = threshold;
 	}
 	
 	public QuantityFilter(int filterValue, Type type, int threshold) {
-		this.filterValue = Siteswap.intToChar(filterValue);
-		this.type = type;
-		this.thresholdValue = threshold;
+		this.mFilterValue = Siteswap.intToChar(filterValue);
+		this.mType = type;
+		this.mThresholdValue = threshold;
 	}
 	
 	@Override
 	public boolean matches_filter(Siteswap siteswap) {
-		if (type == Type.GREATER_EQUAL)
-			return siteswap.getValueOccurence(filterValue) >= thresholdValue;
-		if (type == Type.SMALLER_EQUAL)
-			return siteswap.getValueOccurence(filterValue) <= thresholdValue;
+		if (mType == Type.GREATER_EQUAL)
+			return siteswap.countValue(mFilterValue) >= mThresholdValue;
+		if (mType == Type.SMALLER_EQUAL)
+			return siteswap.countValue(mFilterValue) <= mThresholdValue;
 		
-		return siteswap.getValueOccurence(filterValue) == thresholdValue;
+		return siteswap.countValue(mFilterValue) == mThresholdValue;
 	}
 	
 	@Override
 	public String toString() {
 		String str = new String("number of ");
-		str += Character.toString(filterValue);
+		str += Character.toString(mFilterValue);
 		
-		if (type == Type.GREATER_EQUAL)
+		if (mType == Type.GREATER_EQUAL)
 			str += " ≥ ";
-		else if (type == Type.SMALLER_EQUAL)
+		else if (mType == Type.SMALLER_EQUAL)
 			str += " ≤ ";
 		else
 			str += " = ";
-		str += String.valueOf(thresholdValue);
+		str += String.valueOf(mThresholdValue);
 		return str;
 	}
 
@@ -52,8 +50,8 @@ public class QuantityFilter extends Filter {
 		if (! (obj instanceof QuantityFilter))
 			return false;
 		QuantityFilter rhs = (QuantityFilter) obj;
-		return type == rhs.type && filterValue == rhs.filterValue && 
-				thresholdValue == rhs.thresholdValue;
+		return mType == rhs.mType && mFilterValue == rhs.mFilterValue &&
+				mThresholdValue == rhs.mThresholdValue;
 	}
 
 }

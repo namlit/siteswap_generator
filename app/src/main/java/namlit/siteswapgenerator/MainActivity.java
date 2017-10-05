@@ -5,17 +5,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.CheckBox;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import siteswaplib.*;
 
@@ -30,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText mNumberOfJugglers;
     private EditText mMaxResults;
     private EditText mTimeout;
+    private CheckBox mZapsCheckbox;
+    private CheckBox mHoldsCheckbox;
     private LinearLayout mFilterListLayout;
 
     @Override
@@ -44,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
         mNumberOfJugglers   = (EditText) findViewById(R.id.number_of_jugglers);
         mMaxResults         = (EditText) findViewById(R.id.max_results);
         mTimeout            = (EditText) findViewById(R.id.timeout);
+        mZapsCheckbox       = (CheckBox) findViewById(R.id.include_zaps_checkbox);
+        mHoldsCheckbox      = (CheckBox) findViewById(R.id.include_holds_checkbox);
         mFilterListLayout   = (LinearLayout) findViewById(R.id.filter_list_layout);
 
         if (savedInstanceState != null) {
@@ -61,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
             int numberOfJugglers = sharedPref.getInt(getString(R.string.main_activity__settings_number_of_jugglers), 2);
             int maxResults       = sharedPref.getInt(getString(R.string.main_activity__settings_max_results),      100);
             int timeout          = sharedPref.getInt(getString(R.string.main_activity__settings_timeout),            5);
+            boolean isZaps       = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_zaps), false);
+            boolean isHolds      = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_holds), false);
 
             mNumberOfObjects.setText(String.valueOf(numberOfObjects));
             mPeriodLength.setText(String.valueOf(periodLength));
@@ -69,9 +73,18 @@ public class MainActivity extends AppCompatActivity {
             mNumberOfJugglers.setText(String.valueOf(numberOfJugglers));
             mMaxResults.setText(String.valueOf(maxResults));
             mTimeout.setText(String.valueOf(timeout));
+            mZapsCheckbox.setChecked(isZaps);
+            mHoldsCheckbox.setChecked(isHolds);
         }
 
-        //Filter.addDefaultFilters(mFilterList, 2);
+        int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
+        Filter.addDefaultFilters(mFilterList, numberOfJugglers);
+        onCheckboxClicked(mZapsCheckbox);   // Updates the filter list corresponding to checkbox
+        onCheckboxClicked(mHoldsCheckbox);  // Updates the filter list corresponding to checkbox
+
+        updateFilterListView();
+
+
     }
 
     @Override
@@ -89,6 +102,8 @@ public class MainActivity extends AppCompatActivity {
             int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
             int maxResults = Integer.valueOf(mMaxResults.getText().toString());
             int timeout = Integer.valueOf(mTimeout.getText().toString());
+            boolean isZaps = mZapsCheckbox.isChecked();
+            boolean isHolds = mHoldsCheckbox.isChecked();
 
             editor.putInt(getString(R.string.main_activity__settings_number_of_objects), numberOfObjects);
             editor.putInt(getString(R.string.main_activity__settings_period_length), periodLength);
@@ -97,6 +112,8 @@ public class MainActivity extends AppCompatActivity {
             editor.putInt(getString(R.string.main_activity__settings_number_of_jugglers), numberOfJugglers);
             editor.putInt(getString(R.string.main_activity__settings_max_results), maxResults);
             editor.putInt(getString(R.string.main_activity__settings_timeout), timeout);
+            editor.putBoolean(getString(R.string.main_activity__settings_is_zaps), isZaps);
+            editor.putBoolean(getString(R.string.main_activity__settings_is_holds), isHolds);
 
             editor.commit();
         }
@@ -106,13 +123,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void updateFilterList() {
+    private void addFilterToListView(Filter filter) {
+        LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.filter_item_view, null);
+        TextView filterView = (TextView) view.findViewById(R.id.filter_text_view);
+        filterView.setText(filter.toString());
+        mFilterListLayout.addView(view);
+    }
+
+    private void removeFilterFromListView(int filterIndex) {
+        mFilterListLayout.removeViewAt(filterIndex);
+    }
+
+    private void updateFilterListView() {
         mFilterListLayout.removeAllViews();
         for(Filter filter: mFilterList) {
-            TextView view = new TextView(this);
-            view.setText(filter.toString());
-            view.setPadding(20, 5, 20, 5);
-            mFilterListLayout.addView(view);
+            addFilterToListView(filter);
         }
     }
 
@@ -129,7 +156,8 @@ public class MainActivity extends AppCompatActivity {
             int timeout = Integer.valueOf(mTimeout.getText().toString());
 
 
-            SiteswapGenerator siteswapGenerator = new SiteswapGenerator(periodLength, maxThrow, minThrow, numberOfObjects, numberOfJugglers);
+            SiteswapGenerator siteswapGenerator = new SiteswapGenerator(periodLength, maxThrow,
+                    minThrow, numberOfObjects, numberOfJugglers, mFilterList);
             siteswapGenerator.setMaxResults(maxResults);
             siteswapGenerator.setTimeoutSeconds(timeout);
 
@@ -141,5 +169,27 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.main_activity__invalid_input_value),
                     Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void onCheckboxClicked(View view) {
+
+        boolean checked = ((CheckBox) view).isChecked();
+        int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
+
+        switch(view.getId()) {
+            case R.id.include_zaps_checkbox:
+                if (checked)
+                    Filter.addZaps(mFilterList, numberOfJugglers);
+                else
+                    Filter.removeZaps(mFilterList, numberOfJugglers);
+                break;
+            case R.id.include_holds_checkbox:
+                if (checked)
+                    Filter.addHolds(mFilterList, numberOfJugglers);
+                else
+                    Filter.removeHolds(mFilterList, numberOfJugglers);
+                break;
+        }
+        updateFilterListView();
     }
 }

@@ -10,6 +10,8 @@
     <string name="main_activity__settings_number_of_jugglers">NUMBER_OF_JUGGLERS</string>
     <string name="main_activity__settings_max_results">MAX_RESULTS</string>
     <string name="main_activity__settings_timeout">TIMEOUT</string>
+    <string name="main_activity__settings_is_zaps">IS_ZAPS</string>
+    <string name="main_activity__settings_is_holds">IS_HOLDS</string>
 
     <string name="main_activity__number_of_objects">Number of Objects:</string>
     <string name="main_activity__period_length">Period Length:</string>

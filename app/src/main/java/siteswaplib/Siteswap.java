@@ -64,7 +64,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return true;
 	}
 	
-	public int getValueOccurence(int value) {
+	public int countValue(int value) {
 		int counter = 0;
 		for (byte i : mData) {
 			if(i == value)
@@ -73,7 +73,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return counter;
 	}
 	
-	public int getValueOccurence(char value) {
+	public int countValue(char value) {
 		int counter = 0;
 		for (byte i : mData) {
 			if(Pattern.testPatternValue(value, i, mNumberOfJugglers))
@@ -266,6 +266,14 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		if(value < 10)
 			return (char) (value + '0');
 		return (char) (value - 10 + 'a');
+	}
+
+	static int charToInt(char value) {
+		if(value < '9' && value > '0')
+			return (int) (value - '0');
+		if(value < 'z' && value > 'a')
+			return (int) (value + 10 - 'a');
+		return -1;
 	}
 	
 }

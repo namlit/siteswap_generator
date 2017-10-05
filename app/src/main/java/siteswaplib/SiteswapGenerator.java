@@ -3,14 +3,9 @@ package siteswaplib;
 import java.util.*;
 import java.io.Serializable;
 
-import siteswaplib.QuantityFilter.Type;
-
 public class SiteswapGenerator implements Serializable{
 
-	private transient TreeSet<UniqueSiteswap> mFoundSiteswaps;
-	private transient LinkedList<UniqueSiteswap> mQueue;
-	private transient LinkedList<UniqueSiteswap> mFilteredSiteswaps2;
-	private LinkedList<Siteswap> mFilteredSiteswaps;
+	private LinkedList<Siteswap> mSiteswaps;
 	private LinkedList<Filter> mFilterList;
 	private int mPeriodLength;
 	private byte mMaxThrow;
@@ -27,9 +22,17 @@ public class SiteswapGenerator implements Serializable{
 		this.mMaxThrow = (byte) max;
 		this.mMinThrow = (byte) min;
 		this.mNumberOfObjects = (byte) objects;
-		resetDataStructures();
 		setNumberOfJugglers(number_of_jugglers);
+        mFilterList = new LinkedList<Filter>();
+        Filter.addDefaultFilters(mFilterList, number_of_jugglers);
 	}
+
+    public SiteswapGenerator(int length, int max, int min, int objects, int number_of_jugglers,
+                             LinkedList<Filter> filterList) {
+
+        this(length, max, min, objects, number_of_jugglers);
+        mFilterList = filterList;
+    }
 	
 	public LinkedList<Filter> getFilterList() {
 		return mFilterList;
@@ -41,7 +44,7 @@ public class SiteswapGenerator implements Serializable{
 
 	public boolean generateSiteswaps() {
 		mCalculationComplete = false;
-		resetDataStructures();
+        mSiteswaps = new LinkedList<Siteswap>();
         mStartTime = System.currentTimeMillis();
 		byte[] arr = new byte[mPeriodLength];
 		Arrays.fill(arr, (byte) 0);
@@ -49,7 +52,12 @@ public class SiteswapGenerator implements Serializable{
 		TreeSet<Integer> freePositions = new TreeSet<Integer>();
 		for(int i = 0; i < mPeriodLength; ++i)
 			freePositions.add(i);
-		
+
+        System.out.println(mFilterList.size());
+        for (Filter filter : mFilterList) {
+            System.out.println(filter.toString());
+        }
+        System.out.println(mFilterList.size());
 		boolean result = backtracking(siteswap, freePositions, 0, 0);
 		mCalculationComplete = true;
 		return result;
@@ -83,16 +91,12 @@ public class SiteswapGenerator implements Serializable{
         this.mTimeoutSeconds = timeoutSeconds;
     }
 	
-	public LinkedList<Siteswap> getFilteredSiteswaps() {
-		return mFilteredSiteswaps;
+	public LinkedList<Siteswap> getSiteswaps() {
+		return mSiteswaps;
 	}
 
 	public int getPeriodLength() {
 		return mPeriodLength;
-	}
-
-	public LinkedList<UniqueSiteswap> getFilteredSiteswaps2() {
-		return mFilteredSiteswaps2;
 	}
 
 	public byte getMaxThrow() {
@@ -133,8 +137,8 @@ public class SiteswapGenerator implements Serializable{
 			if (uniqueRepresentationIndex != 0)
 				return true;
 			if (testFilters(siteswap)) {
-				mFilteredSiteswaps.add(new Siteswap(siteswap));
-				if (mFilteredSiteswaps.size() >= mMaxResults)
+				mSiteswaps.add(new Siteswap(siteswap));
+				if (mSiteswaps.size() >= mMaxResults)
 					return false;
 			}
 			return true;
@@ -188,13 +192,5 @@ public class SiteswapGenerator implements Serializable{
 				return false;
 		}
 		return true;
-	}
-	
-	private void resetDataStructures() {
-
-		mFoundSiteswaps = new TreeSet<UniqueSiteswap>();
-		mQueue = new LinkedList<UniqueSiteswap>();
-		mFilteredSiteswaps2 = new LinkedList<UniqueSiteswap>();
-		mFilteredSiteswaps = new LinkedList<Siteswap>();
 	}
 }
