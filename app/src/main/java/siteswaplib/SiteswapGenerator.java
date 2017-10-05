@@ -55,95 +55,6 @@ public class SiteswapGenerator implements Serializable{
 		return result;
 	}
 	
-	private boolean backtracking(Siteswap siteswap, TreeSet<Integer> freePositions, 
-			int currentIndex, int uniqueRepresentationIndex) {
-		if (System.currentTimeMillis() - mStartTime > mTimeoutSeconds * 1000)
-			return false;
-		if (currentIndex == mPeriodLength) {
-			// filters shorter period and non unique representation siteswaps
-			if (uniqueRepresentationIndex != 0)
-				return true;
-			if (testFilters(siteswap)) {
-				mFilteredSiteswaps.add(new Siteswap(siteswap));
-				if (mFilteredSiteswaps.size() >= mMaxResults)
-					return false;
-			}
-			return true;
-		}
-		
-		int partialSum = siteswap.getPartialSum(0, currentIndex - 1);
-		int sum = mPeriodLength * mNumberOfObjects;
-		int averMin = sum - partialSum - (mMaxThrow - 1) * (mPeriodLength - currentIndex - 1);
-		int min = (averMin > mMinThrow) ? averMin : mMinThrow;
-		if(currentIndex == 0)
-			min = mNumberOfObjects;
-
-		int uniqeMax = siteswap.at(uniqueRepresentationIndex);
-		int minTemp = (averMin - 1 > mMinThrow) ? averMin - 1 : mMinThrow;
-		int averMax = sum - partialSum - minTemp * (mPeriodLength - currentIndex - 1);
-		int max = (averMax < uniqeMax) ? averMax : uniqeMax;
-		if(currentIndex == 0)
-			max = mMaxThrow;
-		if(currentIndex == (mPeriodLength - 1) && max == siteswap.at(0) && 
-				uniqueRepresentationIndex != (currentIndex - 1))
-			max--;
-		
-
-		TreeSet<Integer> freePositionsOld = new TreeSet<Integer>(freePositions);
-		for (Integer pos : freePositionsOld) {
-			int n = (int) Math.ceil((min + currentIndex - pos) / (double) mPeriodLength);
-			while(pos - currentIndex + n * mPeriodLength <= max) {
-				int value = pos - currentIndex + n * mPeriodLength;
-				// TODO test filters and other conditions
-				siteswap.set(currentIndex, value);
-				freePositions.remove(pos);
-				int nextUniqueIndex = (value == uniqeMax) ? uniqueRepresentationIndex + 1 : 0;
-				if (!backtracking(siteswap, freePositions, currentIndex + 1, nextUniqueIndex))
-					return false;
-				freePositions.add(pos);
-				n++;
-			}
-			siteswap.set(currentIndex, 0); // reset value for backtracking
-		}
-		
-		
-		return true;
-		
-	}
-	
-	public boolean generateSiteswaps2() {
-		resetDataStructures();
-        long startTime = System.currentTimeMillis();
-		byte[] arr = new byte[mPeriodLength];
-		Arrays.fill(arr, mNumberOfObjects);
-		UniqueSiteswap temp = new UniqueSiteswap(arr, mNumberOfJugglers);
-		mFoundSiteswaps.add(temp);
-		mQueue.add(temp);
-		if (testFilters(temp))
-			mFilteredSiteswaps2.add(temp);
-		outerloop:
-		while (!mQueue.isEmpty()) {
-            if((System.currentTimeMillis() - startTime) >= 1000 * mTimeoutSeconds)
-                return false;
-			Siteswap current = mQueue.remove();
-			for (int i = 0; i < current.period_length(); ++i) {
-				temp = new UniqueSiteswap(current);
-				temp.swap(i);
-				if (temp.is_in_range(mMinThrow, mMaxThrow)) { // TODO more efficient bound for filter rules
-					if(mFoundSiteswaps.add(temp)) {
-						mQueue.add(temp);
-						if (testFilters(temp)) {
-							mFilteredSiteswaps2.add(temp);
-							if (mFilteredSiteswaps2.size() >= mMaxResults)
-								break outerloop;
-						}
-					}
-				}
-			}
-		}
-		return true;
-	}
-	
 	public void setNumberOfJugglers(int numberOfJugglers) {
 		this.mNumberOfJugglers = numberOfJugglers;
 	}
@@ -210,6 +121,63 @@ public class SiteswapGenerator implements Serializable{
 
     public boolean isCalculationComplete() {
 		return mCalculationComplete;
+	}
+
+	private boolean backtracking(Siteswap siteswap, TreeSet<Integer> freePositions,
+								 int currentIndex, int uniqueRepresentationIndex) {
+		if (System.currentTimeMillis() - mStartTime > mTimeoutSeconds * 1000)
+			return false;
+		if (currentIndex == mPeriodLength) {
+
+			// filters shorter period and non unique representation siteswaps
+			if (uniqueRepresentationIndex != 0)
+				return true;
+			if (testFilters(siteswap)) {
+				mFilteredSiteswaps.add(new Siteswap(siteswap));
+				if (mFilteredSiteswaps.size() >= mMaxResults)
+					return false;
+			}
+			return true;
+		}
+
+		int partialSum = siteswap.getPartialSum(0, currentIndex - 1);
+		int sum = mPeriodLength * mNumberOfObjects;
+		int averMin = sum - partialSum - (mMaxThrow - 1) * (mPeriodLength - currentIndex - 1);
+		int min = (averMin > mMinThrow) ? averMin : mMinThrow;
+		if(currentIndex == 0)
+			min = mNumberOfObjects;
+
+		int uniqeMax = siteswap.at(uniqueRepresentationIndex);
+		int minTemp = (averMin - 1 > mMinThrow) ? averMin - 1 : mMinThrow;
+		int averMax = sum - partialSum - minTemp * (mPeriodLength - currentIndex - 1);
+		int max = (averMax < uniqeMax) ? averMax : uniqeMax;
+		if(currentIndex == 0)
+			max = mMaxThrow;
+		if(currentIndex == (mPeriodLength - 1) && max == siteswap.at(0) &&
+				uniqueRepresentationIndex != (currentIndex - 1))
+			max--;
+
+
+		TreeSet<Integer> freePositionsOld = new TreeSet<Integer>(freePositions);
+		for (Integer pos : freePositionsOld) {
+			int n = (int) Math.ceil((min + currentIndex - pos) / (double) mPeriodLength);
+			while(pos - currentIndex + n * mPeriodLength <= max) {
+				int value = pos - currentIndex + n * mPeriodLength;
+				// TODO test filters and other conditions
+				siteswap.set(currentIndex, value);
+				freePositions.remove(pos);
+				int nextUniqueIndex = (value == uniqeMax) ? uniqueRepresentationIndex + 1 : 0;
+				if (!backtracking(siteswap, freePositions, currentIndex + 1, nextUniqueIndex))
+					return false;
+				freePositions.add(pos);
+				n++;
+			}
+			siteswap.set(currentIndex, 0); // reset value for backtracking
+		}
+
+
+		return true;
+
 	}
 
 	private boolean testFilters(Siteswap siteswap) {
