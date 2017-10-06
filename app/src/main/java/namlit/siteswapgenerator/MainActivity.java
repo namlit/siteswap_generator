@@ -12,6 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.CheckBox;
+import android.text.TextWatcher;
+import android.text.Editable;
 
 import java.util.LinkedList;
 
@@ -81,13 +83,29 @@ public class MainActivity extends AppCompatActivity {
             mHoldsCheckbox.setChecked(isHolds);
         }
 
-        int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
-        Filter.addDefaultFilters(mFilterList, numberOfJugglers);
-        onCheckboxClicked(mZipsCheckbox);   // Updates the filter list corresponding to checkbox
-        onCheckboxClicked(mZapsCheckbox);   // Updates the filter list corresponding to checkbox
-        onCheckboxClicked(mHoldsCheckbox);  // Updates the filter list corresponding to checkbox
+        updateAutoFilters();
 
-        updateFilterListView();
+        mNumberOfJugglers.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                try {
+                    int numberOfJugglers = Integer.valueOf(s.toString());
+                    Filter.removeDefaultFilters(mFilterList, numberOfJugglers);
+                    Filter.addZips(mFilterList, numberOfJugglers);
+                    Filter.addZaps(mFilterList, numberOfJugglers);
+                    Filter.addHolds(mFilterList, numberOfJugglers);
+                    updateFilterListView();
+                }
+                catch (NumberFormatException e) {
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateAutoFilters();
+            }
+        });
 
 
     }
@@ -180,29 +198,47 @@ public class MainActivity extends AppCompatActivity {
 
     public void onCheckboxClicked(View view) {
 
-        boolean checked = ((CheckBox) view).isChecked();
-        int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
+        try {
+            boolean checked = ((CheckBox) view).isChecked();
+            int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
 
-        switch(view.getId()) {
-            case R.id.include_zips_checkbox:
-                if (checked)
-                    Filter.addZips(mFilterList, numberOfJugglers);
-                else
-                    Filter.removeZips(mFilterList, numberOfJugglers);
-                break;
-            case R.id.include_zaps_checkbox:
-                if (checked)
-                    Filter.addZaps(mFilterList, numberOfJugglers);
-                else
-                    Filter.removeZaps(mFilterList, numberOfJugglers);
-                break;
-            case R.id.include_holds_checkbox:
-                if (checked)
-                    Filter.addHolds(mFilterList, numberOfJugglers);
-                else
-                    Filter.removeHolds(mFilterList, numberOfJugglers);
-                break;
+            switch (view.getId()) {
+                case R.id.include_zips_checkbox:
+                    if (checked)
+                        Filter.addZips(mFilterList, numberOfJugglers);
+                    else
+                        Filter.removeZips(mFilterList, numberOfJugglers);
+                    break;
+                case R.id.include_zaps_checkbox:
+                    if (checked)
+                        Filter.addZaps(mFilterList, numberOfJugglers);
+                    else
+                        Filter.removeZaps(mFilterList, numberOfJugglers);
+                    break;
+                case R.id.include_holds_checkbox:
+                    if (checked)
+                        Filter.addHolds(mFilterList, numberOfJugglers);
+                    else
+                        Filter.removeHolds(mFilterList, numberOfJugglers);
+                    break;
+            }
+            updateFilterListView();
         }
-        updateFilterListView();
+        catch (NumberFormatException e) {
+        }
+
+    }
+
+    private void updateAutoFilters() {
+        try {
+            int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
+            Filter.addDefaultFilters(mFilterList, numberOfJugglers);
+            onCheckboxClicked(mZipsCheckbox);   // Updates the filter list corresponding to checkbox
+            onCheckboxClicked(mZapsCheckbox);   // Updates the filter list corresponding to checkbox
+            onCheckboxClicked(mHoldsCheckbox);  // Updates the filter list corresponding to checkbox
+            updateFilterListView();
+        }
+        catch (NumberFormatException e) {
+        }
     }
 }
