@@ -7,6 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -33,7 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox mZipsCheckbox;
     private CheckBox mZapsCheckbox;
     private CheckBox mHoldsCheckbox;
-    private LinearLayout mFilterListLayout;
+    private NonScrollListView mFilterListView;
+    private ArrayAdapter<Filter> mFilterListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         mZipsCheckbox       = (CheckBox) findViewById(R.id.include_zips_checkbox);
         mZapsCheckbox       = (CheckBox) findViewById(R.id.include_zaps_checkbox);
         mHoldsCheckbox      = (CheckBox) findViewById(R.id.include_holds_checkbox);
-        mFilterListLayout   = (LinearLayout) findViewById(R.id.filter_list_layout);
+        mFilterListView     = (NonScrollListView) findViewById(R.id.filter_list);
 
         if (savedInstanceState != null) {
             mFilterList = (LinkedList<Filter>) savedInstanceState.getSerializable(
@@ -83,6 +87,11 @@ public class MainActivity extends AppCompatActivity {
             mHoldsCheckbox.setChecked(isHolds);
         }
 
+
+        mFilterListAdapter = new ArrayAdapter<Filter>(
+                this, R.layout.filter_item_view, R.id.filter_text_view, mFilterList);
+        mFilterListView.setAdapter(mFilterListAdapter);
+
         updateAutoFilters();
 
         mNumberOfJugglers.addTextChangedListener(new TextWatcher() {
@@ -96,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                     Filter.addZips(mFilterList, numberOfJugglers);
                     Filter.addZaps(mFilterList, numberOfJugglers);
                     Filter.addHolds(mFilterList, numberOfJugglers);
-                    updateFilterListView();
+                    mFilterListAdapter.notifyDataSetChanged();
                 }
                 catch (NumberFormatException e) {
                 }
@@ -148,25 +157,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void addFilterToListView(Filter filter) {
-        LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(
-                Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.filter_item_view, null);
-        TextView filterView = (TextView) view.findViewById(R.id.filter_text_view);
-        filterView.setText(filter.toString());
-        mFilterListLayout.addView(view);
-    }
-
-    private void removeFilterFromListView(int filterIndex) {
-        mFilterListLayout.removeViewAt(filterIndex);
-    }
-
-    private void updateFilterListView() {
-        mFilterListLayout.removeAllViews();
-        for(Filter filter: mFilterList) {
-            addFilterToListView(filter);
-        }
-    }
 
     public void generateSiteswaps(View view) {
         Intent intent = new Intent(this, ShowSiteswaps.class);
@@ -222,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
                         Filter.removeHolds(mFilterList, numberOfJugglers);
                     break;
             }
-            updateFilterListView();
+            mFilterListAdapter.notifyDataSetChanged();
         }
         catch (NumberFormatException e) {
         }
@@ -236,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
             onCheckboxClicked(mZipsCheckbox);   // Updates the filter list corresponding to checkbox
             onCheckboxClicked(mZapsCheckbox);   // Updates the filter list corresponding to checkbox
             onCheckboxClicked(mHoldsCheckbox);  // Updates the filter list corresponding to checkbox
-            updateFilterListView();
+            mFilterListAdapter.notifyDataSetChanged();
         }
         catch (NumberFormatException e) {
         }

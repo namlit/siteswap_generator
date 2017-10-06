@@ -250,11 +250,11 @@
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/filter_list_layout"
+                <namlit.siteswapgenerator.NonScrollListView
+                    android:id="@+id/filter_list"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"></LinearLayout>
+                    android:layout_height="wrap_content" >
+                </namlit.siteswapgenerator.NonScrollListView>
 
             </LinearLayout>
         </ScrollView>
