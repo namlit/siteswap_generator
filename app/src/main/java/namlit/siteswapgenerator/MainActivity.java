@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText mNumberOfJugglers;
     private EditText mMaxResults;
     private EditText mTimeout;
+    private CheckBox mZipsCheckbox;
     private CheckBox mZapsCheckbox;
     private CheckBox mHoldsCheckbox;
     private LinearLayout mFilterListLayout;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         mNumberOfJugglers   = (EditText) findViewById(R.id.number_of_jugglers);
         mMaxResults         = (EditText) findViewById(R.id.max_results);
         mTimeout            = (EditText) findViewById(R.id.timeout);
+        mZipsCheckbox       = (CheckBox) findViewById(R.id.include_zips_checkbox);
         mZapsCheckbox       = (CheckBox) findViewById(R.id.include_zaps_checkbox);
         mHoldsCheckbox      = (CheckBox) findViewById(R.id.include_holds_checkbox);
         mFilterListLayout   = (LinearLayout) findViewById(R.id.filter_list_layout);
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
             int numberOfJugglers = sharedPref.getInt(getString(R.string.main_activity__settings_number_of_jugglers), 2);
             int maxResults       = sharedPref.getInt(getString(R.string.main_activity__settings_max_results),      100);
             int timeout          = sharedPref.getInt(getString(R.string.main_activity__settings_timeout),            5);
+            boolean isZips       = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_zips), true);
             boolean isZaps       = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_zaps), false);
             boolean isHolds      = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_holds), false);
 
@@ -73,12 +76,14 @@ public class MainActivity extends AppCompatActivity {
             mNumberOfJugglers.setText(String.valueOf(numberOfJugglers));
             mMaxResults.setText(String.valueOf(maxResults));
             mTimeout.setText(String.valueOf(timeout));
+            mZipsCheckbox.setChecked(isZips);
             mZapsCheckbox.setChecked(isZaps);
             mHoldsCheckbox.setChecked(isHolds);
         }
 
         int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
         Filter.addDefaultFilters(mFilterList, numberOfJugglers);
+        onCheckboxClicked(mZipsCheckbox);   // Updates the filter list corresponding to checkbox
         onCheckboxClicked(mZapsCheckbox);   // Updates the filter list corresponding to checkbox
         onCheckboxClicked(mHoldsCheckbox);  // Updates the filter list corresponding to checkbox
 
@@ -102,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
             int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
             int maxResults = Integer.valueOf(mMaxResults.getText().toString());
             int timeout = Integer.valueOf(mTimeout.getText().toString());
+            boolean isZips = mZipsCheckbox.isChecked();
             boolean isZaps = mZapsCheckbox.isChecked();
             boolean isHolds = mHoldsCheckbox.isChecked();
 
@@ -112,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
             editor.putInt(getString(R.string.main_activity__settings_number_of_jugglers), numberOfJugglers);
             editor.putInt(getString(R.string.main_activity__settings_max_results), maxResults);
             editor.putInt(getString(R.string.main_activity__settings_timeout), timeout);
+            editor.putBoolean(getString(R.string.main_activity__settings_is_zips), isZips);
             editor.putBoolean(getString(R.string.main_activity__settings_is_zaps), isZaps);
             editor.putBoolean(getString(R.string.main_activity__settings_is_holds), isHolds);
 
@@ -177,6 +184,12 @@ public class MainActivity extends AppCompatActivity {
         int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
 
         switch(view.getId()) {
+            case R.id.include_zips_checkbox:
+                if (checked)
+                    Filter.addZips(mFilterList, numberOfJugglers);
+                else
+                    Filter.removeZips(mFilterList, numberOfJugglers);
+                break;
             case R.id.include_zaps_checkbox:
                 if (checked)
                     Filter.addZaps(mFilterList, numberOfJugglers);

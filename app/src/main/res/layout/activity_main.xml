@@ -204,6 +204,14 @@
                         android:textStyle="bold" />
 
                     <CheckBox
+                        android:id="@+id/include_zips_checkbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="20dp"
+                        android:text="@string/main_activity__include_zips"
+                        android:onClick="onCheckboxClicked" />
+
+                    <CheckBox
                         android:id="@+id/include_zaps_checkbox"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

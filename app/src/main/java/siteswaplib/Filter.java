@@ -21,11 +21,18 @@ public abstract class Filter implements Serializable {
 		filterList.addFirst(new QuantityFilter('p', Type.GREATER_EQUAL, 1));
 	}
 
+	public static void addZips(LinkedList<Filter> filterList, int numberOfJugglers) {
+
+		while (filterList.remove(new QuantityFilter(numberOfJugglers, Type.EQUAL, 0)))
+			;
+	}
+
 	public static void addZaps(LinkedList<Filter> filterList, int numberOfJugglers) {
 
 		for (int i = 2 * numberOfJugglers + 1; i < 3*numberOfJugglers; ++i) {
 			if ( Pattern.isPass(i, numberOfJugglers))
-				filterList.remove(new QuantityFilter(i, Type.EQUAL, 0));
+				while (filterList.remove(new QuantityFilter(i, Type.EQUAL, 0)))
+					;
 		}
 	}
 
@@ -36,11 +43,18 @@ public abstract class Filter implements Serializable {
 	public static void removeDefaultFilters(LinkedList<Filter> filterList, int numberOfJugglers) {
 		if (numberOfJugglers <= 1)
 			return;
-		filterList.remove(new QuantityFilter('p', Type.GREATER_EQUAL, 1));
+		while (filterList.remove(new QuantityFilter('p', Type.GREATER_EQUAL, 1)))
+			;
 		for (int i = 0; i < 2*numberOfJugglers; ++i) {
 			if ( Pattern.isPass(i, numberOfJugglers))
-				filterList.remove(new QuantityFilter(i, Type.EQUAL, 0));
+				while (filterList.remove(new QuantityFilter(i, Type.EQUAL, 0)))
+					;
 		}
+	}
+
+	public static void removeZips(LinkedList<Filter> filterList, int numberOfJugglers) {
+
+		filterList.addFirst(new QuantityFilter(numberOfJugglers, Type.EQUAL, 0));
 	}
 
 	public static void removeZaps(LinkedList<Filter> filterList, int numberOfJugglers) {
