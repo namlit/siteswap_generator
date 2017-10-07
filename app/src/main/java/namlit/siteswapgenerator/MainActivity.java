@@ -222,7 +222,8 @@ public class MainActivity extends AppCompatActivity {
     private void updateAutoFilters() {
         try {
             int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
-            Filter.addDefaultFilters(mFilterList, numberOfJugglers);
+            int minThrow = Integer.valueOf(mMinThrow.getText().toString());
+            Filter.addDefaultFilters(mFilterList, numberOfJugglers, minThrow);
             onCheckboxClicked(mZipsCheckbox);   // Updates the filter list corresponding to checkbox
             onCheckboxClicked(mZapsCheckbox);   // Updates the filter list corresponding to checkbox
             onCheckboxClicked(mHoldsCheckbox);  // Updates the filter list corresponding to checkbox
