@@ -89,8 +89,15 @@ public class MainActivity extends AppCompatActivity {
 
 
         mFilterListAdapter = new ArrayAdapter<Filter>(
-                this, R.layout.filter_item_view, R.id.filter_text_view, mFilterList);
+                this, android.R.layout.simple_list_item_1, mFilterList);
         mFilterListView.setAdapter(mFilterListAdapter);
+//        mFilterListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                Toast.makeText(getApplicationContext(), "onItemClick", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
         updateAutoFilters();
 
