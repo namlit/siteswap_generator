@@ -9,6 +9,11 @@ import siteswaplib.Pattern;
 
 public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializable {
 
+	public static final int SELF = -1;
+	public static final int PASS = -2;
+	public static final int DONT_CARE = -3;
+	public static final int FREE = -3;
+
 	protected CyclicByteArray mData;
 	protected int mNumberOfJugglers = 1;
 	
@@ -64,19 +69,10 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return true;
 	}
 	
-	public int countValue(int value) {
+	public int countValue(byte value) {
 		int counter = 0;
 		for (byte i : mData) {
-			if(i == value)
-				counter++;
-		}
-		return counter;
-	}
-	
-	public int countValue(char value) {
-		int counter = 0;
-		for (byte i : mData) {
-			if(Pattern.testPatternValue(value, i, mNumberOfJugglers))
+			if(correspondsPattern(value, i))
 				counter++;
 		}
 		return counter;
@@ -261,19 +257,71 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		}
 		return str;
 	}
-	
-	static char intToChar(int value) {
-		if(value < 10)
+
+	public static String intToString(int value) {
+		if (value == SELF)
+			return "self";
+		if (value == PASS)
+			return "pass";
+		if (value == DONT_CARE)
+			return "?";
+		if (value == FREE)
+			return "free";
+		if (value < 0)
+			return "invalid";
+
+		if(value >= 0 && value < 10)
+			return Integer.toString(value);
+
+		return Character.toString((char) (value - 10 + 'a'));
+	}
+
+	public static char intToChar(int value) {
+
+		if (value == SELF)
+			return 's';
+		if (value == PASS)
+			return 'p';
+		if (value == DONT_CARE)
+			return '?';
+		if (value == FREE)
+			return '*';
+		if (value < 0)
+			return '!';
+
+		if(value >= 0 && value < 10)
 			return (char) (value + '0');
+
 		return (char) (value - 10 + 'a');
 	}
 
-	static int charToInt(char value) {
+	public static int charToInt(char value) {
 		if(value < '9' && value > '0')
 			return (int) (value - '0');
 		if(value < 'z' && value > 'a')
 			return (int) (value + 10 - 'a');
 		return -1;
+	}
+
+	private boolean correspondsPattern(byte patternValue, byte siteswapValue) {
+		if (siteswapValue >= 0) {
+			if (patternValue == SELF)
+				return siteswapValue % mNumberOfJugglers == 0;
+			if (patternValue == PASS)
+				return siteswapValue % mNumberOfJugglers != 0;
+			if (patternValue == DONT_CARE)
+				return true;
+			if (patternValue == FREE)
+				return false;
+		}
+		else {
+			if (siteswapValue == DONT_CARE)
+				return true;
+			if (siteswapValue == FREE)
+				return false;
+		}
+
+		return patternValue == siteswapValue;
 	}
 	
 }

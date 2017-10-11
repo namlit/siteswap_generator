@@ -5,17 +5,12 @@ public class QuantityFilter extends Filter {
 	public enum Type {GREATER_EQUAL, SMALLER_EQUAL, EQUAL}
 	
 	private Type mType;
-	private char mFilterValue;
+	private byte mFilterValue;
 	private int mThresholdValue;
-	
-	public QuantityFilter(char filterValue, Type type, int threshold) {
-		this.mFilterValue = filterValue;
-		this.mType = type;
-		this.mThresholdValue = threshold;
-	}
-	
+
+
 	public QuantityFilter(int filterValue, Type type, int threshold) {
-		this.mFilterValue = Siteswap.intToChar(filterValue);
+		this.mFilterValue = (byte) filterValue;
 		this.mType = type;
 		this.mThresholdValue = threshold;
 	}
@@ -32,16 +27,34 @@ public class QuantityFilter extends Filter {
 	
 	@Override
 	public String toString() {
-		String str = new String("number of ");
-		str += Character.toString(mFilterValue);
-		
-		if (mType == Type.GREATER_EQUAL)
-			str += " ≥ ";
+		String str = new String("");
+
+		if (mType == Type.EQUAL) {
+			if (mThresholdValue == 0)
+				return "no " + Siteswap.intToString(mFilterValue);
+			else
+				str += "exactly " + String.valueOf(mThresholdValue);
+		}
+
+		else if (mType == Type.GREATER_EQUAL)
+			str += "at least " + String.valueOf(mThresholdValue);
 		else if (mType == Type.SMALLER_EQUAL)
-			str += " ≤ ";
+			str += "not more than " + String.valueOf(mThresholdValue);
 		else
-			str += " = ";
-		str += String.valueOf(mThresholdValue);
+			return "";
+
+		if (mFilterValue < 0) {
+			str += " " + Siteswap.intToString(mFilterValue);
+		}
+		else {
+			if (mThresholdValue == 1)
+				str += " throw";
+			else
+				str += " throws";
+
+			str += " with height " + Siteswap.intToString(mFilterValue);
+		}
+
 		return str;
 	}
 

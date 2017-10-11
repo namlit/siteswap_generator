@@ -19,7 +19,7 @@ public abstract class Filter implements Serializable {
 			if ( Pattern.isPass(i, numberOfJugglers))
 				filterList.addFirst(new QuantityFilter(i, Type.EQUAL, 0));
 		}
-		filterList.addFirst(new QuantityFilter('p', Type.GREATER_EQUAL, 1));
+		filterList.addFirst(new QuantityFilter(Siteswap.PASS, Type.GREATER_EQUAL, 1));
 	}
 
 	public static void addDefaultFilters(LinkedList<Filter> filterList, int numberOfJugglers) {
@@ -49,7 +49,7 @@ public abstract class Filter implements Serializable {
 											int numberOfJugglers, int minThrow) {
 		if (numberOfJugglers <= 1)
 			return;
-		while (filterList.remove(new QuantityFilter('p', Type.GREATER_EQUAL, 1)))
+		while (filterList.remove(new QuantityFilter(Siteswap.PASS, Type.GREATER_EQUAL, 1)))
 			;
 		for (int i = minThrow; i < 2*numberOfJugglers; ++i) {
 			if ( Pattern.isPass(i, numberOfJugglers))

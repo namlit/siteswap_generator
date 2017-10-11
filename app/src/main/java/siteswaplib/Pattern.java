@@ -4,7 +4,6 @@ import java.util.*;
 import java.io.Serializable;
 
 import siteswaplib.Siteswap;
-import siteswaplib.UniqueSiteswap;
 
 public class Pattern implements Serializable{
 
