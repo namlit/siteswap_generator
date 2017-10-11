@@ -9,7 +9,8 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	public static final int SELF = -1;
 	public static final int PASS = -2;
 	public static final int DONT_CARE = -3;
-	public static final int FREE = -3;
+	public static final int FREE = -4;
+	public static final int INVALID = -5;
 
 	protected CyclicByteArray mData;
 	protected int mNumberOfJugglers = 1;
@@ -21,6 +22,11 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	
 	public Siteswap(byte[] data, int numberOfJugglers) {
 		this.mData = new CyclicByteArray(data);
+		this.mNumberOfJugglers = numberOfJugglers;
+	}
+
+	public Siteswap(String siteswap, int numberOfJugglers) {
+		this.mData = new CyclicByteArray(parseString(siteswap));
 		this.mNumberOfJugglers = numberOfJugglers;
 	}
 	
@@ -275,7 +281,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		if (value == PASS)
 			return "pass";
 		if (value == DONT_CARE)
-			return "?";
+			return "do not care";
 		if (value == FREE)
 			return "free";
 		if (value < 0)
@@ -307,11 +313,19 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	}
 
 	public static int charToInt(char value) {
+		if (value == 'p')
+			return PASS;
+		if (value == 's')
+			return SELF;
+		if (value == '?')
+			return DONT_CARE;
+		if (value == 'O')
+			return FREE;
 		if(value < '9' && value > '0')
 			return (int) (value - '0');
 		if(value < 'z' && value > 'a')
 			return (int) (value + 10 - 'a');
-		return -1;
+		return INVALID;
 	}
 
 	static public boolean correspondsPattern(byte patternValue, byte siteswapValue, int numberOfJugglers) {
@@ -345,6 +359,14 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 
 	private boolean correspondsPattern(byte patternValue, byte siteswapValue) {
 		return correspondsPattern(patternValue, siteswapValue, mNumberOfJugglers);
+	}
+
+	private byte[] parseString(String str) {
+		byte[] siteswap = new byte[str.length()];
+		for (int i = 0; i < str.length(); ++i) {
+			siteswap[i] = (byte) charToInt(str.charAt(i));
+		}
+		return siteswap;
 	}
 	
 }
