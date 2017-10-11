@@ -16,7 +16,7 @@ public abstract class Filter implements Serializable {
 		if (numberOfJugglers <= 1)
 			return;
 		for (int i = minThrow; i < 2*numberOfJugglers; ++i) {
-			if ( Pattern.isPass(i, numberOfJugglers))
+			if ( Siteswap.isPass(i, numberOfJugglers))
 				filterList.addFirst(new QuantityFilter(i, Type.EQUAL, 0));
 		}
 		filterList.addFirst(new QuantityFilter(Siteswap.PASS, Type.GREATER_EQUAL, 1));
@@ -35,7 +35,7 @@ public abstract class Filter implements Serializable {
 	public static void addZaps(LinkedList<Filter> filterList, int numberOfJugglers) {
 
 		for (int i = 2 * numberOfJugglers + 1; i < 3*numberOfJugglers; ++i) {
-			if ( Pattern.isPass(i, numberOfJugglers))
+			if ( Siteswap.isPass(i, numberOfJugglers))
 				while (filterList.remove(new QuantityFilter(i, Type.EQUAL, 0)))
 					;
 		}
@@ -52,7 +52,7 @@ public abstract class Filter implements Serializable {
 		while (filterList.remove(new QuantityFilter(Siteswap.PASS, Type.GREATER_EQUAL, 1)))
 			;
 		for (int i = minThrow; i < 2*numberOfJugglers; ++i) {
-			if ( Pattern.isPass(i, numberOfJugglers))
+			if ( Siteswap.isPass(i, numberOfJugglers))
 				while (filterList.remove(new QuantityFilter(i, Type.EQUAL, 0)))
 					;
 		}
@@ -70,7 +70,7 @@ public abstract class Filter implements Serializable {
 	public static void removeZaps(LinkedList<Filter> filterList, int numberOfJugglers) {
 
 		for (int i = 2 * numberOfJugglers + 1; i < 3*numberOfJugglers; ++i) {
-			if ( Pattern.isPass(i, numberOfJugglers))
+			if ( Siteswap.isPass(i, numberOfJugglers))
 				filterList.addFirst(new QuantityFilter(i, Type.EQUAL, 0));
 		}
 	}

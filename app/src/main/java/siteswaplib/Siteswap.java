@@ -4,9 +4,6 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.io.Serializable;
 
-import siteswaplib.CyclicByteArray;
-import siteswaplib.Pattern;
-
 public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializable {
 
 	public static final int SELF = -1;
@@ -76,6 +73,20 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 				counter++;
 		}
 		return counter;
+	}
+
+	public boolean testPattern(Siteswap pattern) {
+		if (pattern.period_length() == 0)
+			return true;
+		for(int start_pos = 0; start_pos < period_length(); ++start_pos) {
+			for(int i = 0; i < pattern.period_length(); ++i) {
+				if (!correspondsPattern(pattern.at(i), at(start_pos + i)))
+					break;
+				if (i == pattern.period_length() - 1)
+					return true;
+			}
+		}
+		return false;
 	}
 	
 	public void rotateRight(int positions) {
@@ -223,7 +234,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 			for(int i = 0; i < period_length(); ++i) {
 				int position = juggler + i*mNumberOfJugglers;
 				str += formatter.format(mData.at(position) / (double) mNumberOfJugglers);
-				if (Pattern.isPass(mData.at(position), mNumberOfJugglers)) {
+				if (Siteswap.isPass(mData.at(position), mNumberOfJugglers)) {
 					if (isHtml)
 						str += "<sub><small>";
 					if (mNumberOfJugglers >= 3)
@@ -303,12 +314,12 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return -1;
 	}
 
-	private boolean correspondsPattern(byte patternValue, byte siteswapValue) {
+	static public boolean correspondsPattern(byte patternValue, byte siteswapValue, int numberOfJugglers) {
 		if (siteswapValue >= 0) {
 			if (patternValue == SELF)
-				return siteswapValue % mNumberOfJugglers == 0;
+				return siteswapValue % numberOfJugglers == 0;
 			if (patternValue == PASS)
-				return siteswapValue % mNumberOfJugglers != 0;
+				return siteswapValue % numberOfJugglers != 0;
 			if (patternValue == DONT_CARE)
 				return true;
 			if (patternValue == FREE)
@@ -322,6 +333,18 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		}
 
 		return patternValue == siteswapValue;
+	}
+
+	static public boolean isPass(int value, int numberOfJugglers) {
+		return correspondsPattern((byte) PASS, (byte) value, numberOfJugglers);
+	}
+
+	static public boolean isSelf(int value, int numberOfJugglers) {
+		return !isPass(value, numberOfJugglers);
+	}
+
+	private boolean correspondsPattern(byte patternValue, byte siteswapValue) {
+		return correspondsPattern(patternValue, siteswapValue, mNumberOfJugglers);
 	}
 	
 }
