@@ -83,7 +83,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 
     public int countValuePartitially(byte value, int index) {
         int counter = 0;
-        for (int i = 0; i < index; ++i) {
+        for (int i = 0; i <= index; ++i) {
             if(isPatternSingleValue(value, mData.at(i)))
                 counter++;
         }

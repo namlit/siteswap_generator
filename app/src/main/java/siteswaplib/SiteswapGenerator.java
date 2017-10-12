@@ -130,6 +130,36 @@ public class SiteswapGenerator implements Serializable{
 		return mCalculationComplete;
 	}
 
+	private int getMaxSumToGenerate(Siteswap siteswap, Siteswap siteswapInterface, int index) {
+		int maxSum = 0;
+		int interfaceIndex = siteswap.period_length() + mMaxThrow - 2;
+		for(int i = siteswap.period_length() - 1; i >= index; --i) {
+			while (siteswapInterface.at(interfaceIndex) != Siteswap.FREE) {
+				interfaceIndex--;
+				if (interfaceIndex == 0)
+					return 0;
+			}
+			maxSum += (interfaceIndex - i);
+			interfaceIndex--;
+		}
+		return maxSum;
+	}
+
+	private int getMinSumToGenerate(Siteswap siteswap, Siteswap siteswapInterface, int index) {
+		int minSum = 0;
+		int interfaceIndex = index + mMinThrow;
+		for(int i = index; i < siteswap.period_length(); ++i) {
+			while (siteswapInterface.at(interfaceIndex) != Siteswap.FREE) {
+				interfaceIndex++;
+				if (interfaceIndex == mMaxThrow)
+					return mMaxThrow;
+			}
+			minSum += (interfaceIndex - i);
+			interfaceIndex++;
+		}
+		return minSum;
+	}
+
 	/**
 	 * Returns false, if an timeout occured, the maximum number of siteswaps is
 	 * reached or some error occurred. The siteswap calculation is then recursively
@@ -169,23 +199,30 @@ public class SiteswapGenerator implements Serializable{
 			}
 		}
 
-		int partialSum = siteswap.getPartialSum(0, currentIndex - 1);
-		int sum = mPeriodLength * mNumberOfObjects;
-		int averMin = sum - partialSum - (mMaxThrow - 1) * (mPeriodLength - currentIndex - 1);
-		int min = (averMin > mMinThrow) ? averMin : mMinThrow;
-		if(currentIndex == 0)
+		int min, max, uniqeMax;
+
+		if (currentIndex == 0) {
 			min = mNumberOfObjects;
-
-		int uniqeMax = siteswap.at(uniqueRepresentationIndex);
-		int minTemp = (averMin - 1 > mMinThrow) ? averMin - 1 : mMinThrow;
-		int averMax = sum - partialSum - minTemp * (mPeriodLength - currentIndex - 1);
-		int max = (averMax < uniqeMax) ? averMax : uniqeMax;
-		if(currentIndex == 0)
 			max = mMaxThrow;
-		if(currentIndex == (mPeriodLength - 1) && max == siteswap.at(0) &&
-				uniqueRepresentationIndex != (currentIndex - 1))
-			max--;
+			uniqeMax = mMaxThrow + 1; // same value as max would result in wrong index calculation
+		}
+		else {
 
+			int partialSum = siteswap.getPartialSum(0, currentIndex - 1);
+			int sum = mPeriodLength * mNumberOfObjects;
+
+			// calculate minimum throw. The minimum throw must be hight enougth, that
+			// the overall sum can be numberOfOjects * periodLength
+			int minDeterminedByAverage = sum - partialSum - getMaxSumToGenerate(siteswap, siteswapInterface, currentIndex + 1);
+			min = (minDeterminedByAverage > mMinThrow) ? minDeterminedByAverage : mMinThrow;
+
+			// calculate max throw. The maximum throw can not be higher, than required
+			// by the unique representation property. Additionally it must be possible,
+			// that the overall sum is numberOfOjects * periodLength
+			uniqeMax = siteswap.at(uniqueRepresentationIndex);
+			int maxDeterminedByAverage = sum - partialSum - getMinSumToGenerate(siteswap, siteswapInterface, currentIndex + 1);
+			max = (maxDeterminedByAverage < uniqeMax) ? maxDeterminedByAverage : uniqeMax;
+		}
 
 		for (int value = min; value <= max; ++value) {
 
