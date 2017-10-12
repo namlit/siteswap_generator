@@ -6,11 +6,11 @@ import java.io.Serializable;
 
 public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializable {
 
-	public static final int SELF = -1;
-	public static final int PASS = -2;
-	public static final int DONT_CARE = -3;
-	public static final int FREE = -4;
-	public static final int INVALID = -5;
+	public static final byte SELF = -1;
+	public static final byte PASS = -2;
+	public static final byte DONT_CARE = -3;
+	public static final byte FREE = -4;
+	public static final byte INVALID = -5;
 
 	protected CyclicByteArray mData;
 	protected int mNumberOfJugglers = 1;

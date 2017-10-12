@@ -48,14 +48,16 @@ public class SiteswapGenerator implements Serializable{
 		mBacktrackingCount = 0;
         mSiteswaps = new LinkedList<Siteswap>();
         mStartTime = System.currentTimeMillis();
-		byte[] arr = new byte[mPeriodLength];
-		Arrays.fill(arr, (byte) 0);
-		Siteswap siteswap = new Siteswap(arr, mNumberOfJugglers);
-		TreeSet<Integer> freePositions = new TreeSet<Integer>();
-		for(int i = 0; i < mPeriodLength; ++i)
-			freePositions.add(i);
+		byte[] siteswapArray = new byte[mPeriodLength];
+		byte[] interfaceArray = new byte[mPeriodLength];
+		Arrays.fill(siteswapArray, Siteswap.FREE);
+		Arrays.fill(interfaceArray, Siteswap.FREE);
+		Siteswap siteswap = new Siteswap(siteswapArray, mNumberOfJugglers);
 
-		boolean result = backtracking(siteswap, freePositions, 0, 0);
+		// The inteface describes, where throws are coming down
+		Siteswap siteswapInterface = new Siteswap(interfaceArray, mNumberOfJugglers);
+
+		boolean result = backtracking(siteswap, siteswapInterface, 0, 0);
 		mCalculationComplete = true;
 		return result;
 	}
@@ -134,7 +136,7 @@ public class SiteswapGenerator implements Serializable{
 	 * aborted. Returns true on normal, to indicate, that the siteswap search
 	 * shall be continued.
 	 * */
-	private boolean backtracking(Siteswap siteswap, TreeSet<Integer> freePositions,
+	private boolean backtracking(Siteswap siteswap, Siteswap siteswapInterface,
 								 int currentIndex, int uniqueRepresentationIndex) {
 
 		if (System.currentTimeMillis() - mStartTime > mTimeoutSeconds * 1000)
@@ -185,22 +187,20 @@ public class SiteswapGenerator implements Serializable{
 			max--;
 
 
-		// TODO use siteswap as interface with free positions instead of TreeSet
-		TreeSet<Integer> freePositionsOld = new TreeSet<Integer>(freePositions);
-		for (Integer pos : freePositionsOld) {
-			int n = (int) Math.ceil((min + currentIndex - pos) / (double) mPeriodLength);
-			while(pos - currentIndex + n * mPeriodLength <= max) {
-				int value = pos - currentIndex + n * mPeriodLength;
-				siteswap.set(currentIndex, value);
-				freePositions.remove(pos);
-				int nextUniqueIndex = (value == uniqeMax) ? uniqueRepresentationIndex + 1 : 0;
-				if (!backtracking(siteswap, freePositions, currentIndex + 1, nextUniqueIndex))
-					return false;
-				freePositions.add(pos);
-				n++;
-			}
-			siteswap.set(currentIndex, 0); // reset value for backtracking
+		for (int value = min; value <= max; ++value) {
+
+			if (siteswapInterface.at(currentIndex + value) != Siteswap.FREE)
+				continue;
+
+			siteswap.set(currentIndex, value);
+			siteswapInterface.set(currentIndex + value, value);
+			int nextUniqueIndex = (value == uniqeMax) ? uniqueRepresentationIndex + 1 : 0;
+			if (!backtracking(siteswap, siteswapInterface, currentIndex + 1, nextUniqueIndex))
+				return false;
+			siteswapInterface.set(currentIndex + value, Siteswap.FREE);
 		}
+
+		siteswap.set(currentIndex, Siteswap.FREE); // reset value for backtracking
 
 
 		return true;
