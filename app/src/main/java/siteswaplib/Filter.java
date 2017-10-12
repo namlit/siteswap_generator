@@ -8,7 +8,17 @@ import siteswaplib.QuantityFilter.Type;
 
 public abstract class Filter implements Serializable {
 
-	public abstract boolean matches_filter(Siteswap siteswap);
+	public abstract boolean isFulfilled(Siteswap siteswap);
+
+    /**
+     * The filter is only tested at/up to index position. This function can be
+     * used during siteswap generation to test, if a partly generated siteswap
+     * would fulfill the filter condition. Returns true, if the filter is currently
+     * fulfilled or might be fulfilled later, when the complete siteswap is
+     * generated. Returns False, if it is not possible anymore, to fulfill the filter
+     * condition.
+     * */
+    public abstract boolean isPartlyFulfilled(Siteswap siteswap, int index);
 	
 	public static void addDefaultFilters(LinkedList<Filter> filterList,
 										 int numberOfJugglers, int minThrow) {

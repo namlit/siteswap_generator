@@ -13,10 +13,27 @@ public class PatternFilter extends Filter {
 	}
 	
 	@Override
-	public boolean matches_filter(Siteswap siteswap) {
+	public boolean isFulfilled(Siteswap siteswap) {
 		if (mType == Type.INCLUDE)
-			return siteswap.testPattern(mPattern);
-		return !siteswap.testPattern(mPattern);
+			return siteswap.isPattern(mPattern);
+		return !siteswap.isPattern(mPattern);
+	}
+
+
+	@Override
+	public boolean isPartlyFulfilled(Siteswap siteswap, int index) {
+		if (mType == Type.INCLUDE)
+			return true; // TODO return false, if it is impossible to fulfill pattern
+		switch (mType)
+		{
+			case INCLUDE:
+				break;
+			case EXCLUDE:
+				if (index < mPattern.period_length() - 1)
+					return true;
+				return !siteswap.isPattern(mPattern, index + 1 - mPattern.period_length());
+		}
+		return true;
 	}
 
 	@Override

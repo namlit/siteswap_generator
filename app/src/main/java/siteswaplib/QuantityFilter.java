@@ -16,7 +16,7 @@ public class QuantityFilter extends Filter {
 	}
 	
 	@Override
-	public boolean matches_filter(Siteswap siteswap) {
+	public boolean isFulfilled(Siteswap siteswap) {
 		if (mType == Type.GREATER_EQUAL)
 			return siteswap.countValue(mFilterValue) >= mThresholdValue;
 		if (mType == Type.SMALLER_EQUAL)
@@ -24,6 +24,23 @@ public class QuantityFilter extends Filter {
 		
 		return siteswap.countValue(mFilterValue) == mThresholdValue;
 	}
+
+	@Override
+    public boolean isPartlyFulfilled(Siteswap siteswap, int index) {
+
+        int currentCount = siteswap.countValuePartitially(mFilterValue, index);
+
+        switch (mType) {
+            case GREATER_EQUAL:
+                return currentCount + (siteswap.period_length() - index) > mThresholdValue;
+            case SMALLER_EQUAL:
+                return currentCount <= mThresholdValue;
+            case EQUAL:
+                return currentCount <= mThresholdValue &&
+                        currentCount + (siteswap.period_length() - index) > mThresholdValue;
+        }
+        return true;
+    }
 	
 	@Override
 	public String toString() {

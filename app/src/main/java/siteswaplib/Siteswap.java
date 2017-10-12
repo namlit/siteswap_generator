@@ -75,25 +75,20 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	public int countValue(byte value) {
 		int counter = 0;
 		for (byte i : mData) {
-			if(correspondsPattern(value, i))
+			if(isPatternSingleValue(value, i))
 				counter++;
 		}
 		return counter;
 	}
 
-	public boolean testPattern(Siteswap pattern) {
-		if (pattern.period_length() == 0)
-			return true;
-		for(int start_pos = 0; start_pos < period_length(); ++start_pos) {
-			for(int i = 0; i < pattern.period_length(); ++i) {
-				if (!correspondsPattern(pattern.at(i), at(start_pos + i)))
-					break;
-				if (i == pattern.period_length() - 1)
-					return true;
-			}
-		}
-		return false;
-	}
+    public int countValuePartitially(byte value, int index) {
+        int counter = 0;
+        for (int i = 0; i < index; ++i) {
+            if(isPatternSingleValue(value, mData.at(i)))
+                counter++;
+        }
+        return counter;
+    }
 	
 	public void rotateRight(int positions) {
 		mData.rotateRight(positions);
@@ -328,7 +323,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return INVALID;
 	}
 
-	static public boolean correspondsPattern(byte patternValue, byte siteswapValue, int numberOfJugglers) {
+	static public boolean isPatternSingleValue(byte patternValue, byte siteswapValue, int numberOfJugglers) {
 		if (siteswapValue >= 0) {
 			if (patternValue == SELF)
 				return siteswapValue % numberOfJugglers == 0;
@@ -349,16 +344,34 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return patternValue == siteswapValue;
 	}
 
+    public boolean isPatternSingleValue(byte patternValue, byte siteswapValue) {
+        return isPatternSingleValue(patternValue, siteswapValue, mNumberOfJugglers);
+    }
+
+    public boolean isPattern(Siteswap pattern) {
+        if (pattern.period_length() == 0)
+            return true;
+        for(int i = 0; i < period_length(); ++i) {
+            if (isPattern(pattern, i))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isPattern(Siteswap pattern, int patternStartPosition) {
+        for (int i = 0; i < pattern.period_length(); ++i) {
+            if (!isPatternSingleValue(pattern.at(i), at(i + patternStartPosition)))
+                return false;
+        }
+        return true;
+    }
+
 	static public boolean isPass(int value, int numberOfJugglers) {
-		return correspondsPattern((byte) PASS, (byte) value, numberOfJugglers);
+        return value % numberOfJugglers != 0;
 	}
 
 	static public boolean isSelf(int value, int numberOfJugglers) {
 		return !isPass(value, numberOfJugglers);
-	}
-
-	private boolean correspondsPattern(byte patternValue, byte siteswapValue) {
-		return correspondsPattern(patternValue, siteswapValue, mNumberOfJugglers);
 	}
 
 	private byte[] parseString(String str) {

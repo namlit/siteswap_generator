@@ -16,6 +16,7 @@ public class SiteswapGenerator implements Serializable{
 	private long mStartTime = 0;
     private int mTimeoutSeconds = 100;
 	private boolean mCalculationComplete = false;
+	private int mBacktrackingCount = 0; // Just for algorithm performance analysis
 
 	public SiteswapGenerator(int length, int max, int min, int objects, int number_of_jugglers) {
 		this.mPeriodLength = length;
@@ -44,6 +45,7 @@ public class SiteswapGenerator implements Serializable{
 
 	public boolean generateSiteswaps() {
 		mCalculationComplete = false;
+		mBacktrackingCount = 0;
         mSiteswaps = new LinkedList<Siteswap>();
         mStartTime = System.currentTimeMillis();
 		byte[] arr = new byte[mPeriodLength];
@@ -53,11 +55,6 @@ public class SiteswapGenerator implements Serializable{
 		for(int i = 0; i < mPeriodLength; ++i)
 			freePositions.add(i);
 
-        System.out.println(mFilterList.size());
-        for (Filter filter : mFilterList) {
-            System.out.println(filter.toString());
-        }
-        System.out.println(mFilterList.size());
 		boolean result = backtracking(siteswap, freePositions, 0, 0);
 		mCalculationComplete = true;
 		return result;
@@ -123,25 +120,51 @@ public class SiteswapGenerator implements Serializable{
         return mTimeoutSeconds;
     }
 
+	public int getBacktrackingCount() {
+		return mBacktrackingCount;
+	}
+
     public boolean isCalculationComplete() {
 		return mCalculationComplete;
 	}
 
+	/**
+	 * Returns false, if an timeout occured, the maximum number of siteswaps is
+	 * reached or some error occurred. The siteswap calculation is then recursively
+	 * aborted. Returns true on normal, to indicate, that the siteswap search
+	 * shall be continued.
+	 * */
 	private boolean backtracking(Siteswap siteswap, TreeSet<Integer> freePositions,
 								 int currentIndex, int uniqueRepresentationIndex) {
+
 		if (System.currentTimeMillis() - mStartTime > mTimeoutSeconds * 1000)
 			return false;
+
 		if (currentIndex == mPeriodLength) {
 
-			// filters shorter period and non unique representation siteswaps
-			if (uniqueRepresentationIndex != 0)
+			if (uniqueRepresentationIndex != 0) {
+				// Representation is not unique or siteswap has shorter period.
+				// Continue Backtracking...
+				mBacktrackingCount++;
 				return true;
-			if (testFilters(siteswap)) {
+			}
+			if (matchesFilters(siteswap)) {
 				mSiteswaps.add(new Siteswap(siteswap));
 				if (mSiteswaps.size() >= mMaxResults)
-					return false;
+					return false; // Abort if max_results reached
 			}
+			// A filter did not match. Continue Backtracking...
+			mBacktrackingCount++;
 			return true;
+		}
+		else { // Not last index
+
+			if (currentIndex != 0) {
+				if (!matchesFiltersPartialSitswap(siteswap, currentIndex - 1)) {
+					mBacktrackingCount++;
+					return true;
+				}
+			}
 		}
 
 		int partialSum = siteswap.getPartialSum(0, currentIndex - 1);
@@ -162,12 +185,12 @@ public class SiteswapGenerator implements Serializable{
 			max--;
 
 
+		// TODO use siteswap as interface with free positions instead of TreeSet
 		TreeSet<Integer> freePositionsOld = new TreeSet<Integer>(freePositions);
 		for (Integer pos : freePositionsOld) {
 			int n = (int) Math.ceil((min + currentIndex - pos) / (double) mPeriodLength);
 			while(pos - currentIndex + n * mPeriodLength <= max) {
 				int value = pos - currentIndex + n * mPeriodLength;
-				// TODO test filters and other conditions
 				siteswap.set(currentIndex, value);
 				freePositions.remove(pos);
 				int nextUniqueIndex = (value == uniqeMax) ? uniqueRepresentationIndex + 1 : 0;
@@ -184,11 +207,21 @@ public class SiteswapGenerator implements Serializable{
 
 	}
 
-	private boolean testFilters(Siteswap siteswap) {
+	private boolean matchesFilters(Siteswap siteswap) {
 		if (mFilterList == null)
 			return true;
 		for (Filter filter : mFilterList) {
-			if (!filter.matches_filter(siteswap))
+			if (!filter.isFulfilled(siteswap))
+				return false;
+		}
+		return true;
+	}
+
+	private boolean matchesFiltersPartialSitswap(Siteswap siteswap, int index) {
+		if (mFilterList == null)
+			return true;
+		for (Filter filter : mFilterList) {
+			if (!filter.isPartlyFulfilled(siteswap, index))
 				return false;
 		}
 		return true;
