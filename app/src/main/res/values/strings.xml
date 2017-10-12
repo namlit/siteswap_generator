@@ -28,11 +28,8 @@
     <string name="main_activity__include_holds">holds</string>
 
     <string-array name="main_activity__filter_types">
-        <item>Global pattern filter</item>
-        <item>Local pattern filter</item>
+        <item>Pattern filter</item>
         <item>Quantity filter</item>
-        <item>Global interface filter</item>
-        <item>Local interface filter</item>
     </string-array>
 
     <string name="main_activity__add_filter_button">Add</string>
