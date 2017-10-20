@@ -169,15 +169,16 @@ public class SiteswapGenerator implements Serializable{
 	private boolean backtracking(Siteswap siteswap, Siteswap siteswapInterface,
 								 int currentIndex, int uniqueRepresentationIndex) {
 
-		if (System.currentTimeMillis() - mStartTime > mTimeoutSeconds * 1000)
+		mBacktrackingCount++;
+		if (mBacktrackingCount % 1000 == 0 &&
+				System.currentTimeMillis() - mStartTime > mTimeoutSeconds * 1000)
 			return false;
 
 		if (currentIndex == mPeriodLength) {
 
 			if (uniqueRepresentationIndex != 0) {
 				// Representation is not unique or siteswap has shorter period.
-				// Continue Backtracking...
-				mBacktrackingCount++;
+				// Go a step back and continue searching...
 				return true;
 			}
 			if (matchesFilters(siteswap)) {
@@ -185,15 +186,14 @@ public class SiteswapGenerator implements Serializable{
 				if (mSiteswaps.size() >= mMaxResults)
 					return false; // Abort if max_results reached
 			}
-			// A filter did not match. Continue Backtracking...
-			mBacktrackingCount++;
+			// A filter did not match. Go a step back and continue searching...
 			return true;
 		}
 		else { // Not last index
 
 			if (currentIndex != 0) {
 				if (!matchesFiltersPartialSitswap(siteswap, currentIndex - 1)) {
-					mBacktrackingCount++;
+					// Go a step back and continue searching...
 					return true;
 				}
 			}
