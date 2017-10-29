@@ -21,9 +21,11 @@ public abstract class Filter implements Serializable {
 	
 	public static void addDefaultFilters(LinkedList<Filter> filterList,
 										 int numberOfJugglers, int minThrow) {
-		
 		if (numberOfJugglers <= 1)
 			return;
+
+		// remove Filters first, to avoid duplicate filters
+		removeDefaultFilters(filterList, numberOfJugglers, minThrow);
 		for (int i = minThrow; i < 2*numberOfJugglers; ++i) {
 			if ( Siteswap.isPass(i, numberOfJugglers))
 				filterList.addFirst(new NumberFilter(i, Type.EQUAL, 0));
