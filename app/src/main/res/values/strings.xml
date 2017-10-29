@@ -14,6 +14,7 @@
     <string name="main_activity__settings_is_zaps">IS_ZAPS</string>
     <string name="main_activity__settings_is_holds">IS_HOLDS</string>
     <string name="main_activity__settings_filter_spinner_position">FILTER_SPINNER_POSITION</string>
+    <string name="main_activity__settings_filter_list">FILTER_LIST</string>
 
     <string name="main_activity__number_of_objects">Number of Objects:</string>
     <string name="main_activity__period_length">Period Length:</string>
@@ -36,8 +37,9 @@
     <string name="main_activity__add_filter_button">Add</string>
     <string name="main_activity__generate_siteswaps_button">Generate Siteswaps</string>
 
-    <string name="main_activity__saved_filter_list">FILTER_LIST</string>
     <string name="main_activity__invalid_input_value">Invalid Input Value</string>
+    <string name="main_activity__serialization_error_toast">Error during filter list serialization</string>
+    <string name="main_activity__deserialization_error_toast">Error during filter list deserialization</string>
 
     <string name="show_siteswaps__title">Found %d Siteswaps</string>
     <string name="show_siteswaps__title_timeout">Found %d Siteswaps after Timeout</string>

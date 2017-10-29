@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -15,6 +16,10 @@ import android.widget.CheckBox;
 import android.text.TextWatcher;
 import android.text.Editable;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 import java.util.Locale;
 
@@ -59,38 +64,47 @@ public class MainActivity extends AppCompatActivity
         mFilterTypeSpinner  = (Spinner) findViewById(R.id.filter_type_spinner);
         mFilterListView     = (NonScrollListView) findViewById(R.id.filter_list);
 
-        if (savedInstanceState != null) {
-            mFilterList = (LinkedList<Filter>) savedInstanceState.getSerializable(
-                    getString(R.string.main_activity__saved_filter_list));
-        }
-        else {
-            mFilterList = new LinkedList<Filter>();
+        mFilterList = new LinkedList<Filter>();
 
-            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-            int numberOfObjects  = sharedPref.getInt(getString(R.string.main_activity__settings_number_of_objects),  7);
-            int periodLength     = sharedPref.getInt(getString(R.string.main_activity__settings_period_length),      5);
-            int maxThrow         = sharedPref.getInt(getString(R.string.main_activity__settings_max_throw),         10);
-            int minThrow         = sharedPref.getInt(getString(R.string.main_activity__settings_min_throw),          2);
-            int numberOfJugglers = sharedPref.getInt(getString(R.string.main_activity__settings_number_of_jugglers), 2);
-            int maxResults       = sharedPref.getInt(getString(R.string.main_activity__settings_max_results),      100);
-            int timeout          = sharedPref.getInt(getString(R.string.main_activity__settings_timeout),            5);
-            boolean isZips       = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_zips), true);
-            boolean isZaps       = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_zaps), false);
-            boolean isHolds      = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_holds), false);
-            int filterSpinnerPosition = sharedPref.getInt(getString(R.string.main_activity__settings_filter_spinner_position), 0);
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        int numberOfObjects  = sharedPref.getInt(getString(R.string.main_activity__settings_number_of_objects),  7);
+        int periodLength     = sharedPref.getInt(getString(R.string.main_activity__settings_period_length),      5);
+        int maxThrow         = sharedPref.getInt(getString(R.string.main_activity__settings_max_throw),         10);
+        int minThrow         = sharedPref.getInt(getString(R.string.main_activity__settings_min_throw),          2);
+        int numberOfJugglers = sharedPref.getInt(getString(R.string.main_activity__settings_number_of_jugglers), 2);
+        int maxResults       = sharedPref.getInt(getString(R.string.main_activity__settings_max_results),      100);
+        int timeout          = sharedPref.getInt(getString(R.string.main_activity__settings_timeout),            5);
+        boolean isZips       = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_zips), true);
+        boolean isZaps       = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_zaps), false);
+        boolean isHolds      = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_holds), false);
+        int filterSpinnerPosition = sharedPref.getInt(getString(R.string.main_activity__settings_filter_spinner_position), 0);
+        String serializedFilterList = sharedPref.getString(getString(R.string.main_activity__settings_filter_list), "");
 
-            mNumberOfObjects.setText(String.valueOf(numberOfObjects));
-            mPeriodLength.setText(String.valueOf(periodLength));
-            mMaxThrow.setText(String.valueOf(maxThrow));
-            mMinThrow.setText(String.valueOf(minThrow));
-            mNumberOfJugglers.setText(String.valueOf(numberOfJugglers));
-            mMaxResults.setText(String.valueOf(maxResults));
-            mTimeout.setText(String.valueOf(timeout));
-            mZipsCheckbox.setChecked(isZips);
-            mZapsCheckbox.setChecked(isZaps);
-            mHoldsCheckbox.setChecked(isHolds);
-            mFilterTypeSpinner.setSelection(filterSpinnerPosition);
+        if (serializedFilterList != "") {
+            try {
+                byte b[] = Base64.decode(serializedFilterList, Base64.DEFAULT);
+                ByteArrayInputStream bi = new ByteArrayInputStream(b);
+                ObjectInputStream si = new ObjectInputStream(bi);
+                mFilterList = (LinkedList<Filter>) si.readObject();
+                si.close();
+            } catch (Exception e) {
+                Toast.makeText(this, getString(R.string.main_activity__deserialization_error_toast),
+                        Toast.LENGTH_SHORT).show();
+            }
         }
+
+
+        mNumberOfObjects.setText(String.valueOf(numberOfObjects));
+        mPeriodLength.setText(String.valueOf(periodLength));
+        mMaxThrow.setText(String.valueOf(maxThrow));
+        mMinThrow.setText(String.valueOf(minThrow));
+        mNumberOfJugglers.setText(String.valueOf(numberOfJugglers));
+        mMaxResults.setText(String.valueOf(maxResults));
+        mTimeout.setText(String.valueOf(timeout));
+        mZipsCheckbox.setChecked(isZips);
+        mZapsCheckbox.setChecked(isZaps);
+        mHoldsCheckbox.setChecked(isHolds);
+        mFilterTypeSpinner.setSelection(filterSpinnerPosition);
 
 
         mFilterListAdapter = new ArrayAdapter<Filter>(
@@ -180,6 +194,17 @@ public class MainActivity extends AppCompatActivity
             editor.putBoolean(getString(R.string.main_activity__settings_is_holds), isHolds);
             editor.putInt(getString(R.string.main_activity__settings_filter_spinner_position), filterSpinnerPosition);
 
+            try {
+                ByteArrayOutputStream bo = new ByteArrayOutputStream();
+                ObjectOutputStream so = new ObjectOutputStream(bo);
+                so.writeObject(mFilterList);
+                so.close();
+                editor.putString(getString(R.string.main_activity__settings_filter_list), Base64.encodeToString(bo.toByteArray(), Base64.DEFAULT));
+            } catch (Exception e) {
+                Toast.makeText(this, getString(R.string.main_activity__serialization_error_toast),
+                        Toast.LENGTH_SHORT).show();
+            }
+
             editor.commit();
         }
         catch (NumberFormatException e) {
@@ -187,6 +212,7 @@ public class MainActivity extends AppCompatActivity
                     Toast.LENGTH_SHORT).show();
         }
     }
+
 
 
     public void addFilter(View view) {
