@@ -16,6 +16,7 @@ import android.text.TextWatcher;
 import android.text.Editable;
 
 import java.util.LinkedList;
+import java.util.Locale;
 
 import siteswaplib.*;
 

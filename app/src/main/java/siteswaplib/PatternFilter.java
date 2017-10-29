@@ -4,8 +4,8 @@ public class PatternFilter extends Filter {
 
 	public enum Type {EXCLUDE, INCLUDE}
 	
-	private Siteswap mPattern;
-	private Type mType;
+	protected Siteswap mPattern;
+	protected Type mType;
 	
 	public PatternFilter(Siteswap pattern, Type type) {
 		this.mPattern = pattern;

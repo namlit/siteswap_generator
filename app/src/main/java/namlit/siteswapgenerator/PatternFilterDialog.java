@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import siteswaplib.Filter;
+import siteswaplib.LocalPatternFilter;
 import siteswaplib.PatternFilter;
 import siteswaplib.Siteswap;
 
@@ -110,6 +111,11 @@ public class PatternFilterDialog extends AddFilterDialog {
                 mPatternEditText.setText(filter.getPattern().toString());
             }
 
+            if (mOldFilter instanceof LocalPatternFilter) {
+                isGlobal = false;
+                isLocal = true;
+            }
+
         }
 
         mPatternRadioButton.setChecked(isPattern);
@@ -172,8 +178,8 @@ public class PatternFilterDialog extends AddFilterDialog {
             if (isGlobal) {
                 return new PatternFilter(pattern, filterType);
             }
-            else { // Local Pattern Filter
-                Toast.makeText(getActivity(), "Unsupported Filter Type", Toast.LENGTH_SHORT).show();
+            else {
+                return new LocalPatternFilter(pattern, filterType);
             }
         }
         else { // Interface Filter
