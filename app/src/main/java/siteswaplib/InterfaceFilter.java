@@ -25,7 +25,7 @@ public class InterfaceFilter extends PatternFilter {
     @Override
     public boolean isFulfilled(Siteswap siteswap) {
 
-        Siteswap siteswapInterface = siteswap.toInterface();
+        Siteswap siteswapInterface = siteswap.toInterface(Siteswap.DONT_CARE);
 
         if (mType == Type.INCLUDE)
             return siteswapInterface.isPattern(mPattern);

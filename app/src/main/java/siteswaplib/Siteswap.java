@@ -276,11 +276,11 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return str;
 	}
 
-	public Siteswap toInterface() {
+	public Siteswap toInterface(byte defaultValue) {
 
 		byte[] interfaceArray = new byte[period_length()];
-		Arrays.fill(interfaceArray, Siteswap.FREE);
-		Siteswap siteswapInterface = new Siteswap(interfaceArray);
+		Arrays.fill(interfaceArray, defaultValue);
+		Siteswap siteswapInterface = new Siteswap(interfaceArray, mNumberOfJugglers);
 		for (int i = 0; i < period_length(); ++i) {
 			if (at(i) < 0)
 				continue;
@@ -380,12 +380,15 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 				return siteswapValue % numberOfJugglers != 0;
 			if (patternValue == DONT_CARE)
 				return true;
+			// the Pattern should not have any free positions. Therefore false is returned in this case
 			if (patternValue == FREE)
 				return false;
 		}
 		else {
 			if (siteswapValue == DONT_CARE)
 				return true;
+			// When a position in the siteswap is free, it is not known, if the pattern will be
+			// matched. In this case false will be assumed
 			if (siteswapValue == FREE)
 				return false;
 		}
