@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity
             boolean isZips       = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_zips), true);
             boolean isZaps       = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_zaps), false);
             boolean isHolds      = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_holds), false);
+            int filterSpinnerPosition = sharedPref.getInt(getString(R.string.main_activity__settings_filter_spinner_position), 0);
 
             mNumberOfObjects.setText(String.valueOf(numberOfObjects));
             mPeriodLength.setText(String.valueOf(periodLength));
@@ -87,6 +88,7 @@ public class MainActivity extends AppCompatActivity
             mZipsCheckbox.setChecked(isZips);
             mZapsCheckbox.setChecked(isZaps);
             mHoldsCheckbox.setChecked(isHolds);
+            mFilterTypeSpinner.setSelection(filterSpinnerPosition);
         }
 
 
@@ -163,6 +165,7 @@ public class MainActivity extends AppCompatActivity
             boolean isZips = mZipsCheckbox.isChecked();
             boolean isZaps = mZapsCheckbox.isChecked();
             boolean isHolds = mHoldsCheckbox.isChecked();
+            int filterSpinnerPosition = mFilterTypeSpinner.getSelectedItemPosition();
 
             editor.putInt(getString(R.string.main_activity__settings_number_of_objects), numberOfObjects);
             editor.putInt(getString(R.string.main_activity__settings_period_length), periodLength);
@@ -174,6 +177,7 @@ public class MainActivity extends AppCompatActivity
             editor.putBoolean(getString(R.string.main_activity__settings_is_zips), isZips);
             editor.putBoolean(getString(R.string.main_activity__settings_is_zaps), isZaps);
             editor.putBoolean(getString(R.string.main_activity__settings_is_holds), isHolds);
+            editor.putInt(getString(R.string.main_activity__settings_filter_spinner_position), filterSpinnerPosition);
 
             editor.commit();
         }
