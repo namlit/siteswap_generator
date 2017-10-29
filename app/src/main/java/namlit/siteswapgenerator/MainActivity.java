@@ -99,7 +99,21 @@ public class MainActivity extends AppCompatActivity
 
                 Filter filter = (Filter) parent.getItemAtPosition(position);
 
-                if (filter instanceof PatternFilter)
+                if (filter instanceof NumberFilter) {
+
+                    try {
+                        int periodLength = Integer.valueOf(mPeriodLength.getText().toString());
+                        int maxThrow = Integer.valueOf(mMaxThrow.getText().toString());
+                        int minThrow = Integer.valueOf(mMinThrow.getText().toString());
+
+                        new NumberFilterDialog().show(getSupportFragmentManager(),
+                                getString(R.string.number_filter__dialog_tag), minThrow, maxThrow, periodLength, filter);
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(getApplicationContext(), getString(R.string.main_activity__invalid_input_value),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else if (filter instanceof PatternFilter)
                     new PatternFilterDialog().show(getSupportFragmentManager(), getString(R.string.pattern_filter__dialog_tag), filter);
             }
         });
@@ -172,12 +186,23 @@ public class MainActivity extends AppCompatActivity
 
     public void addFilter(View view) {
 
-        if (mFilterTypeSpinner.getSelectedItemPosition() == PATTERN_FILTER_ITEM_NUMBER) {
+        try {
+            int periodLength = Integer.valueOf(mPeriodLength.getText().toString());
+            int maxThrow = Integer.valueOf(mMaxThrow.getText().toString());
+            int minThrow = Integer.valueOf(mMinThrow.getText().toString());
 
-            new PatternFilterDialog().show(getSupportFragmentManager(), getString(R.string.pattern_filter__dialog_tag));
+            if (mFilterTypeSpinner.getSelectedItemPosition() == PATTERN_FILTER_ITEM_NUMBER) {
+
+                new PatternFilterDialog().show(getSupportFragmentManager(), getString(R.string.pattern_filter__dialog_tag));
+            } else {
+                new NumberFilterDialog().show(getSupportFragmentManager(),
+                        getString(R.string.number_filter__dialog_tag), minThrow, maxThrow, periodLength);
+
+            }
         }
-        else {
-
+        catch (NumberFormatException e) {
+            Toast.makeText(this, getString(R.string.main_activity__invalid_input_value),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 

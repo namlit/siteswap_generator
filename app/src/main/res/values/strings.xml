@@ -82,8 +82,14 @@
     <string name="number_filter__at_least">at least</string>
     <string name="number_filter__not_more">not more</string>
     <string name="number_filter__exactly">exactly</string>
-    <string name="number_filter__number_of_throws">Number of throws:</string>
-    <string name="number_filter__throw_height">Throw height:</string>
+    <string name="number_filter__throws_of_height">Throws of height</string>
+    <string name="number_filter__shared_preferences">NUMBER_FILTER__SHARED_PREFERNECES</string>
+    <string name="number_filter__shared_preferences_at_least_checked">NUMBER_FILTER__SHARED_PREFERNECES_AT_LEAST_CHECKED</string>
+    <string name="number_filter__shared_preferences_not_more_checked">PATTERN_FILTER__SHARED_PREFERNECES_NOT_MORE_CHECKED</string>
+    <string name="number_filter__shared_preferences_exactly_checked">PATTERN_FILTER__SHARED_PREFERNECES_EXACTLY_CHECKED</string>
+    <string name="number_filter__shared_preferences_throw_height_index">PATTERN_FILTER__SHARED_PREFERNECES_THROW_HEIGHT_INDEX</string>
+    <string name="number_filter__shared_preferences_number_index">PATTERN_FILTER__SHARED_PREFERNECES_NUMBER_INDEX</string>
+    <string name="number_filter__dialog_tag">NUMBER_FILTER__DIALOG_TAG</string>
 
     <string name="intent__siteswap_number_of_objects">NUMBER_OF_OBECTS</string>
     <string name="intent__siteswap_period_length">PERIOD_LENGTH</string>

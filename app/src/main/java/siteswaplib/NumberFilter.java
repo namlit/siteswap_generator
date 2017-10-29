@@ -60,10 +60,17 @@ public class NumberFilter extends Filter {
 		else
 			return "";
 
-		if (mFilterValue < 0) {
+		if (mFilterValue < 0) { // Pass or Self: use String conversion of Siteswap class
 			str += " " + Siteswap.intToString(mFilterValue);
+
+			if (mThresholdValue != 1) { // Plural s on string representation needed
+				if (mFilterValue == Siteswap.PASS)
+					str += "es";
+				else
+					str += "s";
+			}
 		}
-		else {
+		else { // throw with height >= 0
 			if (mThresholdValue == 1)
 				str += " throw";
 			else
@@ -83,5 +90,20 @@ public class NumberFilter extends Filter {
 		return mType == rhs.mType && mFilterValue == rhs.mFilterValue &&
 				mThresholdValue == rhs.mThresholdValue;
 	}
+
+	public Type getType() {
+		return mType;
+	}
+
+
+	public byte getFilterValue() {
+		return mFilterValue;
+	}
+
+	public int getThresholdValue() {
+		return mThresholdValue;
+	}
+
+
 
 }

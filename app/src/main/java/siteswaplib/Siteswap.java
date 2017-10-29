@@ -294,6 +294,20 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return Character.toString((char) (value - 10 + 'a'));
 	}
 
+	public static int stringToInt(String value) {
+		if (value == "pass")
+			return PASS;
+		else if (value == "self")
+			return SELF;
+		else if (value == "do not care")
+			return DONT_CARE;
+		else if (value == "free")
+			return FREE;
+		else if (value.length() == 1)
+			return charToInt(value.charAt(0));
+		return INVALID;
+	}
+
 	public static char intToChar(int value) {
 
 		if (value == SELF)
@@ -322,9 +336,9 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 			return DONT_CARE;
 		if (value == 'O')
 			return FREE;
-		if(value < '9' && value > '0')
+		if(value <= '9' && value >= '0')
 			return (int) (value - '0');
-		if(value < 'z' && value > 'a')
+		if(value <= 'z' && value >= 'a')
 			return (int) (value + 10 - 'a');
 		return INVALID;
 	}
