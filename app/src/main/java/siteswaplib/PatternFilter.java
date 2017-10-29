@@ -7,7 +7,7 @@ public class PatternFilter extends Filter {
 	private Siteswap mPattern;
 	private Type mType;
 	
-	public PatternFilter(Siteswap pattern, Type type, int number_of_jugglers) {
+	public PatternFilter(Siteswap pattern, Type type) {
 		this.mPattern = pattern;
 		this.mType = type;
 	}
@@ -53,7 +53,7 @@ public class PatternFilter extends Filter {
 		if (! (obj instanceof PatternFilter))
 			return false;
 		PatternFilter rhs = (PatternFilter) obj;
-		return mType == rhs.mType && mPattern == rhs.mPattern;
+		return mType.equals(rhs.mType) && mPattern.equals(rhs.mPattern);
 	}
 
 }

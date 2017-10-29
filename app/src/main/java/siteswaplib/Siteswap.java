@@ -29,6 +29,10 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		this.mData = new CyclicByteArray(parseString(siteswap));
 		this.mNumberOfJugglers = numberOfJugglers;
 	}
+
+	public Siteswap(String siteswap) {
+		this(siteswap, 1);
+	}
 	
 	public Siteswap(byte[] data) {
 		this(data, 1);
@@ -258,6 +262,8 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	
 	@Override
 	public boolean equals(Object obj) {
+        if (! (obj instanceof Siteswap))
+            return false;
 		return compareTo((Siteswap) obj) == 0;
 	}
 

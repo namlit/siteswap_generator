@@ -44,6 +44,45 @@
     <string name="show_siteswaps__saved_is_no_timeout">IS_NO_TIMEOUT</string>
     <string name="show_siteswaps__saved_siteswap_generator">SITESWAP_GENERATOR</string>
 
+    <string name="filter__add_button">Add</string>
+    <string name="filter__remove_button">Remove</string>
+    <string name="filter__cancel_button">Cancel</string>
+
+    <string name="pattern_filter__title">Pattern Filter</string>
+    <string name="pattern_filter__pattern_checkbox">pattern</string>
+    <string name="pattern_filter__interface">interface</string>
+    <string name="pattern_filter__global">global</string>
+    <string name="pattern_filter__local">local</string>
+    <string name="pattern_filter__include">include</string>
+    <string name="pattern_filter__exclude">exclude</string>
+    <string name="pattern_filter__pattern">Pattern:</string>
+    <string name="pattern_filter__description_html">
+        <![CDATA[
+       <h2>Legend</h2>
+       <b>p</b>: pass<br>
+       <b>s</b>: self<br>
+       <b>?</b>: do not care<br>
+       <b>0-9</b>: throw with height 0-9<br>
+       <b>a-z</b>: throw with height 10-36<br>
+       <b>other</b>: invalid<br>
+        ]]>
+    </string>
+    <string name="pattern_filter__shared_preferences">PATTERN_FILTER__SHARED_PREFERNECES</string>
+    <string name="pattern_filter__shared_preferences_pattern_checked">PATTERN_FILTER__SHARED_PREFERNECES_PATTERN_CHECKED</string>
+    <string name="pattern_filter__shared_preferences_interface_checked">PATTERN_FILTER__SHARED_PREFERNECES_INTERFACE_CHECKED</string>
+    <string name="pattern_filter__shared_preferences_global_checked">PATTERN_FILTER__SHARED_PREFERNECES_GLOBAL_CHECKED</string>
+    <string name="pattern_filter__shared_preferences_local_checked">PATTERN_FILTER__SHARED_PREFERNECES_LOCAL_CHECKED</string>
+    <string name="pattern_filter__shared_preferences_include_checked">PATTERN_FILTER__SHARED_PREFERNECES_INCLUDE_CHECKED</string>
+    <string name="pattern_filter__shared_preferences_exclude_checked">PATTERN_FILTER__SHARED_PREFERNECES_EXCLUDE_CHECKED</string>
+    <string name="pattern_filter__toast_no_input">Empty pattern, filter could not be added.</string>
+
+    <string name="quantity_filter__title">Quantity Filter</string>
+    <string name="quantity_filter__at_least">at least</string>
+    <string name="quantity_filter__not_more">not more</string>
+    <string name="quantity_filter__exactly">exactly</string>
+    <string name="quantity_filter__number_of_throws">Number of throws:</string>
+    <string name="quantity_filter__throw_height">Throw height:</string>
+
     <string name="intent__siteswap_number_of_objects">NUMBER_OF_OBECTS</string>
     <string name="intent__siteswap_period_length">PERIOD_LENGTH</string>
     <string name="intent__siteswap_max_throw">MAX_THROW</string>
@@ -53,6 +92,7 @@
     <string name="intent__siteswap_max_results">MAX_RESULTS</string>
     <string name="intent__siteswap_calculation_timeout">CALCULATION_TIMEOUT</string>
     <string name="intent__siteswap_generator">SITESWAP_GENERATOR</string>
+
     <string name="title_activity_siteswap_detailed">SiteswapDetailed</string>
 
 </resources>

@@ -5,14 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.CheckBox;
 import android.text.TextWatcher;
@@ -22,7 +18,10 @@ import java.util.LinkedList;
 
 import siteswaplib.*;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements AddFilterDialog.FilterDialogListener {
+
+    final static int PATTERN_FILTER_ITEM_NUMBER = 0;
 
     private LinkedList<Filter> mFilterList;
 
@@ -36,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox mZipsCheckbox;
     private CheckBox mZapsCheckbox;
     private CheckBox mHoldsCheckbox;
+    private Spinner mFilterTypeSpinner;
     private NonScrollListView mFilterListView;
     private ArrayAdapter<Filter> mFilterListAdapter;
 
@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         mZipsCheckbox       = (CheckBox) findViewById(R.id.include_zips_checkbox);
         mZapsCheckbox       = (CheckBox) findViewById(R.id.include_zaps_checkbox);
         mHoldsCheckbox      = (CheckBox) findViewById(R.id.include_holds_checkbox);
+        mFilterTypeSpinner  = (Spinner) findViewById(R.id.filter_type_spinner);
         mFilterListView     = (NonScrollListView) findViewById(R.id.filter_list);
 
         if (savedInstanceState != null) {
@@ -164,6 +165,33 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    public void addFilter(View view) {
+
+        if (mFilterTypeSpinner.getSelectedItemPosition() == PATTERN_FILTER_ITEM_NUMBER) {
+
+            new PatternFilterDialog().show(getSupportFragmentManager(), "uiae");
+        }
+        else {
+
+        }
+    }
+
+
+    public void onAddSiteswapFilter(Filter filter)
+    {
+        if (!mFilterList.contains(filter))
+            mFilterList.add(filter);
+        mFilterListAdapter.notifyDataSetChanged();
+    }
+
+    public void onRemoveSiteswapFilter(Filter filter)
+    {
+        // Remove all occurences of Filter
+        while (mFilterList.remove(filter))
+            ;
+        mFilterListAdapter.notifyDataSetChanged();
+    }
 
     public void generateSiteswaps(View view) {
         Intent intent = new Intent(this, ShowSiteswaps.class);
