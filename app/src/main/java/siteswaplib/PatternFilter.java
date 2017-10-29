@@ -56,4 +56,12 @@ public class PatternFilter extends Filter {
 		return mType.equals(rhs.mType) && mPattern.equals(rhs.mPattern);
 	}
 
+	public Type getType() {
+		return mType;
+	}
+
+	public Siteswap getPattern() {
+		return mPattern;
+	}
+
 }

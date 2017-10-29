@@ -47,6 +47,7 @@
     <string name="filter__add_button">Add</string>
     <string name="filter__remove_button">Remove</string>
     <string name="filter__cancel_button">Cancel</string>
+    <string name="filter__replace_button">Replace</string>
 
     <string name="pattern_filter__title">Pattern Filter</string>
     <string name="pattern_filter__pattern_checkbox">pattern</string>
@@ -75,6 +76,7 @@
     <string name="pattern_filter__shared_preferences_include_checked">PATTERN_FILTER__SHARED_PREFERNECES_INCLUDE_CHECKED</string>
     <string name="pattern_filter__shared_preferences_exclude_checked">PATTERN_FILTER__SHARED_PREFERNECES_EXCLUDE_CHECKED</string>
     <string name="pattern_filter__toast_no_input">Empty pattern, filter could not be added.</string>
+    <string name="pattern_filter__dialog_tag">PATTERN_FILTER__DIALOG_TAG</string>
 
     <string name="quantity_filter__title">Quantity Filter</string>
     <string name="quantity_filter__at_least">at least</string>

@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.widget.EditText;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import siteswaplib.Filter;
 import siteswaplib.PatternFilter;
+import siteswaplib.QuantityFilter;
 import siteswaplib.Siteswap;
 
 /**
@@ -33,18 +35,27 @@ public class PatternFilterDialog extends AddFilterDialog {
     private RadioButton mExcludeRadioButton;
     private EditText mPatternEditText;
     private TextView mDescriptionTextView;
+    Filter mOldFilter = null;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
+        int positiveButtonStringId = R.string.filter__add_button;
+        if (mOldFilter != null)
+            positiveButtonStringId = R.string.filter__replace_button;
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(R.layout.pattern_filter_layout)
-                .setPositiveButton(R.string.filter__add_button, new DialogInterface.OnClickListener() {
+                .setPositiveButton(positiveButtonStringId, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which
                     ) {
                         Filter filter = readPatternFilter();
-                        if (filter != null)
-                            mListener.onAddSiteswapFilter(filter);
+                        if (filter != null) {
+                            if (mOldFilter != null)
+                                mListener.onChangeSiteswapFilter(mOldFilter, filter);
+                            else
+                                mListener.onAddSiteswapFilter(filter);
+                        }
                     }
                 })
                 .setNegativeButton(R.string.filter__cancel_button, new DialogInterface.OnClickListener() {
@@ -89,6 +100,20 @@ public class PatternFilterDialog extends AddFilterDialog {
         boolean isLocal = sharedPref.getBoolean(getString(R.string.pattern_filter__shared_preferences_local_checked), false);
         boolean isInclude = sharedPref.getBoolean(getString(R.string.pattern_filter__shared_preferences_include_checked), true);
         boolean isExclude = sharedPref.getBoolean(getString(R.string.pattern_filter__shared_preferences_exclude_checked), false);
+
+        if (mOldFilter != null) {
+            if (mOldFilter instanceof PatternFilter) {
+                PatternFilter filter = (PatternFilter) mOldFilter;
+                isPattern = true;
+                isInterface = false;
+                isGlobal = true;
+                isLocal = false;
+                isInclude = filter.getType() == PatternFilter.Type.INCLUDE;
+                isExclude = !isInclude;
+                mPatternEditText.setText(filter.getPattern().toString());
+            }
+
+        }
 
         mPatternRadioButton.setChecked(isPattern);
         mInterfaceRadioButton.setChecked(isInterface);
@@ -166,5 +191,12 @@ public class PatternFilterDialog extends AddFilterDialog {
         }
         return null;
 
+    }
+
+
+
+    public void show(FragmentManager manager, String tag, Filter filter) {
+        mOldFilter = filter;
+         show(manager, tag);
     }
 }

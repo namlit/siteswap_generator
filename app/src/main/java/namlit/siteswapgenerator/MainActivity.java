@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -92,13 +93,16 @@ public class MainActivity extends AppCompatActivity
         mFilterListAdapter = new ArrayAdapter<Filter>(
                 this, android.R.layout.simple_list_item_1, mFilterList);
         mFilterListView.setAdapter(mFilterListAdapter);
-//        mFilterListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//                Toast.makeText(getApplicationContext(), "onItemClick", Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        mFilterListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Filter filter = (Filter) parent.getItemAtPosition(position);
+
+                if (filter instanceof PatternFilter)
+                    new PatternFilterDialog().show(getSupportFragmentManager(), getString(R.string.pattern_filter__dialog_tag), filter);
+            }
+        });
 
         updateAutoFilters();
 
@@ -170,7 +174,7 @@ public class MainActivity extends AppCompatActivity
 
         if (mFilterTypeSpinner.getSelectedItemPosition() == PATTERN_FILTER_ITEM_NUMBER) {
 
-            new PatternFilterDialog().show(getSupportFragmentManager(), "uiae");
+            new PatternFilterDialog().show(getSupportFragmentManager(), getString(R.string.pattern_filter__dialog_tag));
         }
         else {
 
@@ -191,6 +195,12 @@ public class MainActivity extends AppCompatActivity
         while (mFilterList.remove(filter))
             ;
         mFilterListAdapter.notifyDataSetChanged();
+    }
+
+    public void onChangeSiteswapFilter(Filter oldFilter, Filter newFilter)
+    {
+        onRemoveSiteswapFilter(oldFilter);
+        onAddSiteswapFilter(newFilter);
     }
 
     public void generateSiteswaps(View view) {

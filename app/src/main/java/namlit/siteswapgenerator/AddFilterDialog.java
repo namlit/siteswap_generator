@@ -6,9 +6,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 
 import siteswaplib.Filter;
+import siteswaplib.PatternFilter;
+import siteswaplib.QuantityFilter;
 import siteswaplib.Siteswap;
 
 /**
@@ -20,6 +23,7 @@ public class AddFilterDialog extends DialogFragment {
     public interface FilterDialogListener {
         public void onAddSiteswapFilter(Filter filter);
         public void onRemoveSiteswapFilter(Filter filter);
+        public void onChangeSiteswapFilter(Filter oldFilter, Filter newFilter);
     }
 
     // Use this instance of the interface to deliver action events
