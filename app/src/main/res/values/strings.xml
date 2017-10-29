@@ -29,7 +29,7 @@
 
     <string-array name="main_activity__filter_types">
         <item>Pattern filter</item>
-        <item>Quantity filter</item>
+        <item>Number filter</item>
     </string-array>
 
     <string name="main_activity__add_filter_button">Add</string>
@@ -78,12 +78,12 @@
     <string name="pattern_filter__toast_no_input">Empty pattern, filter could not be added.</string>
     <string name="pattern_filter__dialog_tag">PATTERN_FILTER__DIALOG_TAG</string>
 
-    <string name="quantity_filter__title">Quantity Filter</string>
-    <string name="quantity_filter__at_least">at least</string>
-    <string name="quantity_filter__not_more">not more</string>
-    <string name="quantity_filter__exactly">exactly</string>
-    <string name="quantity_filter__number_of_throws">Number of throws:</string>
-    <string name="quantity_filter__throw_height">Throw height:</string>
+    <string name="number_filter__title">Number Filter</string>
+    <string name="number_filter__at_least">at least</string>
+    <string name="number_filter__not_more">not more</string>
+    <string name="number_filter__exactly">exactly</string>
+    <string name="number_filter__number_of_throws">Number of throws:</string>
+    <string name="number_filter__throw_height">Throw height:</string>
 
     <string name="intent__siteswap_number_of_objects">NUMBER_OF_OBECTS</string>
     <string name="intent__siteswap_period_length">PERIOD_LENGTH</string>

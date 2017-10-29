@@ -1,18 +1,9 @@
 package namlit.siteswapgenerator;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
 
 import siteswaplib.Filter;
-import siteswaplib.PatternFilter;
-import siteswaplib.QuantityFilter;
-import siteswaplib.Siteswap;
 
 /**
  * Created by tilman on 29.10.17.

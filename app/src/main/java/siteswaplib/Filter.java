@@ -3,8 +3,7 @@ package siteswaplib;
 import java.io.Serializable;
 import java.util.LinkedList;
 
-import siteswaplib.Siteswap;
-import siteswaplib.QuantityFilter.Type;
+import siteswaplib.NumberFilter.Type;
 
 public abstract class Filter implements Serializable {
 
@@ -27,9 +26,9 @@ public abstract class Filter implements Serializable {
 			return;
 		for (int i = minThrow; i < 2*numberOfJugglers; ++i) {
 			if ( Siteswap.isPass(i, numberOfJugglers))
-				filterList.addFirst(new QuantityFilter(i, Type.EQUAL, 0));
+				filterList.addFirst(new NumberFilter(i, Type.EQUAL, 0));
 		}
-		filterList.addFirst(new QuantityFilter(Siteswap.PASS, Type.GREATER_EQUAL, 1));
+		filterList.addFirst(new NumberFilter(Siteswap.PASS, Type.GREATER_EQUAL, 1));
 	}
 
 	public static void addDefaultFilters(LinkedList<Filter> filterList, int numberOfJugglers) {
@@ -38,7 +37,7 @@ public abstract class Filter implements Serializable {
 
 	public static void addZips(LinkedList<Filter> filterList, int numberOfJugglers) {
 
-		while (filterList.remove(new QuantityFilter(numberOfJugglers, Type.EQUAL, 0)))
+		while (filterList.remove(new NumberFilter(numberOfJugglers, Type.EQUAL, 0)))
 			;
 	}
 
@@ -46,24 +45,24 @@ public abstract class Filter implements Serializable {
 
 		for (int i = 2 * numberOfJugglers + 1; i < 3*numberOfJugglers; ++i) {
 			if ( Siteswap.isPass(i, numberOfJugglers))
-				while (filterList.remove(new QuantityFilter(i, Type.EQUAL, 0)))
+				while (filterList.remove(new NumberFilter(i, Type.EQUAL, 0)))
 					;
 		}
 	}
 
 	public static void addHolds(LinkedList<Filter> filterList, int numberOfJugglers) {
-		filterList.remove(new QuantityFilter(2 * numberOfJugglers, Type.EQUAL, 0));
+		filterList.remove(new NumberFilter(2 * numberOfJugglers, Type.EQUAL, 0));
 	}
 	
 	public static void removeDefaultFilters(LinkedList<Filter> filterList,
 											int numberOfJugglers, int minThrow) {
 		if (numberOfJugglers <= 1)
 			return;
-		while (filterList.remove(new QuantityFilter(Siteswap.PASS, Type.GREATER_EQUAL, 1)))
+		while (filterList.remove(new NumberFilter(Siteswap.PASS, Type.GREATER_EQUAL, 1)))
 			;
 		for (int i = minThrow; i < 2*numberOfJugglers; ++i) {
 			if ( Siteswap.isPass(i, numberOfJugglers))
-				while (filterList.remove(new QuantityFilter(i, Type.EQUAL, 0)))
+				while (filterList.remove(new NumberFilter(i, Type.EQUAL, 0)))
 					;
 		}
 	}
@@ -74,19 +73,19 @@ public abstract class Filter implements Serializable {
 
 	public static void removeZips(LinkedList<Filter> filterList, int numberOfJugglers) {
 
-		filterList.addFirst(new QuantityFilter(numberOfJugglers, Type.EQUAL, 0));
+		filterList.addFirst(new NumberFilter(numberOfJugglers, Type.EQUAL, 0));
 	}
 
 	public static void removeZaps(LinkedList<Filter> filterList, int numberOfJugglers) {
 
 		for (int i = 2 * numberOfJugglers + 1; i < 3*numberOfJugglers; ++i) {
 			if ( Siteswap.isPass(i, numberOfJugglers))
-				filterList.addFirst(new QuantityFilter(i, Type.EQUAL, 0));
+				filterList.addFirst(new NumberFilter(i, Type.EQUAL, 0));
 		}
 	}
 
 	public static void removeHolds(LinkedList<Filter> filterList, int numberOfJugglers) {
-		filterList.addFirst(new QuantityFilter(2 * numberOfJugglers, Type.EQUAL, 0));
+		filterList.addFirst(new NumberFilter(2 * numberOfJugglers, Type.EQUAL, 0));
 	}
 
 }

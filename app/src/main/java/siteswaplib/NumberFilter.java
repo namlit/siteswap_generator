@@ -1,6 +1,6 @@
 package siteswaplib;
 
-public class QuantityFilter extends Filter {
+public class NumberFilter extends Filter {
 
 	public enum Type {GREATER_EQUAL, SMALLER_EQUAL, EQUAL}
 	
@@ -9,7 +9,7 @@ public class QuantityFilter extends Filter {
 	private int mThresholdValue;
 
 
-	public QuantityFilter(int filterValue, Type type, int threshold) {
+	public NumberFilter(int filterValue, Type type, int threshold) {
 		this.mFilterValue = (byte) filterValue;
 		this.mType = type;
 		this.mThresholdValue = threshold;
@@ -77,9 +77,9 @@ public class QuantityFilter extends Filter {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (! (obj instanceof QuantityFilter))
+		if (! (obj instanceof NumberFilter))
 			return false;
-		QuantityFilter rhs = (QuantityFilter) obj;
+		NumberFilter rhs = (NumberFilter) obj;
 		return mType == rhs.mType && mFilterValue == rhs.mFilterValue &&
 				mThresholdValue == rhs.mThresholdValue;
 	}
