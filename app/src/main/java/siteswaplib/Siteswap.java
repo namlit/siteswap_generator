@@ -276,6 +276,35 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return str;
 	}
 
+	public Siteswap toInterface() {
+
+		byte[] interfaceArray = new byte[period_length()];
+		Arrays.fill(interfaceArray, Siteswap.FREE);
+		Siteswap siteswapInterface = new Siteswap(interfaceArray);
+		for (int i = 0; i < period_length(); ++i) {
+			if (at(i) < 0)
+				continue;
+			siteswapInterface.set(i + at(i), at(i));
+		}
+		return siteswapInterface;
+	}
+
+	public static boolean isValid(Siteswap siteswap) {
+
+		byte[] interfaceArray = new byte[siteswap.period_length()];
+		Arrays.fill(interfaceArray, Siteswap.FREE);
+		Siteswap siteswapInterface = new Siteswap(interfaceArray);
+		for (int i = 0; i < siteswap.period_length(); ++i) {
+			if (siteswap.at(i) < 0)
+				continue;
+			if (siteswapInterface.at(i + siteswap.at(i)) != Siteswap.FREE)
+				return false;
+			siteswapInterface.set(i + siteswap.at(i), siteswap.at(i));
+		}
+
+		return true;
+	}
+
 	public static String intToString(int value) {
 		if (value == SELF)
 			return "self";
