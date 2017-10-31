@@ -3,6 +3,8 @@ package namlit.siteswapgenerator;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -72,6 +74,18 @@ public class ShowSiteswaps extends AppCompatActivity {
         ArrayAdapter adapter = new ArrayAdapter<Siteswap>(
                 ShowSiteswaps.this, android.R.layout.simple_list_item_1, mSiteswapList);
         mSiteswapListView.setAdapter(adapter);
+        mSiteswapListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Siteswap siteswap = (Siteswap) parent.getItemAtPosition(position);
+                Intent intent = new Intent(getApplicationContext(), DetailedSiteswapActivity.class);
+                intent.putExtra(getString(R.string.intent_detailed_siteswap_view__siteswap), siteswap);
+                startActivity(intent);
+            }
+        });
+
+
         if (mNoTimeout)
             setTitle(String.format(getString(R.string.show_siteswaps__title), mSiteswapList.size()));
         else

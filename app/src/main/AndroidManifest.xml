@@ -17,6 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ShowSiteswaps" />
+        <activity android:name=".DetailedSiteswapActivity"></activity>
     </application>
 
 </manifest>

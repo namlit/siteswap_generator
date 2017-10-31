@@ -72,6 +72,10 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	public int getNumberOfObjects() {
 		return getPartialSum(0, period_length()-1) / period_length();
 	}
+
+	public int getNumberOfJugglers() {
+		return mNumberOfJugglers;
+	}
 	
 	public int getPartialSum(int startIndex, int stopIndex) {
 		int sum = 0;
@@ -143,7 +147,8 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	
 	public Siteswap calculateGetin() {
 
-		Siteswap siteswapInterface = toInterface(Siteswap.FREE, period_length() + getMaxThrow());
+		Siteswap siteswapInterface = toInterface(Siteswap.FREE, period_length() + getMaxThrow(),
+				period_length() + getMaxThrow());
 
 		int getinLength = 0;
 
@@ -173,13 +178,14 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	
 	public Siteswap calculateGetout() {
 
-		Siteswap siteswapInterface = toInterface(Siteswap.FREE, period_length() + getMaxThrow());
+		Siteswap siteswapInterface = toInterface(Siteswap.FREE, period_length() + getMaxThrow(), period_length());
 
 		int getoutLength = 0;
 
 		// calculate getout length
 		for (int i = 0; i < getMaxThrow() - getNumberOfObjects(); ++i) {
-			if (siteswapInterface.at(period_length() + getMaxThrow() - i - 1) != FREE) {
+			int interfaceIndex = period_length() + getMaxThrow() - i - 1;
+			if (siteswapInterface.at(interfaceIndex) != FREE) {
 				getoutLength = getMaxThrow() - getNumberOfObjects() - i;
 				break;
 			}
@@ -206,6 +212,69 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return calculateGetin().period_length() == 0;
 	}
 
+	public Siteswap[] calculateLocalGetins() {
+
+		Siteswap siteswapInterface = toInterface(Siteswap.FREE, period_length() + getMaxThrow(),
+				period_length() + getMaxThrow());
+		Siteswap[] localGetins = new Siteswap[getNumberOfJugglers()];
+		int[] localGetinIndices = new int[getNumberOfJugglers()];
+		Siteswap globalGetin = calculateGetin();
+
+		for (int i = 0; i < globalGetin.period_length(); ++i) {
+			int juggler = (i + getNumberOfJugglers() -
+					globalGetin.period_length() % getNumberOfJugglers()) %
+					getNumberOfJugglers();
+
+			int interfaceIndex = i - globalGetin.period_length() + globalGetin.at(i);
+
+			if (localGetins[juggler] == null) {
+				int interfaceSameHand =  interfaceIndex - 2 * getNumberOfJugglers();
+				if (interfaceSameHand >= 0 && siteswapInterface.at(interfaceSameHand) != FREE) {
+					int length = (globalGetin.period_length() - i) / getNumberOfJugglers() + 1;
+					byte[] localGetinArray = new byte[length];
+					localGetins[juggler] = new Siteswap(localGetinArray, mNumberOfJugglers);
+					localGetinIndices[juggler] = 0;
+				}
+			}
+
+			if (localGetins[juggler] != null) {
+				siteswapInterface.set(interfaceIndex, globalGetin.at(i));
+				localGetins[juggler].set(localGetinIndices[juggler], globalGetin.at(i));
+				localGetinIndices[juggler]++;
+			}
+		}
+
+		for(int i = 0; i < localGetins.length; ++i) {
+			if (localGetins[i] == null)
+				localGetins[i] = new Siteswap();
+		}
+
+		return localGetins;
+	}
+
+
+	public Siteswap[] calculateLocalGetouts() {
+
+		Siteswap[] localGetouts = new Siteswap[getNumberOfJugglers()];
+		Siteswap globalGetout = calculateGetout();
+
+		for(int i = 0; i < localGetouts.length; ++i) {
+			int startPos = i - period_length() % getNumberOfJugglers();
+			if (i < period_length() % getNumberOfJugglers())
+				startPos += getNumberOfJugglers();
+			int length = (globalGetout.period_length() - startPos - 1) / getNumberOfJugglers() + 1;
+			if (globalGetout.period_length() - startPos <= 0)
+				length = 0;
+			localGetouts[i] = new Siteswap(new byte[length], mNumberOfJugglers);
+		}
+
+		for (int i = 0; i < globalGetout.period_length(); ++i) {
+			int juggler = (period_length() % getNumberOfJugglers() + i) % getNumberOfJugglers();
+			localGetouts[juggler].set(i / getNumberOfJugglers(), globalGetout.at(i));
+		}
+
+		return localGetouts;
+	}
 
 	@Override
 	public Iterator<Byte> iterator() {
@@ -237,40 +306,60 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		}
 		return arr;
 	}
-	
-	public String toLocalString() {
-		return toLocalString(false);
+
+	public Vector<Siteswap> toLocal() {
+
+		Vector<Siteswap> localSiteswaps = new Vector<Siteswap>(mNumberOfJugglers);
+		for (int i = 0; i < mNumberOfJugglers; ++i) {
+			localSiteswaps.add(new Siteswap(new byte[period_length()]));
+			for(int j = 0; j < period_length(); ++j) {
+				localSiteswaps.elementAt(i).set(j, at(mNumberOfJugglers * j + i));
+			}
+		}
+		return localSiteswaps;
 	}
-	
-	public String toLocalString(boolean isHtml) {
-		if (mNumberOfJugglers == 1)
-			return toString();
+
+	public String toDividedString() {
+
 		String str = new String();
+		DecimalFormat formatter = new DecimalFormat("0.#");
+		for(int i = 0; i < period_length(); ++i) {
+			str += formatter.format(at(i) / (double) mNumberOfJugglers);
+			str += " ";
+		}
+		return str;
+	}
+
+	public Vector<String> toLocalString() {
+
+		Vector<String> localSiteswapStrings = new Vector<String>(mNumberOfJugglers);
+		if (mNumberOfJugglers == 1) {
+			localSiteswapStrings.add(toString());
+			return localSiteswapStrings;
+		}
 		
 		for(int juggler = 0; juggler < mNumberOfJugglers; ++juggler) {
-			str += Character.toString((char) ('A' + juggler)) + ": ";
+			String str = new String();
 			DecimalFormat formatter = new DecimalFormat("0.#");
 			for(int i = 0; i < period_length(); ++i) {
 				int position = juggler + i*mNumberOfJugglers;
-				str += formatter.format(mData.at(position) / (double) mNumberOfJugglers);
-				if (Siteswap.isPass(mData.at(position), mNumberOfJugglers)) {
-					if (isHtml)
-						str += "<sub><small>";
+				str += formatter.format(at(position) / (double) mNumberOfJugglers);
+				if (Siteswap.isPass(at(position), mNumberOfJugglers)) {
+					str += "<sub><small>";
 					if (mNumberOfJugglers >= 3)
-						str += Character.toString((char) ('A' + position % mNumberOfJugglers));
-					if (((juggler + mData.at(position)) / mNumberOfJugglers) % 2 == 0)
+						str += Character.toString((char) ('A' + (position + at(position)) % mNumberOfJugglers));
+					if (((juggler + at(position)) / mNumberOfJugglers) % 2 == 0)
 						str += "x";
 					else
 						str += "s";
-					if (isHtml)
-						str += "</small></sub>";
+					str += "</small></sub>";
 				}
 				str += " ";
 			}
-			str += "\n";
+			localSiteswapStrings.add(str);
 		}
 		
-		return str;
+		return localSiteswapStrings;
 		
 	}
 	
@@ -290,14 +379,25 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return str;
 	}
 
-	public Siteswap toInterface(byte defaultValue) {
-
-		return toInterface(defaultValue, period_length());
+	public Siteswap toPattern() {
+		Siteswap pattern = new Siteswap(this);
+		for (int i = 0; i < period_length(); ++i) {
+			if(isPass(at(i), mNumberOfJugglers))
+				pattern.set(i, PASS);
+			if(isSelf(at(i), mNumberOfJugglers))
+				pattern.set(i, SELF);
+		}
+		return pattern;
 	}
 
-	public Siteswap toInterface(byte defaultValue, int interfaceLength) {
+	public Siteswap toInterface() {
 
-		byte[] interfaceArray = new byte[interfaceLength];
+		return toInterface(Siteswap.FREE);
+	}
+
+	public Siteswap toInterface(byte defaultValue) {
+
+		byte[] interfaceArray = new byte[period_length()];
 		Arrays.fill(interfaceArray, defaultValue);
 		Siteswap siteswapInterface = new Siteswap(interfaceArray, mNumberOfJugglers);
 		for (int i = 0; i < period_length(); ++i) {
@@ -306,6 +406,36 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 			siteswapInterface.set(i + at(i), at(i));
 		}
 		return siteswapInterface;
+	}
+
+	/**
+	 * converts the siteswap to an interface of a specific length. The interface will not be
+	 * filled cyclic and throws coming down after the specified length will be ignored. The
+	 * length parameters specifies, how many throws of the siteswaps are considered for the
+	 * interface. Typically length is the interfaceLength in the context of getin calculation
+	 * and the period length of the siteswap in the context of getout calculation.
+	 *
+	 *
+	 * @param defaultValue
+	 * @param interfaceLength
+	 * @param length
+	 * @return
+	 */
+	public Siteswap toInterface(byte defaultValue, int interfaceLength, int length) {
+
+		byte[] interfaceArray = new byte[interfaceLength];
+		Arrays.fill(interfaceArray, defaultValue);
+		Siteswap siteswapInterface = new Siteswap(interfaceArray, mNumberOfJugglers);
+		for (int i = 0; i < length; ++i) {
+			if (at(i) < 0 || i + at(i) >= interfaceLength)
+				continue;
+			siteswapInterface.set(i + at(i), at(i));
+		}
+		return siteswapInterface;
+	}
+
+	public boolean isValid() {
+		return isValid(this);
 	}
 
 	public static boolean isValid(Siteswap siteswap) {
