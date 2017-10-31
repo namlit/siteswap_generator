@@ -116,22 +116,26 @@ public class MainActivity extends AppCompatActivity
 
                 Filter filter = (Filter) parent.getItemAtPosition(position);
 
-                if (filter instanceof NumberFilter) {
+                try {
+                    int periodLength = Integer.valueOf(mPeriodLength.getText().toString());
+                    int maxThrow = Integer.valueOf(mMaxThrow.getText().toString());
+                    int minThrow = Integer.valueOf(mMinThrow.getText().toString());
+                    int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
 
-                    try {
-                        int periodLength = Integer.valueOf(mPeriodLength.getText().toString());
-                        int maxThrow = Integer.valueOf(mMaxThrow.getText().toString());
-                        int minThrow = Integer.valueOf(mMinThrow.getText().toString());
+                    if (filter instanceof NumberFilter) {
 
-                        new NumberFilterDialog().show(getSupportFragmentManager(),
-                                getString(R.string.number_filter__dialog_tag), minThrow, maxThrow, periodLength, filter);
-                    } catch (NumberFormatException e) {
-                        Toast.makeText(getApplicationContext(), getString(R.string.main_activity__invalid_input_value),
-                                Toast.LENGTH_SHORT).show();
+                            new NumberFilterDialog().show(getSupportFragmentManager(),
+                                    getString(R.string.number_filter__dialog_tag),
+                                    minThrow, maxThrow, periodLength, filter);
                     }
+                    else if (filter instanceof PatternFilter)
+                        new PatternFilterDialog().show(getSupportFragmentManager(),
+                                getString(R.string.pattern_filter__dialog_tag), numberOfJugglers, filter);
+
+                } catch (NumberFormatException e) {
+                    Toast.makeText(getApplicationContext(), getString(R.string.main_activity__invalid_input_value),
+                            Toast.LENGTH_SHORT).show();
                 }
-                else if (filter instanceof PatternFilter)
-                    new PatternFilterDialog().show(getSupportFragmentManager(), getString(R.string.pattern_filter__dialog_tag), filter);
             }
         });
 
@@ -221,10 +225,12 @@ public class MainActivity extends AppCompatActivity
             int periodLength = Integer.valueOf(mPeriodLength.getText().toString());
             int maxThrow = Integer.valueOf(mMaxThrow.getText().toString());
             int minThrow = Integer.valueOf(mMinThrow.getText().toString());
+            int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
 
             if (mFilterTypeSpinner.getSelectedItemPosition() == PATTERN_FILTER_ITEM_NUMBER) {
 
-                new PatternFilterDialog().show(getSupportFragmentManager(), getString(R.string.pattern_filter__dialog_tag));
+                new PatternFilterDialog().show(getSupportFragmentManager(),
+                        getString(R.string.pattern_filter__dialog_tag), numberOfJugglers);
             } else {
                 new NumberFilterDialog().show(getSupportFragmentManager(),
                         getString(R.string.number_filter__dialog_tag), minThrow, maxThrow, periodLength);

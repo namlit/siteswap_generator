@@ -8,16 +8,16 @@ public class LocalInterfaceFilter extends InterfaceFilter {
 
     private Siteswap mLocalPattern;
 
-    public LocalInterfaceFilter(Siteswap pattern, Type type) {
+    public LocalInterfaceFilter(Siteswap pattern, Type type, int numberOfJugglers) {
         super(pattern, type);
 
         mLocalPattern = pattern;
 
-        byte[] globalPattern = new byte[2 * pattern.period_length() - 1];
+        byte[] globalPattern = new byte[numberOfJugglers * pattern.period_length() - (numberOfJugglers-1)];
 
-        for (int i = 0; i < 2 * pattern.period_length() - 1; ++i) {
-            if (i % 2 == 0)
-                globalPattern[i] = pattern.at(i / 2);
+        for (int i = 0; i < globalPattern.length; ++i) {
+            if (i % numberOfJugglers == 0)
+                globalPattern[i] = pattern.at(i / numberOfJugglers);
             else
                 globalPattern[i] = Siteswap.DONT_CARE;
         }

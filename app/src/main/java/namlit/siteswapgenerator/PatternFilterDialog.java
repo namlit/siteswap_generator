@@ -35,7 +35,8 @@ public class PatternFilterDialog extends AddFilterDialog {
     private RadioButton mExcludeRadioButton;
     private EditText mPatternEditText;
     private TextView mDescriptionTextView;
-    Filter mOldFilter = null;
+    private Filter mOldFilter = null;
+    private int mNumberOfJugglers;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -191,7 +192,7 @@ public class PatternFilterDialog extends AddFilterDialog {
                 return new PatternFilter(pattern, filterType);
             }
             else {
-                return new LocalPatternFilter(pattern, filterType);
+                return new LocalPatternFilter(pattern, filterType, mNumberOfJugglers);
             }
         }
         else { // Interface Filter
@@ -202,16 +203,19 @@ public class PatternFilterDialog extends AddFilterDialog {
             }
             else {
 
-                return new LocalInterfaceFilter(pattern, filterType);
+                return new LocalInterfaceFilter(pattern, filterType, mNumberOfJugglers);
             }
         }
 
     }
 
+    public void show(FragmentManager manager, String tag, int numberOfJugglers) {
+        mNumberOfJugglers = numberOfJugglers;
+        show(manager, tag);
+    }
 
-
-    public void show(FragmentManager manager, String tag, Filter filter) {
+    public void show(FragmentManager manager, String tag, int numberOfJugglers, Filter filter) {
         mOldFilter = filter;
-         show(manager, tag);
+         show(manager, tag, numberOfJugglers);
     }
 }
