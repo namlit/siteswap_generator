@@ -75,11 +75,13 @@ public abstract class Filter implements Serializable {
 
 	public static void removeZips(LinkedList<Filter> filterList, int numberOfJugglers) {
 
+		addZips(filterList, numberOfJugglers);
 		filterList.addFirst(new NumberFilter(numberOfJugglers, Type.EQUAL, 0));
 	}
 
 	public static void removeZaps(LinkedList<Filter> filterList, int numberOfJugglers) {
 
+		addZaps(filterList, numberOfJugglers);
 		for (int i = 2 * numberOfJugglers + 1; i < 3*numberOfJugglers; ++i) {
 			if ( Siteswap.isPass(i, numberOfJugglers))
 				filterList.addFirst(new NumberFilter(i, Type.EQUAL, 0));
@@ -87,6 +89,8 @@ public abstract class Filter implements Serializable {
 	}
 
 	public static void removeHolds(LinkedList<Filter> filterList, int numberOfJugglers) {
+
+		addHolds(filterList, numberOfJugglers);
 		filterList.addFirst(new NumberFilter(2 * numberOfJugglers, Type.EQUAL, 0));
 	}
 
