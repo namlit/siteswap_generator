@@ -14,7 +14,11 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 
 	protected CyclicByteArray mData;
 	protected int mNumberOfJugglers = 1;
-	
+
+	public Siteswap() {
+		this(new byte[0]);
+	}
+
 	public Siteswap(Siteswap s) {
 		this.mData = new CyclicByteArray(s.mData);
 		this.mNumberOfJugglers = s.mNumberOfJugglers;
@@ -54,6 +58,15 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		byte temp = mData.at(index + 1);
 		mData.modify(index+1, (byte) (mData.at(index) - 1));
 		mData.modify(index, (byte) (temp + 1));
+	}
+
+	public int getMaxThrow() {
+		int max = 0;
+		for(int i = 0; i < period_length(); ++i) {
+			if (at(i) > max)
+				max = at(i);
+		}
+		return max;
 	}
 	
 	public int getNumberOfObjects() {
@@ -117,6 +130,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 			rotate_counter++;
 		}
 	}
+
 	
 	public boolean rotateGetinFree() {
 		for (int i = 0; i < period_length(); ++i) {
@@ -128,66 +142,66 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	}
 	
 	public Siteswap calculateGetin() {
-		
-		byte[] getIn = new byte[0];
-		TreeSet<Integer> fallDownPositions = new TreeSet<Integer>();
-		for (int i = 0; i < 3 * getNumberOfObjects(); ++i) {
-			fallDownPositions.add(i + at(i));
-		}
-		
-		int getInPos = 0;
-		int value = 0;
+
+		Siteswap siteswapInterface = toInterface(Siteswap.FREE, period_length() + getMaxThrow());
+
+		int getinLength = 0;
+
+		// calculate getin length
 		for (int i = 0; i < getNumberOfObjects(); ++i) {
-			value = 0;
-			if (fallDownPositions.contains(i)) {
-				if (getIn.length == 0) {
-					getIn = new byte[getNumberOfObjects() - i];
-				}
-				while(fallDownPositions.contains(i + value)) {
-					value++;
-				}
-			}
-			if (getIn.length != 0) {
-				getIn[getInPos] = (byte) (getNumberOfObjects() + value);
-				getInPos++;
-				fallDownPositions.add(i + value);
+			if (siteswapInterface.at(i) != FREE) {
+				getinLength = getNumberOfObjects() - i;
+				break;
 			}
 		}
-		return new Siteswap(getIn, mNumberOfJugglers);
+
+		// create getin Siteswap
+		byte[] getinArray = new byte[getinLength];
+		Arrays.fill(getinArray, (byte) getNumberOfObjects());
+		Siteswap getin = new Siteswap(getinArray, mNumberOfJugglers);
+
+		// calculate getin values
+		for(int i = 0; i < getin.period_length(); ++i) {
+			int offset = i - getin.period_length();
+			while(siteswapInterface.at(getin.at(i) + offset) != FREE)
+				getin.set(i, getin.at(i) + 1);
+			siteswapInterface.set(getin.at(i) + offset, getin.at(i));
+		}
+		
+		return getin;
 	}
 	
 	public Siteswap calculateGetout() {
 
-		byte[] getOut = new byte[0];
-		
-		// pos zero is the first throw after end of siteswap
-		TreeSet<Integer> fallDownPositions = new TreeSet<Integer>();
-		for (int i = -1; i > -3 * getNumberOfObjects(); --i) {
-			fallDownPositions.add(i + at(i));
-		}
-		
-		int getOutPos = 0;
-		int value = getNumberOfObjects();
-		for (int i = getNumberOfObjects() - 1; i >= 0; --i) {
-			value = getNumberOfObjects();
-			if (fallDownPositions.contains(i + value)) {
-				if (getOut.length == 0) {
-					getOutPos = i;
-					getOut = new byte[i + 1];
-				}
-				while(fallDownPositions.contains(i + value)) {
-					value--;
-				}
-			}
-			if (getOut.length != 0) {
-				getOut[getOutPos] = (byte) (value);
-				getOutPos--;
-				fallDownPositions.add(i + value);
+		Siteswap siteswapInterface = toInterface(Siteswap.FREE, period_length() + getMaxThrow());
+
+		int getoutLength = 0;
+
+		// calculate getout length
+		for (int i = 0; i < getMaxThrow() - getNumberOfObjects(); ++i) {
+			if (siteswapInterface.at(period_length() + getMaxThrow() - i - 1) != FREE) {
+				getoutLength = getMaxThrow() - getNumberOfObjects() - i;
+				break;
 			}
 		}
-		return new Siteswap(getOut, mNumberOfJugglers);
+
+		// create getout Siteswap
+		byte[] getoutArray = new byte[getoutLength];
+		Arrays.fill(getoutArray, (byte) getNumberOfObjects());
+		Siteswap getout = new Siteswap(getoutArray, mNumberOfJugglers);
+
+		// calculate getout values
+		for (int i = getout.period_length() - 1; i >= 0; --i) {
+			int offset = period_length() + i;
+			while (siteswapInterface.at(getout.at(i) + offset) != FREE)
+				getout.set(i, getout.at(i) - 1);
+			siteswapInterface.set(getout.at(i) + offset, getout.at(i));
+		}
+
+		return getout;
 	}
-	
+
+
 	public boolean isGetinFree() {
 		return calculateGetin().period_length() == 0;
 	}
@@ -278,7 +292,12 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 
 	public Siteswap toInterface(byte defaultValue) {
 
-		byte[] interfaceArray = new byte[period_length()];
+		return toInterface(defaultValue, period_length());
+	}
+
+	public Siteswap toInterface(byte defaultValue, int interfaceLength) {
+
+		byte[] interfaceArray = new byte[interfaceLength];
 		Arrays.fill(interfaceArray, defaultValue);
 		Siteswap siteswapInterface = new Siteswap(interfaceArray, mNumberOfJugglers);
 		for (int i = 0; i < period_length(); ++i) {
