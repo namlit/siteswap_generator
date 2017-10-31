@@ -17,6 +17,7 @@ public class SiteswapGenerator implements Serializable{
     private int mTimeoutSeconds = 100;
 	private boolean mCalculationComplete = false;
 	private int mBacktrackingCount = 0; // Just for algorithm performance analysis
+	private boolean mIsRandomGeneration = false;
 
 	public SiteswapGenerator(int length, int max, int min, int objects, int number_of_jugglers) {
 		this.mPeriodLength = length;
@@ -58,6 +59,17 @@ public class SiteswapGenerator implements Serializable{
 		Siteswap siteswapInterface = new Siteswap(interfaceArray, mNumberOfJugglers);
 
 		boolean result = backtracking(siteswap, siteswapInterface, 0, 0);
+
+		if (mIsRandomGeneration) {
+			while (System.currentTimeMillis() - mStartTime < mTimeoutSeconds * 1000 &&
+					mSiteswaps.size() < mMaxResults) {
+				Arrays.fill(siteswapArray, Siteswap.FREE);
+				Arrays.fill(interfaceArray, Siteswap.FREE);
+				siteswap = new Siteswap(siteswapArray, mNumberOfJugglers);
+				siteswapInterface = new Siteswap(interfaceArray, mNumberOfJugglers);
+				result = backtracking(siteswap, siteswapInterface, 0, 0);
+			}
+		}
 		mCalculationComplete = true;
 		return result;
 	}
@@ -89,6 +101,10 @@ public class SiteswapGenerator implements Serializable{
     public void setTimeoutSeconds(int timeoutSeconds) {
         this.mTimeoutSeconds = timeoutSeconds;
     }
+
+    public void setRandomGeneration(boolean isRandomGeneration) {
+		mIsRandomGeneration = isRandomGeneration;
+	}
 	
 	public LinkedList<Siteswap> getSiteswaps() {
 		return mSiteswaps;
@@ -183,7 +199,7 @@ public class SiteswapGenerator implements Serializable{
 			}
 			if (matchesFilters(siteswap)) {
 				mSiteswaps.add(new Siteswap(siteswap));
-				if (mSiteswaps.size() >= mMaxResults)
+				if (mSiteswaps.size() >= mMaxResults || mIsRandomGeneration)
 					return false; // Abort if max_results reached
 			}
 			// A filter did not match. Go a step back and continue searching...
@@ -203,6 +219,8 @@ public class SiteswapGenerator implements Serializable{
 
 		if (currentIndex == 0) {
 			min = mNumberOfObjects;
+			if (mIsRandomGeneration)
+				min = mMaxThrow;
 			max = mMaxThrow;
 			uniqeMax = mMaxThrow + 1; // same value as max would result in wrong index calculation
 		}
@@ -225,6 +243,11 @@ public class SiteswapGenerator implements Serializable{
 		}
 
 		for (int value = min; value <= max; ++value) {
+
+			if (mIsRandomGeneration) {
+				Random rand = new Random();
+				value = rand.nextInt(max - min + 1) + min;
+			}
 
 			if (siteswapInterface.at(currentIndex + value) != Siteswap.FREE)
 				continue;

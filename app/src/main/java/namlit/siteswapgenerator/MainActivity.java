@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity
     private EditText mNumberOfJugglers;
     private EditText mMaxResults;
     private EditText mTimeout;
+    private CheckBox mRandomGenerationModeCheckbox;
     private CheckBox mZipsCheckbox;
     private CheckBox mZapsCheckbox;
     private CheckBox mHoldsCheckbox;
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity
         mHoldsCheckbox      = (CheckBox) findViewById(R.id.include_holds_checkbox);
         mFilterTypeSpinner  = (Spinner) findViewById(R.id.filter_type_spinner);
         mFilterListView     = (NonScrollListView) findViewById(R.id.filter_list);
+        mRandomGenerationModeCheckbox = (CheckBox) findViewById(R.id.random_generation_mode_checkbox);
 
         mFilterList = new LinkedList<Filter>();
 
@@ -77,6 +79,8 @@ public class MainActivity extends AppCompatActivity
         boolean isZips       = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_zips), true);
         boolean isZaps       = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_zaps), false);
         boolean isHolds      = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_holds), false);
+        boolean isRandomGenerationMode = sharedPref.getBoolean(
+                getString(R.string.main_activity__settings_is_random_generation_mode), false);
         int filterSpinnerPosition = sharedPref.getInt(getString(R.string.main_activity__settings_filter_spinner_position), 0);
         String serializedFilterList = sharedPref.getString(getString(R.string.main_activity__settings_filter_list), "");
 
@@ -101,6 +105,7 @@ public class MainActivity extends AppCompatActivity
         mNumberOfJugglers.setText(String.valueOf(numberOfJugglers));
         mMaxResults.setText(String.valueOf(maxResults));
         mTimeout.setText(String.valueOf(timeout));
+        mRandomGenerationModeCheckbox.setChecked(isRandomGenerationMode);
         mZipsCheckbox.setChecked(isZips);
         mZapsCheckbox.setChecked(isZaps);
         mHoldsCheckbox.setChecked(isHolds);
@@ -181,6 +186,7 @@ public class MainActivity extends AppCompatActivity
             int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
             int maxResults = Integer.valueOf(mMaxResults.getText().toString());
             int timeout = Integer.valueOf(mTimeout.getText().toString());
+            boolean isRandomGenerationMode = mRandomGenerationModeCheckbox.isChecked();
             boolean isZips = mZipsCheckbox.isChecked();
             boolean isZaps = mZapsCheckbox.isChecked();
             boolean isHolds = mHoldsCheckbox.isChecked();
@@ -193,6 +199,7 @@ public class MainActivity extends AppCompatActivity
             editor.putInt(getString(R.string.main_activity__settings_number_of_jugglers), numberOfJugglers);
             editor.putInt(getString(R.string.main_activity__settings_max_results), maxResults);
             editor.putInt(getString(R.string.main_activity__settings_timeout), timeout);
+            editor.putBoolean(getString(R.string.main_activity__settings_is_random_generation_mode), isRandomGenerationMode);
             editor.putBoolean(getString(R.string.main_activity__settings_is_zips), isZips);
             editor.putBoolean(getString(R.string.main_activity__settings_is_zaps), isZaps);
             editor.putBoolean(getString(R.string.main_activity__settings_is_holds), isHolds);
@@ -276,12 +283,14 @@ public class MainActivity extends AppCompatActivity
             int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
             int maxResults = Integer.valueOf(mMaxResults.getText().toString());
             int timeout = Integer.valueOf(mTimeout.getText().toString());
+            boolean isRandomGenerationMode = mRandomGenerationModeCheckbox.isChecked();
 
 
             SiteswapGenerator siteswapGenerator = new SiteswapGenerator(periodLength, maxThrow,
                     minThrow, numberOfObjects, numberOfJugglers, mFilterList);
             siteswapGenerator.setMaxResults(maxResults);
             siteswapGenerator.setTimeoutSeconds(timeout);
+            siteswapGenerator.setRandomGeneration(isRandomGenerationMode);
 
             intent.putExtra(getString(R.string.intent__siteswap_generator), siteswapGenerator);
             startActivity(intent);

@@ -183,6 +183,12 @@
 
                 </TableLayout>
 
+                <CheckBox
+                    android:id="@+id/random_generation_mode_checkbox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_activity__random_generation_mode" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
