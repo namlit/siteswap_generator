@@ -1,16 +1,23 @@
 package namlit.siteswapgenerator;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.CheckBox;
 import android.text.TextWatcher;
@@ -169,6 +176,28 @@ public class MainActivity extends AppCompatActivity
         });
 
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.action_about)
+        {
+            showAboutDialog();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -346,6 +375,39 @@ public class MainActivity extends AppCompatActivity
             mFilterListAdapter.notifyDataSetChanged();
         }
         catch (NumberFormatException e) {
+        }
+    }
+
+
+    private void showAboutDialog()
+    {
+
+        try
+        {
+
+            PackageManager manager = getPackageManager();
+            PackageInfo info = manager.getPackageInfo(getPackageName(), 0);
+            String appVersion = info.versionName;
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            View view = getLayoutInflater().inflate(R.layout.layout_about_page, null);
+            TextView appNameVersion = (TextView) view.findViewById(R.id.appNameVersion);
+            appNameVersion.setText(getString(R.string.app_name) + " " + appVersion);
+
+            builder.setView(view);
+            builder.setNeutralButton(getString(R.string.back), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+        } catch (Throwable t) {
+
+            t.printStackTrace();
         }
     }
 }

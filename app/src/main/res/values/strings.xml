@@ -43,6 +43,19 @@
     <string name="main_activity__serialization_error_toast">Error during filter list serialization</string>
     <string name="main_activity__deserialization_error_toast">Error during filter list deserialization</string>
 
+    <string name="main_activity__option_about">About</string>
+    <string name="main_activity__option_help">Help</string>
+
+
+    <string name="ok">Ok</string>
+    <string name="cancel">cancel</string>
+    <string name="abort">abort</string>
+    <string name="back">back</string>
+
+    <string name="option_about__source_code_at">Source Code at:</string>
+    <string name="option_about__github_address">https://github.com/namlit/siteswap_generator</string>
+    <string name="option_about__post_on_github">Please post bug reports and feature requests at the github page.</string>
+
     <string name="show_siteswaps__title">Found %d Siteswaps</string>
     <string name="show_siteswaps__title_timeout">Found %d Siteswaps after Timeout</string>
     <string name="show_siteswaps__title_loading">Generating Siteswaps ...</string>
