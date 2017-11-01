@@ -86,7 +86,7 @@ public class ShowSiteswaps extends AppCompatActivity {
         });
 
 
-        if (mNoTimeout)
+        if (mNoTimeout || mSiteswapList.size() == mGenerator.getMaxResults())
             setTitle(String.format(getString(R.string.show_siteswaps__title), mSiteswapList.size()));
         else
             setTitle(String.format(getString(R.string.show_siteswaps__title_timeout), mSiteswapList.size()));
