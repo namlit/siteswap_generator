@@ -279,6 +279,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void resetFilters(View view) {
+        mFilterList.clear();
+        updateAutoFilters();
+    }
+
 
     public void onAddSiteswapFilter(Filter filter)
     {

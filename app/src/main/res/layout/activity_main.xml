@@ -263,6 +263,15 @@
                     android:layout_height="wrap_content" >
                 </namlit.siteswapgenerator.NonScrollListView>
 
+                <Button
+                    android:id="@+id/reset_filters_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:onClick="resetFilters"
+                    android:text="@string/main_activity__reset_filters"
+                    tools:text="@string/main_activity__reset_filters" />
+
             </LinearLayout>
         </ScrollView>
 

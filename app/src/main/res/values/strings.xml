@@ -30,6 +30,7 @@
     <string name="main_activity__include_zips">zips</string>
     <string name="main_activity__include_zaps">zaps</string>
     <string name="main_activity__include_holds">holds</string>
+    <string name="main_activity__reset_filters">Reset Filters</string>
 
     <string-array name="main_activity__filter_types">
         <item>Pattern filter</item>
