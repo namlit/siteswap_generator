@@ -212,41 +212,62 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return calculateGetin().period_length() == 0;
 	}
 
-	public Siteswap[] calculateLocalGetins() {
+	public Siteswap calculateMandatoryGetin() {
 
+		Siteswap getin = calculateGetin();
 		Siteswap siteswapInterface = toInterface(Siteswap.FREE, period_length() + getMaxThrow(),
 				period_length() + getMaxThrow());
-		Siteswap[] localGetins = new Siteswap[getNumberOfJugglers()];
-		int[] localGetinIndices = new int[getNumberOfJugglers()];
-		Siteswap globalGetin = calculateGetin();
 
-		for (int i = 0; i < globalGetin.period_length(); ++i) {
-			int juggler = (i + getNumberOfJugglers() -
-					globalGetin.period_length() % getNumberOfJugglers()) %
-					getNumberOfJugglers();
+		int mandatoryGetinLength = 0;
 
-			int interfaceIndex = i - globalGetin.period_length() + globalGetin.at(i);
+		for (int i = 0; i < getin.period_length(); ++i) {
+			int fallDownPosition = getin.at(i) + i - getin.period_length();
+			int sameHandPreviousPosition = fallDownPosition - 2 * getNumberOfJugglers();
 
-			if (localGetins[juggler] == null) {
-				int interfaceSameHand =  interfaceIndex - 2 * getNumberOfJugglers();
-				if (interfaceSameHand >= 0 && siteswapInterface.at(interfaceSameHand) != FREE) {
-					int length = (globalGetin.period_length() - i) / getNumberOfJugglers() + 1;
-					byte[] localGetinArray = new byte[length];
-					localGetins[juggler] = new Siteswap(localGetinArray, mNumberOfJugglers);
-					localGetinIndices[juggler] = 0;
-				}
+			// if Siteswap is Mandatory
+			if( sameHandPreviousPosition >= 0 && siteswapInterface.at(sameHandPreviousPosition) != Siteswap.FREE ) {
+				mandatoryGetinLength = getin.period_length() - i;
+				break;
 			}
 
-			if (localGetins[juggler] != null) {
-				siteswapInterface.set(interfaceIndex, globalGetin.at(i));
-				localGetins[juggler].set(localGetinIndices[juggler], globalGetin.at(i));
-				localGetinIndices[juggler]++;
+			if(fallDownPosition >= 0) {
+				siteswapInterface.set(fallDownPosition, getin.at(i));
 			}
+
 		}
 
-		for(int i = 0; i < localGetins.length; ++i) {
-			if (localGetins[i] == null)
-				localGetins[i] = new Siteswap();
+		Siteswap mandatorySiteswap = new Siteswap(new byte[mandatoryGetinLength], mNumberOfJugglers);
+
+		for(int i = 0; i < mandatorySiteswap.period_length(); ++i) {
+			int getinPos = i + getin.period_length() - mandatorySiteswap.period_length();
+			mandatorySiteswap.set(i, getin.at(getinPos));
+		}
+
+		return mandatorySiteswap;
+	}
+
+	public Siteswap[] calculateLocalGetins() {
+
+		Siteswap[] localGetins = new Siteswap[getNumberOfJugglers()];
+		Siteswap mandatoryGetin = calculateMandatoryGetin();
+
+		// initialize getin Siteswaps
+		for(int i = 0; i < getNumberOfJugglers(); ++i) {
+			int plusone = mandatoryGetin.period_length() % getNumberOfJugglers() >= (getNumberOfJugglers() - i) ? 1 : 0;
+			int localGetinLength = mandatoryGetin.period_length() / getNumberOfJugglers() + plusone;
+					;
+			localGetins[i] = new Siteswap(new byte[localGetinLength], getNumberOfJugglers());
+		}
+
+		int localGetinIndex = 0;
+		for (int i = 0; i < mandatoryGetin.period_length(); ++i) {
+			int juggler = (i + getNumberOfJugglers() -
+					mandatoryGetin.period_length() % getNumberOfJugglers()) % getNumberOfJugglers();
+
+			localGetins[juggler].set(localGetinIndex, mandatoryGetin.at(i));
+
+			if ((i + 1) % getNumberOfJugglers() == 0)
+				localGetinIndex++;
 		}
 
 		return localGetins;
@@ -258,6 +279,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		Siteswap[] localGetouts = new Siteswap[getNumberOfJugglers()];
 		Siteswap globalGetout = calculateGetout();
 
+		// Calculate getout lenght for each juggler and allocate getout Siteswaps
 		for(int i = 0; i < localGetouts.length; ++i) {
 			int startPos = i - period_length() % getNumberOfJugglers();
 			if (i < period_length() % getNumberOfJugglers())
