@@ -122,7 +122,7 @@
     <string name="detailed_siteswap__legend_html">
         <![CDATA[
        <big>Legend:</big><br>
-       <b>A 1|2</b>: Juggler A starts with one club in the left hand and two clubs in the right hand<br>
+       <b>A <small>1|2</small></b>: Juggler A starts with one club in the left hand and two clubs in the right hand<br>
        <b>x</b>: cross pass<br>
        <b>s</b>: straight pass<br>
        <b>A/B/C...</b>: pass to juggler A/B/C (more than two jugglers)<br>

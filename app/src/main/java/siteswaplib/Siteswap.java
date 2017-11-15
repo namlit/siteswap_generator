@@ -212,8 +212,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return calculateGetin().period_length() == 0;
 	}
 
-	public Siteswap calculateMandatoryGetin() {
-
+	public int calculateMandatoreyGetinLength() {
 		Siteswap getin = calculateGetin();
 		Siteswap siteswapInterface = toInterface(Siteswap.FREE, period_length() + getMaxThrow(),
 				period_length() + getMaxThrow());
@@ -235,6 +234,13 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 			}
 
 		}
+		return mandatoryGetinLength;
+	}
+
+	public Siteswap calculateMandatoryGetin() {
+
+		Siteswap getin = calculateGetin();
+		int mandatoryGetinLength = calculateMandatoreyGetinLength();
 
 		Siteswap mandatorySiteswap = new Siteswap(new byte[mandatoryGetinLength], mNumberOfJugglers);
 
@@ -246,17 +252,33 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return mandatorySiteswap;
 	}
 
+	public Siteswap calculateNonMandatoryGetins() {
+
+		Siteswap getin = calculateGetin();
+		int mandatoryGetinLength = calculateMandatoreyGetinLength();
+		int nonMandatoryGetinLength = getin.period_length() - mandatoryGetinLength;
+
+		Siteswap nonMandatorySiteswap = new Siteswap(new byte[nonMandatoryGetinLength], mNumberOfJugglers);
+
+		for (int i = 0; i < nonMandatoryGetinLength; ++i) {
+			nonMandatorySiteswap.set(i, getin.at(i));
+		}
+
+		return nonMandatorySiteswap;
+	}
+
 	public Siteswap[] calculateLocalGetins() {
 
 		Siteswap[] localGetins = new Siteswap[getNumberOfJugglers()];
 		Siteswap mandatoryGetin = calculateMandatoryGetin();
 
 		// initialize getin Siteswaps
-		for(int i = 0; i < getNumberOfJugglers(); ++i) {
-			int plusone = mandatoryGetin.period_length() % getNumberOfJugglers() >= (getNumberOfJugglers() - i) ? 1 : 0;
-			int localGetinLength = mandatoryGetin.period_length() / getNumberOfJugglers() + plusone;
-					;
-			localGetins[i] = new Siteswap(new byte[localGetinLength], getNumberOfJugglers());
+		for(int juggler = 0; juggler < getNumberOfJugglers(); ++juggler) {
+			int localGetinLength = mandatoryGetin.period_length() / getNumberOfJugglers();
+			if (mandatoryGetin.period_length() % getNumberOfJugglers() >= (getNumberOfJugglers() - juggler))
+				localGetinLength++;
+
+			localGetins[juggler] = new Siteswap(new byte[localGetinLength], getNumberOfJugglers());
 		}
 
 		int localGetinIndex = 0;
@@ -296,6 +318,80 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		}
 
 		return localGetouts;
+	}
+
+	public class ClubAssignment {
+		public int leftHandNumberOfClubs;
+		public int rightHandNumberOfClubs;
+
+		public ClubAssignment(int left, int right) {
+			leftHandNumberOfClubs = left;
+			rightHandNumberOfClubs = right;
+		}
+
+		@Override
+		public String toString() {
+			return String.valueOf(leftHandNumberOfClubs) + "|" +
+					String.valueOf(rightHandNumberOfClubs);
+		}
+	}
+
+	public ClubAssignment[] calculateInitialClubAssignment() {
+		ClubAssignment initialClubAssignment[] = new ClubAssignment[getNumberOfJugglers()];
+		Siteswap getin = calculateGetin();
+		Siteswap localGetins[] = calculateLocalGetins();
+		Siteswap nonMandatoryGetin = calculateNonMandatoryGetins();
+
+		// Calculate initial start position including all getins. It is assumed,
+		// that the regular periodig Siteswap is started from the right Hand
+		// for all jugglers.
+		for(int juggler = 0; juggler < getNumberOfJugglers(); ++juggler) {
+			int numberOfClubsForJuggler = getNumberOfObjects() / getNumberOfJugglers();
+			int jugglerPosition = (getin.period_length() % getNumberOfJugglers() + juggler) %
+					getNumberOfJugglers();
+			if( jugglerPosition < getNumberOfObjects() % getNumberOfJugglers())
+				numberOfClubsForJuggler++;
+			int numberOfClubsStartingHand = numberOfClubsForJuggler / 2 + numberOfClubsForJuggler % 2;
+			int numberOfClubsSecondHand = numberOfClubsForJuggler / 2;
+			int numberOfGetinsForJuggler = getin.period_length() / getNumberOfJugglers();
+			if (getin.period_length() % getNumberOfJugglers() >= (getNumberOfJugglers() - juggler))
+				numberOfGetinsForJuggler++;
+			boolean isStartRight = (numberOfGetinsForJuggler % 2) == 0;
+			int right = numberOfClubsStartingHand;
+			int left = numberOfClubsSecondHand;
+			if (!isStartRight) {
+				right = numberOfClubsSecondHand;
+				left = numberOfClubsStartingHand;
+			}
+			initialClubAssignment[juggler] = new ClubAssignment(left, right);
+		}
+
+		// Calculate new starting position, when only mandatory getins are thrown
+		for (int i = 0; i < nonMandatoryGetin.period_length(); ++i) {
+			int throwingJuggler = (i + getNumberOfJugglers() -
+					getin.period_length() % getNumberOfJugglers()) % getNumberOfJugglers();
+			int numberOfThrows = getin.period_length() / getNumberOfJugglers();
+			if (throwingJuggler >= getNumberOfJugglers() - getin.period_length() % getNumberOfJugglers())
+				numberOfThrows++;
+			boolean isRightHandThrowing = (numberOfThrows % 2) == 0;
+			int catchingJuggler = (throwingJuggler + nonMandatoryGetin.at(i)) % getNumberOfJugglers();
+			boolean isRightHandCatching = ((throwingJuggler + nonMandatoryGetin.at(i)) /
+					getNumberOfJugglers()) % 2 == 0;
+			if (!isRightHandThrowing)
+				isRightHandCatching = !isRightHandCatching;
+
+			if (isRightHandThrowing)
+				initialClubAssignment[throwingJuggler].rightHandNumberOfClubs--;
+			else
+				initialClubAssignment[throwingJuggler].leftHandNumberOfClubs--;
+
+			if (isRightHandCatching)
+				initialClubAssignment[catchingJuggler].rightHandNumberOfClubs++;
+			else
+				initialClubAssignment[catchingJuggler].leftHandNumberOfClubs++;
+		}
+
+		return initialClubAssignment;
 	}
 
 	@Override
