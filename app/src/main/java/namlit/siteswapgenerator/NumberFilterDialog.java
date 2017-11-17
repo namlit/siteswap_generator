@@ -98,31 +98,6 @@ public class NumberFilterDialog extends AddFilterDialog {
         int throwHeightIndex = sharedPref.getInt(getString(R.string.number_filter__shared_preferences_throw_height_index), 0);
         int numberIndex = sharedPref.getInt(getString(R.string.number_filter__shared_preferences_number_index), 1);
 
-        List<String> throwHeightArray =  new ArrayList<String>();
-        throwHeightArray.add(Siteswap.intToString(Siteswap.PASS));
-        throwHeightArray.add(Siteswap.intToString(Siteswap.SELF));
-        for (int i = mMinThrow; i <= mMaxThrow; ++i) {
-            throwHeightArray.add(Siteswap.intToString(i));
-        }
-
-        ArrayAdapter<String> throwHeightAdapter = new ArrayAdapter<String>(
-                getActivity(), android.R.layout.simple_spinner_item, throwHeightArray);
-
-        throwHeightAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mHeightSpinner.setAdapter(throwHeightAdapter);
-
-        List<String> numberArray =  new ArrayList<String>();
-        for (int i = 0; i <= mPeriodLength; ++i) {
-            numberArray.add(Integer.toString(i));
-        }
-
-        ArrayAdapter<String> NumberAdapter = new ArrayAdapter<String>(
-                getActivity(), android.R.layout.simple_spinner_item, numberArray);
-
-        NumberAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mNumberSpinner.setAdapter(NumberAdapter);
-
-
         if (mOldFilter != null) {
             if (mOldFilter instanceof NumberFilter) {
                 NumberFilter filter = (NumberFilter) mOldFilter;
@@ -154,6 +129,33 @@ public class NumberFilterDialog extends AddFilterDialog {
             }
 
         }
+
+        List<String> throwHeightArray =  new ArrayList<String>();
+        throwHeightArray.add(Siteswap.intToString(Siteswap.PASS));
+        throwHeightArray.add(Siteswap.intToString(Siteswap.SELF));
+        int max = mMaxThrow;
+        if (throwHeightIndex > max)
+            max = throwHeightIndex;
+        for (int i = mMinThrow; i <= max; ++i) {
+            throwHeightArray.add(Siteswap.intToString(i));
+        }
+
+        ArrayAdapter<String> throwHeightAdapter = new ArrayAdapter<String>(
+                getActivity(), android.R.layout.simple_spinner_item, throwHeightArray);
+
+        throwHeightAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mHeightSpinner.setAdapter(throwHeightAdapter);
+
+        List<String> numberArray =  new ArrayList<String>();
+        for (int i = 0; i <= mPeriodLength; ++i) {
+            numberArray.add(Integer.toString(i));
+        }
+
+        ArrayAdapter<String> NumberAdapter = new ArrayAdapter<String>(
+                getActivity(), android.R.layout.simple_spinner_item, numberArray);
+
+        NumberAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mNumberSpinner.setAdapter(NumberAdapter);
 
         if (throwHeightIndex >= mHeightSpinner.getCount() || throwHeightIndex < 0)
             throwHeightIndex = 0;
