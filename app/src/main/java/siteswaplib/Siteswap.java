@@ -396,8 +396,8 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		for (int i = 0; i < nonMandatoryGetin.period_length(); ++i) {
 			int throwingJuggler = (i + getNumberOfJugglers() -
 					getin.period_length() % getNumberOfJugglers()) % getNumberOfJugglers();
-			int numberOfThrows = getin.period_length() / getNumberOfJugglers();
-			if (throwingJuggler >= getNumberOfJugglers() - getin.period_length() % getNumberOfJugglers())
+			int numberOfThrows = (getin.period_length() - i) / getNumberOfJugglers();
+			if (throwingJuggler >= getNumberOfJugglers() - (getin.period_length()-i) % getNumberOfJugglers())
 				numberOfThrows++;
 			boolean isRightHandThrowing = (numberOfThrows % 2) == 0;
 			int catchingJuggler = (throwingJuggler + nonMandatoryGetin.at(i)) % getNumberOfJugglers();
