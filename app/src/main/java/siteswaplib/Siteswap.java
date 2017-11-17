@@ -320,11 +320,11 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return localGetouts;
 	}
 
-	public class ClubAssignment {
+	public class ClubDistribution {
 		public int leftHandNumberOfClubs;
 		public int rightHandNumberOfClubs;
 
-		public ClubAssignment(int left, int right) {
+		public ClubDistribution(int left, int right) {
 			leftHandNumberOfClubs = left;
 			rightHandNumberOfClubs = right;
 		}
@@ -336,8 +336,8 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		}
 	}
 
-	public ClubAssignment[] calculateInitialClubAssignment() {
-		ClubAssignment initialClubAssignment[] = new ClubAssignment[getNumberOfJugglers()];
+	public ClubDistribution[] calculateInitialClubDistribution() {
+		ClubDistribution initialClubDistribution[] = new ClubDistribution[getNumberOfJugglers()];
 		Siteswap getin = calculateGetin();
 		Siteswap localGetins[] = calculateLocalGetins();
 		Siteswap nonMandatoryGetin = calculateNonMandatoryGetins();
@@ -363,7 +363,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 				right = numberOfClubsSecondHand;
 				left = numberOfClubsStartingHand;
 			}
-			initialClubAssignment[juggler] = new ClubAssignment(left, right);
+			initialClubDistribution[juggler] = new ClubDistribution(left, right);
 		}
 
 		// Calculate new starting position, when only mandatory getins are thrown
@@ -381,17 +381,17 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 				isRightHandCatching = !isRightHandCatching;
 
 			if (isRightHandThrowing)
-				initialClubAssignment[throwingJuggler].rightHandNumberOfClubs--;
+				initialClubDistribution[throwingJuggler].rightHandNumberOfClubs--;
 			else
-				initialClubAssignment[throwingJuggler].leftHandNumberOfClubs--;
+				initialClubDistribution[throwingJuggler].leftHandNumberOfClubs--;
 
 			if (isRightHandCatching)
-				initialClubAssignment[catchingJuggler].rightHandNumberOfClubs++;
+				initialClubDistribution[catchingJuggler].rightHandNumberOfClubs++;
 			else
-				initialClubAssignment[catchingJuggler].leftHandNumberOfClubs++;
+				initialClubDistribution[catchingJuggler].leftHandNumberOfClubs++;
 		}
 
-		return initialClubAssignment;
+		return initialClubDistribution;
 	}
 
 	@Override

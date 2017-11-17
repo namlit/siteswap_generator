@@ -66,11 +66,11 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
         Siteswap[] localGetins = mSiteswap.calculateLocalGetins();
         Siteswap[] localGetouts = mSiteswap.calculateLocalGetouts();
 
-        Siteswap.ClubAssignment initialClubAssignment[] = mSiteswap.calculateInitialClubAssignment();
+        Siteswap.ClubDistribution initialClubDistribution[] = mSiteswap.calculateInitialClubDistribution();
 
         for(int juggler = 0; juggler < mSiteswap.getNumberOfJugglers(); ++juggler) {
             localHtmlString += Character.toString((char) ('A' + juggler)) + " ";
-            localHtmlString += "<small>" + initialClubAssignment[juggler].toString() + "</small>";
+            localHtmlString += "<small>" + initialClubDistribution[juggler].toString() + "</small>";
             // initial clubs in hands
             localHtmlString += ": ";
             localHtmlString += "<small>" + localGetins[juggler].toDividedString() + "</small> ";
