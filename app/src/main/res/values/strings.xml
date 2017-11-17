@@ -47,6 +47,22 @@
     <string name="main_activity__option_about">About</string>
     <string name="main_activity__option_help">Help</string>
 
+    <string name="main_activity__random_generation_mode_help">
+        <![CDATA[
+       <h2>Random Generation Mode</h2>
+       <p>When generating very long siteswaps, typically you do not want
+       to get all possible siteswaps, but just a hand ful of interesting
+       ones. With the systematic siteswap generation approach the first
+       generated Siteswaps are all very similar and often boring. By using
+       the random generation mode, siteswaps are generated in random order
+       and thus avoid boring siteswaps. Note that in this mode, there is no
+       test of duplicate Siteswaps and the siteswap generation is only limited
+       by the generation timeout and maximum number of results. Using
+       this mode for short siteswaps results in many duplicate siteswaps in
+       random order.r</p>
+        ]]>
+    </string>
+
 
     <string name="ok">Ok</string>
     <string name="cancel">cancel</string>
