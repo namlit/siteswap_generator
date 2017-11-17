@@ -34,6 +34,8 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
         if (mSiteswap == null)
             mSiteswap = new Siteswap();
 
+        mSiteswap.rotateToBestStartingPosition();
+
         mGlobalSiteswapTextview = (TextView) findViewById(R.id.global_siteswap_textview);
         mLocalSiteswapTextview = (TextView) findViewById(R.id.local_siteswap_textview);
         mIntefaceTextview = (TextView) findViewById(R.id.interface_textview);

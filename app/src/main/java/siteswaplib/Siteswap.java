@@ -334,6 +334,32 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 			return String.valueOf(leftHandNumberOfClubs) + "|" +
 					String.valueOf(rightHandNumberOfClubs);
 		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (! (obj instanceof ClubDistribution))
+				return false;
+			ClubDistribution rhs = (ClubDistribution) obj;
+			return this.leftHandNumberOfClubs == rhs.leftHandNumberOfClubs &&
+					this.rightHandNumberOfClubs == rhs.rightHandNumberOfClubs;
+		}
+	}
+
+	// Calculates the club Distribution for a pattern started from ground state
+	public ClubDistribution[] calculateGroundStateClubDistribution() {
+		ClubDistribution groundStateClubDistribution[] = new ClubDistribution[getNumberOfJugglers()];
+
+		for (int juggler = 0; juggler < getNumberOfJugglers(); ++juggler) {
+			int numberOfClubsForJuggler = getNumberOfObjects() / getNumberOfJugglers();
+			if (juggler < getNumberOfObjects() % getNumberOfJugglers())
+				numberOfClubsForJuggler++;
+			int numberOfClubsRightHand = numberOfClubsForJuggler / 2 + numberOfClubsForJuggler % 2;
+			int numberOfClubsLeftHand = numberOfClubsForJuggler / 2;
+
+			groundStateClubDistribution[juggler] =
+					new ClubDistribution(numberOfClubsLeftHand, numberOfClubsRightHand);
+		}
+		return groundStateClubDistribution;
 	}
 
 	public ClubDistribution[] calculateInitialClubDistribution() {
@@ -392,6 +418,54 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		}
 
 		return initialClubDistribution;
+	}
+
+	public boolean isMandatoryGetin() {
+		return calculateMandatoryGetin().period_length() != 0;
+	}
+
+	public boolean isGroundStateClubDistribution() {
+		ClubDistribution groundstateClubDistribution[] = calculateGroundStateClubDistribution();
+		ClubDistribution actualClubDistribution[] = calculateInitialClubDistribution();
+
+		for (int i = 0; i < actualClubDistribution.length; ++i) {
+			if (!groundstateClubDistribution[i].equals(actualClubDistribution[i]))
+				return false;
+		}
+		return true;
+	}
+
+	// The higher the returned integer value, the better the current rotation can be
+	// used as a starting position.
+	public int measureSuitabilityForStartingPosition() {
+		int measure = 0;
+
+		if (!isMandatoryGetin())
+			measure += 1000;
+		if (isGroundStateClubDistribution())
+			measure += 10;
+		if (isGetinFree())
+			measure += 1;
+		if (Siteswap.isPass(at(0), getNumberOfJugglers()))
+			measure += 100;
+		for(int i = 1; i < getNumberOfJugglers(); ++i) {
+			if (Siteswap.isPass(at(i), getNumberOfJugglers()))
+				measure += 2;
+		}
+		return measure;
+	}
+
+	public void rotateToBestStartingPosition() {
+		int max = 0;
+		int rot = 0;
+		for (int i = 0; i < period_length(); ++i) {
+			if (measureSuitabilityForStartingPosition() > max) {
+				max = measureSuitabilityForStartingPosition();
+				rot = i;
+			}
+			rotateRight(1);
+		}
+		rotateRight(rot);
 	}
 
 	@Override
