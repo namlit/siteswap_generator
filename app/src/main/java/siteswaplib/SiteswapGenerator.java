@@ -110,6 +110,12 @@ public class SiteswapGenerator implements Serializable{
 		return mSiteswaps;
 	}
 
+	public int getNumberOfGeneratedSiteswaps() {
+		if (mSiteswaps == null)
+			return 0;
+		return mSiteswaps.size();
+	}
+
 	public int getPeriodLength() {
 		return mPeriodLength;
 	}
@@ -199,6 +205,9 @@ public class SiteswapGenerator implements Serializable{
 			}
 			if (matchesFilters(siteswap)) {
 				mSiteswaps.add(new Siteswap(siteswap));
+				if(Runtime.getRuntime().maxMemory()-(Runtime.getRuntime().totalMemory() -
+						Runtime.getRuntime().freeMemory()) < 1000)
+					return false;
 				if (mSiteswaps.size() >= mMaxResults || mIsRandomGeneration)
 					return false; // Abort if max_results reached
 			}
