@@ -64,10 +64,9 @@ public class ShowSiteswaps extends AppCompatActivity {
 
     @Override
     public void onSaveInstanceState(Bundle out) {
-        if(mGenerator.getNumberOfGeneratedSiteswaps() < 1000) {
-            out.putBoolean(getString(R.string.show_siteswaps__saved_is_no_timeout), mNoTimeout);
-            out.putSerializable(getString(R.string.show_siteswaps__saved_siteswap_generator), mGenerator);
-        }
+        out.putBoolean(getString(R.string.show_siteswaps__saved_is_no_timeout), mNoTimeout);
+        out.putSerializable(getString(R.string.show_siteswaps__saved_siteswap_generator), mGenerator);
+
         super.onSaveInstanceState(out);
     }
 
