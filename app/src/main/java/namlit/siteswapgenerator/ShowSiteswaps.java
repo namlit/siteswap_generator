@@ -1,5 +1,6 @@
 package namlit.siteswapgenerator;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,61 +14,59 @@ import java.util.LinkedList;
 import siteswaplib.SiteswapGenerator;
 import siteswaplib.Siteswap;
 
-public class ShowSiteswaps extends AppCompatActivity {
+public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerationFragment.SiteswapGenerationCallbacks {
 
+    private static final String TAG_SITESWAP_GENERATION_TASK_FRAGMENT = "siteswap_generation_task_fragment";
     private SiteswapGenerator mGenerator = null;
     private LinkedList<Siteswap> mSiteswapList = null;
     private boolean mNoTimeout = true;
+    private SiteswapGenerationFragment mSiteswapGenerationFragment;
 
     ListView mSiteswapListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+//            @Override
+//            public void uncaughtException(final Thread paramThread, final Throwable paramThrowable) {
+//
+//                new Thread() {
+//                    @Override
+//                    public void run() {
+//                        Looper.prepare();
+//                        Toast.makeText(getApplicationContext(), "Uncaught exeption: " + paramThread.toString() + " " + paramThrowable.toString(), Toast.LENGTH_LONG).show();
+//                        Looper.loop();
+//                    }
+//                }.start();
+//                try {
+//                    Thread.sleep(4000); // Let the Toast display before app will get shutdown
+//                } catch (InterruptedException e) {
+//                }
+//                System.exit(2);
+//            }
+//        });
         setContentView(R.layout.activity_show_siteswaps);
+
+        Intent intent = getIntent();
+        if(intent != null) {
+            mGenerator = (SiteswapGenerator) intent.getSerializableExtra(getString(R.string.intent__siteswap_generator));
+        }
 
         mSiteswapListView = (ListView) findViewById(R.id.siteswap_list);
 
-        if (savedInstanceState != null) {
+        FragmentManager fm = getFragmentManager();
+        mSiteswapGenerationFragment = (SiteswapGenerationFragment) fm.findFragmentByTag(TAG_SITESWAP_GENERATION_TASK_FRAGMENT);
 
-            mNoTimeout = savedInstanceState.getBoolean(getString(R.string.show_siteswaps__saved_is_no_timeout));
-            mGenerator = (SiteswapGenerator) savedInstanceState.getSerializable(
-                    getString(R.string.show_siteswaps__saved_siteswap_generator));
-            mSiteswapList = mGenerator.getSiteswaps();
-
+        // If the Fragment is non-null, then it is currently being
+        // retained across a configuration change.
+        if (mSiteswapGenerationFragment == null) {
+            mSiteswapGenerationFragment = new SiteswapGenerationFragment();
+            fm.beginTransaction().add(mSiteswapGenerationFragment, TAG_SITESWAP_GENERATION_TASK_FRAGMENT).commit();
         }
         else {
-
-            Intent intent = getIntent();
-
-//            int numberOfObjects  = intent.getIntExtra(getString(R.string.intent__siteswap_number_of_objects),   0);
-//            int periodLength     = intent.getIntExtra(getString(R.string.intent__siteswap_period_length),       0);
-//            int maxThrow         = intent.getIntExtra(getString(R.string.intent__siteswap_max_throw),           0);
-//            int minThrow         = intent.getIntExtra(getString(R.string.intent__siteswap_min_throw),           0);
-//            int numberOfJugglers = intent.getIntExtra(getString(R.string.intent__siteswap_number_of_jugglers),  0);
-//            int maxResults       = intent.getIntExtra(getString(R.string.intent__siteswap_max_results),         0);
-//            int timeout          = intent.getIntExtra(getString(R.string.intent__siteswap_calculation_timeout), 0);
-//            ArrayList<Filter> filterList = (ArrayList<Filter>) intent.getSerializableExtra(getString(R.string.intent__siteswap_filter_list));
-            //LinkedList<Filter> filterList = new LinkedList<Filter>();
-
-            mGenerator = (SiteswapGenerator) intent.getSerializableExtra(getString(R.string.intent__siteswap_generator));
-            //mGenerator.setFilterList(filterList);
+            mSiteswapGenerationFragment.getSiteswapGenerator();
         }
-
-        if (mGenerator.isCalculationComplete()) {
-            loadSiteswaps();
-        }
-        else {
-            generateSiteswaps();
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle out) {
-        out.putBoolean(getString(R.string.show_siteswaps__saved_is_no_timeout), mNoTimeout);
-        out.putSerializable(getString(R.string.show_siteswaps__saved_siteswap_generator), mGenerator);
-
-        super.onSaveInstanceState(out);
     }
 
     private void loadSiteswaps() {
@@ -93,21 +92,12 @@ public class ShowSiteswaps extends AppCompatActivity {
             setTitle(String.format(getString(R.string.show_siteswaps__title_timeout), mSiteswapList.size()));
     }
 
-    private void generateSiteswaps() {
-
-        setTitle(getString(R.string.show_siteswaps__title_loading));
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                mNoTimeout = mGenerator.generateSiteswaps();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadSiteswaps();
-                    }
-                });
-            }
-        }).start();
-
+    public SiteswapGenerator getSiteswapGenerator() {
+        return mGenerator;
+    }
+    public void onGenerationComplete(SiteswapGenerator generator, boolean noTimeout) {
+        mGenerator = generator;
+        mNoTimeout = noTimeout;
+        loadSiteswaps();
     }
 }
