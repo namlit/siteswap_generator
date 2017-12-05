@@ -158,7 +158,7 @@ public class SiteswapGenerator implements Serializable{
 		for(int i = siteswap.period_length() - 1; i >= index; --i) {
 			while (siteswapInterface.at(interfaceIndex) != Siteswap.FREE) {
 				interfaceIndex--;
-				if (interfaceIndex == 0)
+				if (interfaceIndex < i)
 					return 0;
 			}
 			maxSum += (interfaceIndex - i);
@@ -173,7 +173,7 @@ public class SiteswapGenerator implements Serializable{
 		for(int i = index; i < siteswap.period_length(); ++i) {
 			while (siteswapInterface.at(interfaceIndex) != Siteswap.FREE) {
 				interfaceIndex++;
-				if (interfaceIndex == mMaxThrow)
+				if ((interfaceIndex - i) > mMaxThrow)
 					return mMaxThrow;
 			}
 			minSum += (interfaceIndex - i);
