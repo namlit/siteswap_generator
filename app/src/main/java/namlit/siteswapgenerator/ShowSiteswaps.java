@@ -29,6 +29,8 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_siteswaps);
 
+        setTitle(String.format(getString(R.string.show_siteswaps__title_generating)));
+
         Intent intent = getIntent();
         if(intent != null) {
             mGenerator = (SiteswapGenerator) intent.getSerializableExtra(getString(R.string.intent__siteswap_generator));

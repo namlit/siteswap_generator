@@ -75,7 +75,7 @@
 
     <string name="show_siteswaps__title">Found %d Siteswaps</string>
     <string name="show_siteswaps__title_timeout">Found %d Siteswaps after Timeout</string>
-    <string name="show_siteswaps__title_loading">Generating Siteswaps ...</string>
+    <string name="show_siteswaps__title_generating">Generating Siteswaps ...</string>
     <string name="show_siteswaps__saved_is_no_timeout">IS_NO_TIMEOUT</string>
     <string name="show_siteswaps__saved_siteswap_generator">SITESWAP_GENERATOR</string>
 
