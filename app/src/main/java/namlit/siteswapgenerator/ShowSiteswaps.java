@@ -27,25 +27,6 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-//            @Override
-//            public void uncaughtException(final Thread paramThread, final Throwable paramThrowable) {
-//
-//                new Thread() {
-//                    @Override
-//                    public void run() {
-//                        Looper.prepare();
-//                        Toast.makeText(getApplicationContext(), "Uncaught exeption: " + paramThread.toString() + " " + paramThrowable.toString(), Toast.LENGTH_LONG).show();
-//                        Looper.loop();
-//                    }
-//                }.start();
-//                try {
-//                    Thread.sleep(4000); // Let the Toast display before app will get shutdown
-//                } catch (InterruptedException e) {
-//                }
-//                System.exit(2);
-//            }
-//        });
         setContentView(R.layout.activity_show_siteswaps);
 
         Intent intent = getIntent();

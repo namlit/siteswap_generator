@@ -53,19 +53,30 @@ public class SiteswapGenerationFragment extends Fragment {
     }
 
     public void getSiteswapGenerator() {
+        if (isError()) {
+            mTask = new SiteswapGenerationTask();
+            mTask.execute();
+            return;
+        }
         if (mTask.getStatus() == AsyncTask.Status.FINISHED) {
             mTask.onPostExecute(null);
         }
+    }
+
+    public boolean isError() {
+        if(mTask.mGenerator == null)
+            return true;
+        return mTask.mIsError;
     }
 
     private class SiteswapGenerationTask extends AsyncTask<Void, Integer, Void> {
 
         private SiteswapGenerator mGenerator;
         private boolean mNoTimeout;
+        private boolean mIsError = false;
 
         @Override
         protected void onPreExecute() {
-            publishProgress(0);
             if (mCallbacks != null) {
                 mGenerator = mCallbacks.getSiteswapGenerator();
             }
@@ -75,17 +86,21 @@ public class SiteswapGenerationFragment extends Fragment {
         protected Void doInBackground(Void... ignore) {
             try {
                 mNoTimeout = mGenerator.generateSiteswaps();
-                publishProgress(100);
             }
-            catch (java.lang.Exception e) {
-                cancel(true);
-                // TODO correct handling, the Task should automatically be restarted on an error here.
+            catch (java.lang.RuntimeException e) {
+                mIsError = true;
+                // This exceptions occurs, if the Andoid system recycles the memory of the
+                // activity, but doInBackgound is still executed in backgound.
             }
             return null;
         }
 
         @Override
         protected void onPostExecute(Void ignore) {
+
+            if (mIsError) {
+                return;
+            }
             if (mCallbacks != null) {
                 mCallbacks.onGenerationComplete(mGenerator, mNoTimeout);
             }
