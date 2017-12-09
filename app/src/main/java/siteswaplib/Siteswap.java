@@ -519,6 +519,9 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	 */
 	public String toDividedString() {
 
+		if (mNumberOfJugglers == 1)
+			return toString();
+
 		String str = new String();
 		DecimalFormat formatter = new DecimalFormat("0.#");
 		for(int i = 0; i < period_length(); ++i) {
