@@ -58,9 +58,13 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
         mIsValidTextview.setText(String.valueOf(mSiteswap.isValid()));
 
 
-        String globalHtmlString = mSiteswap.calculateGetin().toString() +
+        String globalHtmlString = "<font color=\"grey\">" +
+                mSiteswap.calculateGetin().toString() +
+                "</font> " +
                 " <big>" + mSiteswap.toString() + " </big> " +
-                mSiteswap.calculateGetout().toString();
+                "<font color=\"grey\">" +
+                mSiteswap.calculateGetout().toString() +
+                "</font> ";
         mGlobalSiteswapTextview.setText(Html.fromHtml(globalHtmlString));
 
         String localHtmlString = "<big>Local Siteswap:</big><br>";
