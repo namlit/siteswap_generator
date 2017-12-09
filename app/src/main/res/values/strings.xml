@@ -73,9 +73,12 @@
     <string name="option_about__github_address">https://github.com/namlit/siteswap_generator</string>
     <string name="option_about__post_on_github">Please post bug reports and feature requests at the github page.</string>
 
-    <string name="show_siteswaps__title">Found %d Siteswaps</string>
-    <string name="show_siteswaps__title_timeout">Found %d Siteswaps after Timeout</string>
     <string name="show_siteswaps__title_generating">Generating Siteswaps ...</string>
+    <string name="show_siteswaps__title_found_all">Found %d Siteswaps</string>
+    <string name="show_siteswaps__title_timeout_reached">Timeout Reached: Found %d Siteswaps</string>
+    <string name="show_siteswaps__title_limit_reached">Limit Reached: Found %d Siteswaps</string>
+    <string name="show_siteswaps__title_memory_full">Memory Full: Found %d Siteswaps</string>
+    <string name="show_siteswaps__title_cancelled">Siteswap Generation Cancelled</string>
     <string name="show_siteswaps__saved_is_no_timeout">IS_NO_TIMEOUT</string>
     <string name="show_siteswaps__saved_siteswap_generator">SITESWAP_GENERATOR</string>
 

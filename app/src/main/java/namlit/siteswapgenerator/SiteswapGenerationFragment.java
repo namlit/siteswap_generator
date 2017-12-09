@@ -1,14 +1,10 @@
 package namlit.siteswapgenerator;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 
-import java.util.LinkedList;
-
-import siteswaplib.Siteswap;
 import siteswaplib.SiteswapGenerator;
 
 /**
@@ -19,7 +15,7 @@ public class SiteswapGenerationFragment extends Fragment {
 
     interface SiteswapGenerationCallbacks {
         SiteswapGenerator getSiteswapGenerator();
-        void onGenerationComplete(SiteswapGenerator generator, boolean noTimeout);
+        void onGenerationComplete(SiteswapGenerator generator, SiteswapGenerator.Status status);
     }
 
     private SiteswapGenerationCallbacks mCallbacks;
@@ -81,7 +77,7 @@ public class SiteswapGenerationFragment extends Fragment {
     private class SiteswapGenerationTask extends AsyncTask<Void, Integer, Void> {
 
         private SiteswapGenerator mGenerator;
-        private boolean mNoTimeout;
+        private SiteswapGenerator.Status mGenerationStatus;
         private boolean mIsError = false;
 
         @Override
@@ -94,7 +90,7 @@ public class SiteswapGenerationFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... ignore) {
             try {
-                mNoTimeout = mGenerator.generateSiteswaps();
+                mGenerationStatus = mGenerator.generateSiteswaps();
             }
             catch (java.lang.RuntimeException e) {
                 mIsError = true;
@@ -111,7 +107,7 @@ public class SiteswapGenerationFragment extends Fragment {
                 return;
             }
             if (mCallbacks != null) {
-                mCallbacks.onGenerationComplete(mGenerator, mNoTimeout);
+                mCallbacks.onGenerationComplete(mGenerator, mGenerationStatus);
             }
         }
     }

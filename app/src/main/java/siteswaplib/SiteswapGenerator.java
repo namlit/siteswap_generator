@@ -6,6 +6,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SiteswapGenerator implements Serializable{
 
+	public enum Status {GENERATING, ALL_SITESWAPS_FOUND, MAX_RESULTS_REACHED, TIMEOUT_REACHED, MEMORY_FULL, CANCELLED};
+
 	private LinkedList<Siteswap> mSiteswaps;
 	private LinkedList<Filter> mFilterList;
 	private int mPeriodLength;
@@ -47,7 +49,7 @@ public class SiteswapGenerator implements Serializable{
 		this.mFilterList = filterList;
 	}
 
-	public boolean generateSiteswaps() {
+	public Status generateSiteswaps() {
 		mIsCanceled.set(false);
 		mCalculationComplete = false;
 		mBacktrackingCount = 0;
@@ -62,7 +64,9 @@ public class SiteswapGenerator implements Serializable{
 		// The inteface describes, where throws are coming down
 		Siteswap siteswapInterface = new Siteswap(interfaceArray, mNumberOfJugglers);
 
-		boolean result = backtracking(siteswap, siteswapInterface, 0, 0);
+		Status status = backtracking(siteswap, siteswapInterface, 0, 0);
+		if (status == Status.GENERATING)
+			status = Status.ALL_SITESWAPS_FOUND;
 
 		if (mIsRandomGeneration) {
 			while (System.currentTimeMillis() - mStartTime < mTimeoutSeconds * 1000 &&
@@ -72,11 +76,11 @@ public class SiteswapGenerator implements Serializable{
 				Arrays.fill(interfaceArray, Siteswap.FREE);
 				siteswap = new Siteswap(siteswapArray, mNumberOfJugglers);
 				siteswapInterface = new Siteswap(interfaceArray, mNumberOfJugglers);
-				result = backtracking(siteswap, siteswapInterface, 0, 0);
+				status = backtracking(siteswap, siteswapInterface, 0, 0);
 			}
 		}
 		mCalculationComplete = true;
-		return result;
+		return status;
 	}
 	
 	public void setNumberOfJugglers(int numberOfJugglers) {
@@ -197,41 +201,41 @@ public class SiteswapGenerator implements Serializable{
 	 * aborted. Returns true on normal, to indicate, that the siteswap search
 	 * shall be continued.
 	 * */
-	private boolean backtracking(Siteswap siteswap, Siteswap siteswapInterface,
+	private Status backtracking(Siteswap siteswap, Siteswap siteswapInterface,
 								 int currentIndex, int uniqueRepresentationIndex) {
 
 		mBacktrackingCount++;
 		if (mBacktrackingCount % 1000 == 0 &&
 				System.currentTimeMillis() - mStartTime > mTimeoutSeconds * 1000)
-			return false;
+			return Status.TIMEOUT_REACHED;
 
 		if (mIsCanceled.get())
-			return false;
+			return Status.CANCELLED;
 
 		if (currentIndex == mPeriodLength) {
 
 			if (uniqueRepresentationIndex != 0) {
 				// Representation is not unique or siteswap has shorter period.
 				// Go a step back and continue searching...
-				return true;
+				return Status.GENERATING;
 			}
 			if (matchesFilters(siteswap)) {
 				mSiteswaps.add(new Siteswap(siteswap));
 				if(Runtime.getRuntime().maxMemory()-(Runtime.getRuntime().totalMemory() -
 						Runtime.getRuntime().freeMemory()) < 1000)
-					return false;
+					return Status.MEMORY_FULL;
 				if (mSiteswaps.size() >= mMaxResults || mIsRandomGeneration)
-					return false; // Abort if max_results reached
+					return Status.MAX_RESULTS_REACHED; // Abort if max_results reached
 			}
 			// A filter did not match. Go a step back and continue searching...
-			return true;
+			return Status.GENERATING;
 		}
 		else { // Not last index
 
 			if (currentIndex != 0) {
 				if (!matchesFiltersPartialSitswap(siteswap, currentIndex - 1)) {
 					// Go a step back and continue searching...
-					return true;
+					return Status.GENERATING;
 				}
 			}
 		}
@@ -276,15 +280,16 @@ public class SiteswapGenerator implements Serializable{
 			siteswap.set(currentIndex, value);
 			siteswapInterface.set(currentIndex + value, value);
 			int nextUniqueIndex = (value == uniqeMax) ? uniqueRepresentationIndex + 1 : 0;
-			if (!backtracking(siteswap, siteswapInterface, currentIndex + 1, nextUniqueIndex))
-				return false;
+			Status status = backtracking(siteswap, siteswapInterface, currentIndex + 1, nextUniqueIndex);
+			if (status != Status.GENERATING)
+				return status;
 			siteswapInterface.set(currentIndex + value, Siteswap.FREE);
 		}
 
 		siteswap.set(currentIndex, Siteswap.FREE); // reset value for backtracking
 
 
-		return true;
+		return Status.GENERATING;
 
 	}
 

@@ -19,7 +19,7 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
     private static final String TAG_SITESWAP_GENERATION_TASK_FRAGMENT = "siteswap_generation_task_fragment";
     private SiteswapGenerator mGenerator = null;
     private LinkedList<Siteswap> mSiteswapList = null;
-    private boolean mNoTimeout = true;
+    private SiteswapGenerator.Status mGenerationStatus = SiteswapGenerator.Status.GENERATING;
     private SiteswapGenerationFragment mSiteswapGenerationFragment;
 
     ListView mSiteswapListView;
@@ -69,18 +69,34 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
         });
 
 
-        if (mNoTimeout || mSiteswapList.size() == mGenerator.getMaxResults())
-            setTitle(String.format(getString(R.string.show_siteswaps__title), mSiteswapList.size()));
-        else
-            setTitle(String.format(getString(R.string.show_siteswaps__title_timeout), mSiteswapList.size()));
+        switch (mGenerationStatus) {
+            case GENERATING:
+                setTitle(String.format(getString(R.string.show_siteswaps__title_generating)));
+                break;
+            case ALL_SITESWAPS_FOUND:
+                setTitle(String.format(getString(R.string.show_siteswaps__title_found_all), mSiteswapList.size()));
+                break;
+            case MAX_RESULTS_REACHED:
+                setTitle(String.format(getString(R.string.show_siteswaps__title_limit_reached), mSiteswapList.size()));
+                break;
+            case TIMEOUT_REACHED:
+                setTitle(String.format(getString(R.string.show_siteswaps__title_timeout_reached), mSiteswapList.size()));
+                break;
+            case MEMORY_FULL:
+                setTitle(String.format(getString(R.string.show_siteswaps__title_memory_full), mSiteswapList.size()));
+                break;
+            case CANCELLED:
+                setTitle(String.format(getString(R.string.show_siteswaps__title_cancelled)));
+                break;
+        }
     }
 
     public SiteswapGenerator getSiteswapGenerator() {
         return mGenerator;
     }
-    public void onGenerationComplete(SiteswapGenerator generator, boolean noTimeout) {
+    public void onGenerationComplete(SiteswapGenerator generator, SiteswapGenerator.Status status) {
         mGenerator = generator;
-        mNoTimeout = noTimeout;
+        mGenerationStatus = status;
         loadSiteswaps();
     }
 }
