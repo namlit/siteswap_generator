@@ -75,9 +75,11 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
             localHtmlString += "<small>" + initialClubDistribution[juggler].toString() + "</small>";
             // initial clubs in hands
             localHtmlString += ": ";
-            localHtmlString += "<small>" + localGetins[juggler].toDividedString() + "</small> ";
+            localHtmlString += "<font color=\"grey\"><small>" +
+                    localGetins[juggler].toDividedString() + "</small></font> ";
             localHtmlString += localSiteswapStrings.elementAt(juggler);
-            localHtmlString += "<small>" + localGetouts[juggler].toDividedString() + "</small> ";
+            localHtmlString += "<font color=\"grey\"><small>" +
+                    localGetouts[juggler].toDividedString() + "</small></font> ";
             localHtmlString += "<br>";
         }
 

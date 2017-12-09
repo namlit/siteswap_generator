@@ -511,13 +511,19 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return localSiteswaps;
 	}
 
+	/**
+	 * Returns the Siteswap as a string, where the individual numbers are
+	 * divided by the number of jugglers (local notation). The order of the
+	 * number is left as is.
+	 * @return String representation of the siteswap
+	 */
 	public String toDividedString() {
 
 		String str = new String();
 		DecimalFormat formatter = new DecimalFormat("0.#");
 		for(int i = 0; i < period_length(); ++i) {
 			str += formatter.format(at(i) / (double) mNumberOfJugglers);
-			str += " ";
+			str += "&ensp;";
 		}
 		return str;
 	}
@@ -546,7 +552,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 						str += "s";
 					str += "</small></sub>";
 				}
-				str += " ";
+				str += "&ensp;";
 			}
 			localSiteswapStrings.add(str);
 		}
