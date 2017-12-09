@@ -52,6 +52,15 @@ public class SiteswapGenerationFragment extends Fragment {
         mCallbacks = null;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mTask.mGenerator.cancelGeneration();
+        mTask.cancel(true);
+        mTask.mGenerator = null;
+        mTask = null;
+    }
+
     public void getSiteswapGenerator() {
         if (isError()) {
             mTask = new SiteswapGenerationTask();

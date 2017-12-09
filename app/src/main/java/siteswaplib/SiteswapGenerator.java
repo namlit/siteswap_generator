@@ -2,6 +2,7 @@ package siteswaplib;
 
 import java.util.*;
 import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SiteswapGenerator implements Serializable{
 
@@ -16,6 +17,7 @@ public class SiteswapGenerator implements Serializable{
 	private long mStartTime = 0;
     private int mTimeoutSeconds = 100;
 	private boolean mCalculationComplete = false;
+	private AtomicBoolean mIsCanceled;
 	private int mBacktrackingCount = 0; // Just for algorithm performance analysis
 	private boolean mIsRandomGeneration = false;
 
@@ -24,6 +26,7 @@ public class SiteswapGenerator implements Serializable{
 		this.mMaxThrow = (byte) max;
 		this.mMinThrow = (byte) min;
 		this.mNumberOfObjects = (byte) objects;
+		mIsCanceled = new AtomicBoolean(false);
 		setNumberOfJugglers(number_of_jugglers);
         mFilterList = new LinkedList<Filter>();
         Filter.addDefaultFilters(mFilterList, number_of_jugglers);
@@ -45,6 +48,7 @@ public class SiteswapGenerator implements Serializable{
 	}
 
 	public boolean generateSiteswaps() {
+		mIsCanceled.set(false);
 		mCalculationComplete = false;
 		mBacktrackingCount = 0;
         mSiteswaps = new LinkedList<Siteswap>();
@@ -62,7 +66,8 @@ public class SiteswapGenerator implements Serializable{
 
 		if (mIsRandomGeneration) {
 			while (System.currentTimeMillis() - mStartTime < mTimeoutSeconds * 1000 &&
-					mSiteswaps.size() < mMaxResults) {
+					mSiteswaps.size() < mMaxResults &&
+					mIsCanceled.get() == false) {
 				Arrays.fill(siteswapArray, Siteswap.FREE);
 				Arrays.fill(interfaceArray, Siteswap.FREE);
 				siteswap = new Siteswap(siteswapArray, mNumberOfJugglers);
@@ -152,6 +157,10 @@ public class SiteswapGenerator implements Serializable{
 		return mCalculationComplete;
 	}
 
+	public void cancelGeneration() {
+		mIsCanceled.set(true);
+	}
+
 	private int getMaxSumToGenerate(Siteswap siteswap, Siteswap siteswapInterface, int index) {
 		int maxSum = 0;
 		int interfaceIndex = siteswap.period_length() + mMaxThrow - 2;
@@ -194,6 +203,9 @@ public class SiteswapGenerator implements Serializable{
 		mBacktrackingCount++;
 		if (mBacktrackingCount % 1000 == 0 &&
 				System.currentTimeMillis() - mStartTime > mTimeoutSeconds * 1000)
+			return false;
+
+		if (mIsCanceled.get())
 			return false;
 
 		if (currentIndex == mPeriodLength) {
