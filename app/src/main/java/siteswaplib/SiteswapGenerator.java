@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SiteswapGenerator implements Serializable{
 
-	public enum Status {GENERATING, ALL_SITESWAPS_FOUND, MAX_RESULTS_REACHED, TIMEOUT_REACHED, MEMORY_FULL, CANCELLED};
+	public enum Status {GENERATING, ALL_SITESWAPS_FOUND, RANDOM_SITESWAP_FOUND, MAX_RESULTS_REACHED, TIMEOUT_REACHED, MEMORY_FULL, CANCELLED};
 
 	private LinkedList<Siteswap> mSiteswaps;
 	private LinkedList<Filter> mFilterList;
@@ -69,9 +69,7 @@ public class SiteswapGenerator implements Serializable{
 			status = Status.ALL_SITESWAPS_FOUND;
 
 		if (mIsRandomGeneration) {
-			while (System.currentTimeMillis() - mStartTime < mTimeoutSeconds * 1000 &&
-					mSiteswaps.size() < mMaxResults &&
-					mIsCanceled.get() == false) {
+			while (status == Status.GENERATING || status == Status.RANDOM_SITESWAP_FOUND) {
 				Arrays.fill(siteswapArray, Siteswap.FREE);
 				Arrays.fill(interfaceArray, Siteswap.FREE);
 				siteswap = new Siteswap(siteswapArray, mNumberOfJugglers);
@@ -224,8 +222,10 @@ public class SiteswapGenerator implements Serializable{
 				if(Runtime.getRuntime().maxMemory()-(Runtime.getRuntime().totalMemory() -
 						Runtime.getRuntime().freeMemory()) < 1000)
 					return Status.MEMORY_FULL;
-				if (mSiteswaps.size() >= mMaxResults || mIsRandomGeneration)
-					return Status.MAX_RESULTS_REACHED; // Abort if max_results reached
+				if (mSiteswaps.size() >= mMaxResults)
+					return Status.MAX_RESULTS_REACHED;
+				if (mIsRandomGeneration)
+					return Status.RANDOM_SITESWAP_FOUND;
 			}
 			// A filter did not match. Go a step back and continue searching...
 			return Status.GENERATING;
