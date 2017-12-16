@@ -64,7 +64,7 @@ public class SiteswapGenerationFragment extends Fragment {
             return;
         }
         if (mTask.getStatus() == AsyncTask.Status.FINISHED) {
-            mTask.onPostExecute(null);
+            mTask.generationComplete();
         }
     }
 
@@ -95,7 +95,7 @@ public class SiteswapGenerationFragment extends Fragment {
             catch (java.lang.RuntimeException e) {
                 mIsError = true;
                 // This exceptions occurs, if the Andoid system recycles the memory of the
-                // activity, but doInBackgound is still executed in backgound.
+                // activity, but doInBackgound is still executed in background.
             }
             return null;
         }
@@ -103,6 +103,10 @@ public class SiteswapGenerationFragment extends Fragment {
         @Override
         protected void onPostExecute(Void ignore) {
 
+            generationComplete();
+        }
+
+        private void generationComplete() {
             if (mIsError) {
                 return;
             }
