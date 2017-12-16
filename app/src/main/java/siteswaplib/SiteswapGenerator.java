@@ -248,6 +248,9 @@ public class SiteswapGenerator implements Serializable{
 				min = mMaxThrow;
 			max = mMaxThrow;
 			uniqeMax = mMaxThrow + 1; // same value as max would result in wrong index calculation
+			if (mPeriodLength == 1) {
+				max = mNumberOfObjects;
+			}
 		}
 		else {
 
