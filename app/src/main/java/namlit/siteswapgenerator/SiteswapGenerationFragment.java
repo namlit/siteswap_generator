@@ -1,5 +1,6 @@
 package namlit.siteswapgenerator;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,6 +24,12 @@ public class SiteswapGenerationFragment extends Fragment {
 
     @Override
     public void onAttach(Context context) {
+        super.onAttach(context);
+        mCallbacks = (SiteswapGenerationCallbacks) context;
+    }
+
+    @Override
+    public void onAttach(Activity context) {
         super.onAttach(context);
         mCallbacks = (SiteswapGenerationCallbacks) context;
     }
