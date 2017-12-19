@@ -9,6 +9,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -195,6 +196,17 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_about)
         {
             showAboutDialog();
+        }
+        else if (id == R.id.action_help) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(Html.fromHtml(getString(R.string.help_activity__help_html_text)))
+                    .setNeutralButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+            builder.create().show();
         }
 
         return super.onOptionsItemSelected(item);
