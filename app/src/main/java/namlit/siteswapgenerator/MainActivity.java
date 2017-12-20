@@ -200,12 +200,7 @@ public class MainActivity extends AppCompatActivity
         else if (id == R.id.action_help) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(Html.fromHtml(getString(R.string.help_activity__help_html_text)))
-                    .setNeutralButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
+                    .setNeutralButton(getString(R.string.back), null);
             builder.create().show();
         }
 
