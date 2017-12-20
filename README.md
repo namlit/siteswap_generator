@@ -92,4 +92,4 @@ Note that the Random Generation Mode does not check for duplicate Siteswaps. The
 
 ## Detailed Siteswap View with Local Siteswaps
 
-When clicking on a Siteswap, a detailed view of the Siteswap including a local representation is given. A good starting position is automatically determined, but the Siteswap can also manually be rotated to alternative starting positions. To simplify finding a starting position for compatible Siteswaps, the interface is calculated as well. All patterns are started from juggler A.
+When clicking on a Siteswap, a detailed view including a local representation is given. A good starting position is automatically determined, but the Siteswap can also manually be rotated to alternative starting positions. To simplify finding a starting position for compatible Siteswaps, the interface is calculated as well. All patterns are started from juggler A.
