@@ -12,11 +12,15 @@ This is an Andoid App for generating juggling [Siteswaps](https://en.wikipedia.o
 
 # Get the App
 
-The App is available at the Google Playstore: <https://play.google.com/store/apps/details?id=namlit.siteswapgenerator>
+<a href="https://f-droid.org/packages/namlit.siteswapgenerator/" target="_blank">
+<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80"/></a>
+<a href="https://play.google.com/store/apps/details?id=namlit.siteswapgenerator" target="_blank">
+<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" height="80"/></a>
 
 ## Becoming a Beta Tester
 
 App updates are usually released as beta versions first. To get the newest features as soon as they are available you can enter the beta testing with the following link: <https://play.google.com/apps/testing/namlit.siteswapgenerator>
+
 # How to use the App
 
 ## Generating Siteswaps
