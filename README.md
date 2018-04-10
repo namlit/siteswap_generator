@@ -101,3 +101,11 @@ Note that the Random Generation Mode does not check for duplicate Siteswaps. The
 ## Detailed Siteswap View with Local Siteswaps
 
 When clicking on a Siteswap, a detailed view including a local representation is given. A good starting position is automatically determined, but the Siteswap can also manually be rotated to alternative starting positions. To simplify finding a starting position for compatible Siteswaps, the interface is calculated as well. All patterns are started from juggler A.
+
+# License
+
+Copyright 2017 Tilman Sinning
+
+Licensed under the GPLv3: http://www.gnu.org/licenses/gpl-3.0.html
+
+Google Play and the Google Play logo are trademarks of Google LLC.
