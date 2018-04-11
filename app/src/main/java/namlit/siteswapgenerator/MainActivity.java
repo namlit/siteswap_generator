@@ -152,6 +152,8 @@ public class MainActivity extends AppCompatActivity
                     int maxThrow = Integer.valueOf(mMaxThrow.getText().toString());
                     int minThrow = Integer.valueOf(mMinThrow.getText().toString());
                     int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
+                    if (numberOfJugglers < 1 || periodLength < 1)
+                        throw new IllegalArgumentException();
 
                     if (filter instanceof NumberFilter) {
 
@@ -163,7 +165,7 @@ public class MainActivity extends AppCompatActivity
                         new PatternFilterDialog().show(getSupportFragmentManager(),
                                 getString(R.string.pattern_filter__dialog_tag), numberOfJugglers, filter);
 
-                } catch (NumberFormatException e) {
+                } catch (IllegalArgumentException e) {
                     Toast.makeText(getApplicationContext(), getString(R.string.main_activity__invalid_input_value),
                             Toast.LENGTH_SHORT).show();
                 }
@@ -179,13 +181,15 @@ public class MainActivity extends AppCompatActivity
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 try {
                     int numberOfJugglers = Integer.valueOf(s.toString());
+                    if (numberOfJugglers < 1)
+                        throw new IllegalArgumentException();
                     Filter.removeDefaultFilters(mFilterList, numberOfJugglers);
                     Filter.addZips(mFilterList, numberOfJugglers);
                     Filter.addZaps(mFilterList, numberOfJugglers);
                     Filter.addHolds(mFilterList, numberOfJugglers);
                     mFilterListAdapter.notifyDataSetChanged();
                 }
-                catch (NumberFormatException e) {
+                catch (IllegalArgumentException e) {
                 }
             }
             @Override
@@ -287,6 +291,8 @@ public class MainActivity extends AppCompatActivity
             int maxThrow = Integer.valueOf(mMaxThrow.getText().toString());
             int minThrow = Integer.valueOf(mMinThrow.getText().toString());
             int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
+            if (periodLength < 1 || numberOfJugglers < 1)
+                throw new IllegalArgumentException();
 
             if (mFilterTypeSpinner.getSelectedItemPosition() == PATTERN_FILTER_ITEM_NUMBER) {
 
@@ -298,7 +304,7 @@ public class MainActivity extends AppCompatActivity
 
             }
         }
-        catch (NumberFormatException e) {
+        catch (IllegalArgumentException e) {
             Toast.makeText(this, getString(R.string.main_activity__invalid_input_value),
                     Toast.LENGTH_SHORT).show();
         }
@@ -344,6 +350,9 @@ public class MainActivity extends AppCompatActivity
             int timeout = Integer.valueOf(mTimeout.getText().toString());
             boolean isRandomGenerationMode = mRandomGenerationModeCheckbox.isChecked();
 
+            if (numberOfObjects < 1 || periodLength < 1 || numberOfJugglers < 1)
+                throw new IllegalArgumentException();
+
 
             SiteswapGenerator siteswapGenerator = new SiteswapGenerator(periodLength, maxThrow,
                     minThrow, numberOfObjects, numberOfJugglers, mFilterList);
@@ -355,7 +364,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
 
         }
-        catch (NumberFormatException e) {
+        catch (IllegalArgumentException e) {
             Toast.makeText(this, getString(R.string.main_activity__invalid_input_value),
                     Toast.LENGTH_SHORT).show();
         }
@@ -366,6 +375,8 @@ public class MainActivity extends AppCompatActivity
         try {
             boolean checked = ((CheckBox) view).isChecked();
             int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
+            if (numberOfJugglers < 1)
+                throw new IllegalArgumentException();
 
             switch (view.getId()) {
                 case R.id.include_zips_checkbox:
@@ -389,7 +400,7 @@ public class MainActivity extends AppCompatActivity
             }
             mFilterListAdapter.notifyDataSetChanged();
         }
-        catch (NumberFormatException e) {
+        catch (IllegalArgumentException e) {
         }
 
     }
@@ -397,6 +408,8 @@ public class MainActivity extends AppCompatActivity
     private void updateAutoFilters() {
         try {
             int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
+            if (numberOfJugglers < 1)
+                throw new IllegalArgumentException();
             int minThrow = Integer.valueOf(mMinThrow.getText().toString());
             Filter.addDefaultFilters(mFilterList, numberOfJugglers, minThrow);
             onCheckboxClicked(mZipsCheckbox);   // Updates the filter list corresponding to checkbox
@@ -404,7 +417,7 @@ public class MainActivity extends AppCompatActivity
             onCheckboxClicked(mHoldsCheckbox);  // Updates the filter list corresponding to checkbox
             mFilterListAdapter.notifyDataSetChanged();
         }
-        catch (NumberFormatException e) {
+        catch (IllegalArgumentException e) {
         }
     }
 

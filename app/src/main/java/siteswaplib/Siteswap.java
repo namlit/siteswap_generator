@@ -39,17 +39,17 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 
 	public Siteswap(Siteswap s) {
 		this.mData = new CyclicByteArray(s.mData);
-		this.mNumberOfJugglers = s.mNumberOfJugglers;
+		setNumberOfJugglers(s.getNumberOfJugglers());
 	}
 	
 	public Siteswap(byte[] data, int numberOfJugglers) {
 		this.mData = new CyclicByteArray(data);
-		this.mNumberOfJugglers = numberOfJugglers;
+		setNumberOfJugglers(numberOfJugglers);
 	}
 
 	public Siteswap(String siteswap, int numberOfJugglers) {
 		this.mData = new CyclicByteArray(parseString(siteswap));
-		this.mNumberOfJugglers = numberOfJugglers;
+		setNumberOfJugglers(numberOfJugglers);
 	}
 
 	public Siteswap(String siteswap) {
@@ -93,6 +93,12 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 
 	public int getNumberOfJugglers() {
 		return mNumberOfJugglers;
+	}
+
+	private void setNumberOfJugglers(int numberOfJugglers) {
+		this.mNumberOfJugglers = numberOfJugglers;
+		if (numberOfJugglers < 1)
+			this.mNumberOfJugglers = 1;
 	}
 	
 	public int getPartialSum(int startIndex, int stopIndex) {

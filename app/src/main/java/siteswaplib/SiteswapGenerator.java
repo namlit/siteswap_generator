@@ -43,9 +43,14 @@ public class SiteswapGenerator implements Serializable{
 
 	public SiteswapGenerator(int length, int max, int min, int objects, int number_of_jugglers) {
 		this.mPeriodLength = length;
+		if (length < 1)
+			this.mPeriodLength = 1;
 		this.mMaxThrow = (byte) max;
 		this.mMinThrow = (byte) min;
 		this.mNumberOfObjects = (byte) objects;
+		if (objects < 1) {
+			this.mNumberOfObjects = 1;
+		}
 		mIsCanceled = new AtomicBoolean(false);
 		setNumberOfJugglers(number_of_jugglers);
         mFilterList = new LinkedList<Filter>();
@@ -101,6 +106,8 @@ public class SiteswapGenerator implements Serializable{
 	
 	public void setNumberOfJugglers(int numberOfJugglers) {
 		this.mNumberOfJugglers = numberOfJugglers;
+		if (numberOfJugglers < 1)
+			this.mNumberOfJugglers = 1;
 	}
 
 	public void setPeriodLength(int periodLength) {
