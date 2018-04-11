@@ -40,6 +40,7 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
     private TextView mPeriodLengthTextview;
     private TextView mIsValidTextview;
     private TextView mLocalSiteswapLegendTextview;
+    private CausalDiagram mCausalDiagram;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +63,8 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
         mPeriodLengthTextview = (TextView) findViewById(R.id.period_length_textview);
         mIsValidTextview = (TextView) findViewById(R.id.is_valid_text_view);
         mLocalSiteswapLegendTextview = (TextView) findViewById(R.id.local_siteswap_legend_textview);
+        mCausalDiagram = (CausalDiagram) findViewById(R.id.causal_diagram_view);
+        mCausalDiagram.setSiteswap(mSiteswap);
 
         updateTextViews();
 
@@ -107,6 +110,8 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
 
         mLocalSiteswapTextview.setText(Html.fromHtml(localHtmlString));
         //mLocalSiteswapTextview.setText(Html.fromHtml("Juggler A: 4 2.5 3.5"));
+
+        mCausalDiagram.invalidate();
 
         mLocalSiteswapLegendTextview.setText(Html.fromHtml(getString(R.string.detailed_siteswap__legend_html)));
     }
