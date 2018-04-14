@@ -137,6 +137,7 @@
     <string name="detailed_siteswap__number_of_objects">Number of Objects: </string>
     <string name="detailed_siteswap__period_length">Period Length: </string>
     <string name="detailed_siteswap__is_valid">Is Valid: </string>
+    <string name="detailed_siteswap__local_siteswap"><![CDATA[<big>Local Siteswap:</big>]]></string>
     <string name="detailed_siteswap__causal_diagram">Causal Diagram: </string>
 
     <string name="detailed_siteswap__legend_html">

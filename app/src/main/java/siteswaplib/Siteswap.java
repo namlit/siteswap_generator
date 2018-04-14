@@ -692,6 +692,10 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return true;
 	}
 
+	public String stringAt(int index) {
+		return Character.toString(intToChar(at(index)));
+	}
+
 	public static String intToString(int value) {
 		if (value == SELF)
 			return "self";
