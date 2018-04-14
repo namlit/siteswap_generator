@@ -71,6 +71,19 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	public int period_length() {
 		return mData.length();
 	}
+
+	public int getNonMirroredPeriod() {
+		int length = period_length();
+		int number_of_hands = getNumberOfHands();
+		while (length % number_of_hands != 0) {
+			length += period_length();
+		}
+		return length;
+	}
+
+	public int getNumberOfHands() {
+		return 2 * getNumberOfJugglers();
+	}
 	
 	public void swap(int index) {
 		byte temp = mData.at(index + 1);
@@ -677,6 +690,10 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		}
 
 		return true;
+	}
+
+	public String stringAt(int index) {
+		return Character.toString(intToChar(at(index)));
 	}
 
 	public static String intToString(int value) {

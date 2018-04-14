@@ -38,8 +38,9 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
     private TextView mIntefacePatternTextview;
     private TextView mNumberOfObjectsTextview;
     private TextView mPeriodLengthTextview;
-    private TextView mIsValidTextview;
     private TextView mLocalSiteswapLegendTextview;
+    private CausalDiagram mCausalDiagram;
+    private CausalDiagram mLadderDiagram;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +61,11 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
         mIntefacePatternTextview = (TextView) findViewById(R.id.interface_pattern_text_view);
         mNumberOfObjectsTextview = (TextView) findViewById(R.id.number_of_objects_textview);
         mPeriodLengthTextview = (TextView) findViewById(R.id.period_length_textview);
-        mIsValidTextview = (TextView) findViewById(R.id.is_valid_text_view);
         mLocalSiteswapLegendTextview = (TextView) findViewById(R.id.local_siteswap_legend_textview);
+        mCausalDiagram = (CausalDiagram) findViewById(R.id.causal_diagram_view);
+        mCausalDiagram.setSiteswap(mSiteswap);
+        mLadderDiagram = (CausalDiagram) findViewById(R.id.ladder_diagram_view);
+        mLadderDiagram.setSiteswap(mSiteswap);
 
         updateTextViews();
 
@@ -73,7 +77,6 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
         mIntefacePatternTextview.setText(mSiteswap.toInterface().toPattern().toString());
         mNumberOfObjectsTextview.setText(String.valueOf(mSiteswap.getNumberOfObjects()));
         mPeriodLengthTextview.setText(String.valueOf(mSiteswap.period_length()));
-        mIsValidTextview.setText(String.valueOf(mSiteswap.isValid()));
 
 
         String globalHtmlString = "<font color=\"grey\">" +
@@ -107,6 +110,9 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
 
         mLocalSiteswapTextview.setText(Html.fromHtml(localHtmlString));
         //mLocalSiteswapTextview.setText(Html.fromHtml("Juggler A: 4 2.5 3.5"));
+
+        mCausalDiagram.invalidate();
+        mLadderDiagram.invalidate();
 
         mLocalSiteswapLegendTextview.setText(Html.fromHtml(getString(R.string.detailed_siteswap__legend_html)));
     }
