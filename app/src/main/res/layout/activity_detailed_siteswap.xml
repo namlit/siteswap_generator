@@ -128,25 +128,6 @@
 
                 </TableRow>
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        android:id="@+id/number_jugglers_view"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/detailed_siteswap__is_valid" />
-
-                    <TextView
-                        android:id="@+id/is_valid_text_view"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="@android:style/TextAppearance.Large"
-                        android:text="@string/detailed_siteswap__interface" />
-
-                </TableRow>
-
             </TableLayout>
 
             <TextView
@@ -177,6 +158,35 @@
                         android:id="@+id/causal_diagram_view"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:paddingLeft="0dp"
+                        android:paddingRight="0dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/ladder_diagram_textview"
+                style="@android:style/TextAppearance.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:text="@string/detailed_siteswap__ladder_diagram" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <namlit.siteswapgenerator.CausalDiagram
+                        android:id="@+id/ladder_diagram_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:isLadderDiagram="true"
                         android:paddingLeft="0dp"
                         android:paddingRight="0dp"
                         android:paddingTop="10dp"

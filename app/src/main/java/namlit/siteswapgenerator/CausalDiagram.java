@@ -19,6 +19,7 @@
 package namlit.siteswapgenerator;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -37,6 +38,7 @@ import siteswaplib.Siteswap;
 
 public class CausalDiagram extends View {
 
+    private boolean mIsLadderDiagram;
     private Paint mTextPaint;
     private Paint mHandTextPaint;
     private Paint mJugglerNamePaint;
@@ -58,6 +60,16 @@ public class CausalDiagram extends View {
 
     public CausalDiagram(Context context, AttributeSet attrs) {
         super(context, attrs);
+        TypedArray a = context.getTheme().obtainStyledAttributes(
+                attrs,
+                R.styleable.CausalDiagram,
+                0, 0);
+        try {
+            mIsLadderDiagram = a.getBoolean(R.styleable.CausalDiagram_isLadderDiagram, false);
+        } finally {
+            a.recycle();
+        }
+
         init();
     }
 
@@ -103,7 +115,6 @@ public class CausalDiagram extends View {
             drawConnection(canvas, i);
 
         }
-
     }
 
     private boolean isTextAbove(int index) {
@@ -123,9 +134,15 @@ public class CausalDiagram extends View {
         canvas.drawText(handText, x, handTextPosY, mHandTextPaint);
     }
 
+    private int getStepIndex(int startNodeIndex){
+        if (mIsLadderDiagram) {
+            return mSiteswap.at(startNodeIndex);
+        }
+        return mSiteswap.at(startNodeIndex) - 2 * mSiteswap.getNumberOfJugglers();
+    }
+
     private void drawConnection(Canvas canvas, int startNodeIndex) {
-        int stepIndex = mSiteswap.at(startNodeIndex) -
-                2 * mSiteswap.getNumberOfJugglers();
+        int stepIndex = getStepIndex(startNodeIndex);
         int stopNodeIndex = startNodeIndex + stepIndex;
         if (stopNodeIndex < 0)
             return;
