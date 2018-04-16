@@ -275,12 +275,30 @@
             </LinearLayout>
         </ScrollView>
 
-        <Button
-            android:id="@+id/generate_siteswaps_button"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="generateSiteswaps"
-            android:text="@string/main_activity__generate_siteswaps_button" />
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/enter_siteswap_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="enterSiteswap"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:text="@string/main_activity__enter_siteswap_button" />
+
+            <Button
+                android:id="@+id/generate_siteswaps_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="generateSiteswaps"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:text="@string/main_activity__generate_siteswaps_button" />
+        </LinearLayout>
+
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

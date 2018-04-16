@@ -337,6 +337,22 @@ public class MainActivity extends AppCompatActivity
         onAddSiteswapFilter(newFilter);
     }
 
+    public void enterSiteswap(View button) {
+
+        try {
+            int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
+            if (numberOfJugglers < 1)
+                throw new IllegalArgumentException();
+
+            new EnterSiteswapDialog().show(getSupportFragmentManager(),
+                    getString(R.string.enter_siteswap__dialog_tag), numberOfJugglers);
+        }
+        catch (IllegalArgumentException e) {
+            Toast.makeText(this, getString(R.string.main_activity__invalid_input_value),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public void generateSiteswaps(View view) {
         Intent intent = new Intent(this, ShowSiteswaps.class);
 

@@ -38,9 +38,12 @@
     </string-array>
 
     <string name="main_activity__add_filter_button">Add</string>
+    <string name="main_activity__enter_siteswap_button">Enter Siteswap</string>
     <string name="main_activity__generate_siteswaps_button">Generate Siteswaps</string>
 
     <string name="main_activity__invalid_input_value">Invalid Input Value</string>
+    <string name="main_activity__invalid_site_swap">The siteswap is invalid: </string>
+    <string name="main_activity__jugglers">jugglers</string>
     <string name="main_activity__serialization_error_toast">Error during filter list serialization</string>
     <string name="main_activity__deserialization_error_toast">Error during filter list deserialization</string>
 
@@ -128,6 +131,9 @@
     <string name="number_filter__shared_preferences_throw_height_index">PATTERN_FILTER__SHARED_PREFERNECES_THROW_HEIGHT_INDEX</string>
     <string name="number_filter__shared_preferences_number_index">PATTERN_FILTER__SHARED_PREFERNECES_NUMBER_INDEX</string>
     <string name="number_filter__dialog_tag">NUMBER_FILTER__DIALOG_TAG</string>
+
+    <string name="enter_siteswap__title">Enter Siteswap</string>
+    <string name="enter_siteswap__dialog_tag">ENTER_SITESWAP__DIALOG_TAG</string>
 
     <string name="detailed_siteswap__title">Siteswap Info</string>
     <string name="detailed_siteswap__rotate_left">&lt;</string>

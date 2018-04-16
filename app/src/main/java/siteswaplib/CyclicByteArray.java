@@ -38,10 +38,14 @@ public class CyclicByteArray implements Iterable<Byte>, Iterator<Byte>, Serializ
 	}
 	
 	public byte at(int index) {
+		if (length() == 0)
+			return 0;
 		return data[((first_element_index + index) % length() + length()) % length()];
 	}
 	
 	public void modify(int index, byte value) {
+		if (length() == 0)
+			return;
 		data[((first_element_index + index) % length() + length()) % length()] = value;
 	}
 	
@@ -50,12 +54,16 @@ public class CyclicByteArray implements Iterable<Byte>, Iterator<Byte>, Serializ
 	}
 	
 	public void rotateRight(int positions) {
+		if (length() == 0)
+			return;
 		first_element_index = (first_element_index - positions) % length();
 		if (first_element_index < 0)
 			first_element_index += length();
 	}
 	
 	public void rotateLeft(int positions) {
+		if (length() == 0)
+			return;
 		first_element_index = (first_element_index + positions) % length();
 		if (first_element_index < 0)
 			first_element_index += length();

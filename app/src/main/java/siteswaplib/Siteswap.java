@@ -101,6 +101,8 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	}
 	
 	public int getNumberOfObjects() {
+		if (period_length() == 0)
+			return 0;
 		return getPartialSum(0, period_length()-1) / period_length();
 	}
 
