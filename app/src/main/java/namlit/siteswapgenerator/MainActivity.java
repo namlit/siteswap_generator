@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 try {
                     int numberOfJugglers = Integer.valueOf(s.toString());
-                    if (numberOfJugglers < 1)
+                    if (numberOfJugglers < 1 || numberOfJugglers > 20)
                         throw new IllegalArgumentException();
                     Filter.removeDefaultFilters(mFilterList, numberOfJugglers);
                     Filter.addZips(mFilterList, numberOfJugglers);
@@ -424,7 +424,7 @@ public class MainActivity extends AppCompatActivity
     private void updateAutoFilters() {
         try {
             int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
-            if (numberOfJugglers < 1)
+            if (numberOfJugglers < 1 || numberOfJugglers > 20)
                 throw new IllegalArgumentException();
             int minThrow = Integer.valueOf(mMinThrow.getText().toString());
             Filter.addDefaultFilters(mFilterList, numberOfJugglers, minThrow);
