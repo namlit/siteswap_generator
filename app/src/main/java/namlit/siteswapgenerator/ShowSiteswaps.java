@@ -20,8 +20,12 @@ package namlit.siteswapgenerator;
 
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.ShareActionProvider;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -39,6 +43,8 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
     private LinkedList<Siteswap> mSiteswapList = null;
     private SiteswapGenerator.Status mGenerationStatus = SiteswapGenerator.Status.GENERATING;
     private SiteswapGenerationFragment mSiteswapGenerationFragment;
+    private ShareActionProvider mShareActionProvider;
+
 
     ListView mSiteswapListView;
 
@@ -67,6 +73,35 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
         }
         else {
             mSiteswapGenerationFragment.getSiteswapGenerator();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_siteswap_list, menu);
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        setShareIntent();
+
+        return true;
+    }
+
+    private void setShareIntent() {
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        String siteswapString = "";
+        if (mSiteswapList != null) {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (Siteswap siteswap: mSiteswapList)
+            {
+                stringBuilder.append(siteswap.toString() + "\n");
+            }
+            siteswapString = stringBuilder.toString();
+        }
+        shareIntent.putExtra(Intent.EXTRA_TEXT, siteswapString);
+        shareIntent.setType("text/plain");
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(shareIntent);
         }
     }
 
@@ -116,5 +151,7 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
         mGenerator = generator;
         mGenerationStatus = status;
         loadSiteswaps();
+        setShareIntent();
+
     }
 }

@@ -71,6 +71,7 @@
     <string name="cancel">cancel</string>
     <string name="abort">abort</string>
     <string name="back">back</string>
+    <string name="share">Share</string>
 
     <string name="option_about__source_code_at">Source Code at:</string>
     <string name="option_about__github_address">https://github.com/namlit/siteswap_generator</string>
