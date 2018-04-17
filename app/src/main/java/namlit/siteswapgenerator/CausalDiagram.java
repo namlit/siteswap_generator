@@ -57,6 +57,7 @@ public class CausalDiagram extends View {
     private float mStrokeWidth;
     private float mJugglerNameDist;
     private float mArrowHeadSize;
+    private int mNumberOfNodes;
 
     public CausalDiagram(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -79,12 +80,18 @@ public class CausalDiagram extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int rowLengthCenterPoints = (mSiteswap.getNonMirroredPeriod() /
+        mNumberOfNodes = mSiteswap.getNonMirroredPeriod();
+        int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
+        int rowLengthCenterPoints = (mNumberOfNodes /
                 mSiteswap.getNumberOfJugglers()) * (int) mNodeXDistance;
         int circleSize = 2 * (int) mNodeRadius + (int) mStrokeWidth;
         int rowOffset = (int) mNodeXDistance / mSiteswap.getNumberOfJugglers();
         int minw = getPaddingLeft() + getPaddingRight() + (int) mJugglerNameDist +
                 rowLengthCenterPoints + circleSize - rowOffset;
+        if (minw < parentWidth) {
+            minw = parentWidth;
+            mNumberOfNodes = (int) ((minw / mNodeXDistance * mSiteswap.getNumberOfJugglers()) - 1);
+        }
         int w = resolveSizeAndState(minw, widthMeasureSpec, 1);
 
         int minh = getPaddingTop() + getPaddingBottom() +
@@ -106,7 +113,7 @@ public class CausalDiagram extends View {
                     getPaddingLeft(), numberTextPosY, mJugglerNamePaint);
         }
 
-        for(int i = 0; i < mSiteswap.getNonMirroredPeriod(); ++i) {
+        for(int i = 0; i < mNumberOfNodes; ++i) {
             boolean isRightHand = (i / mSiteswap.getNumberOfJugglers()) % 2 == 0;
 
             drawNode(canvas, getNodePosition(i).x, getNodePosition(i).y, mSiteswap.stringAt(i),
