@@ -72,6 +72,12 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return mData.length();
 	}
 
+	public int local_period_length() {
+		if (period_length() % getNumberOfJugglers() == 0)
+			return period_length() / getNumberOfJugglers();
+		return period_length();
+	}
+
 	public int getNonMirroredPeriod() {
 		int length = period_length();
 		int number_of_hands = getNumberOfHands();
@@ -581,7 +587,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		for(int juggler = 0; juggler < mNumberOfJugglers; ++juggler) {
 			String str = new String();
 			DecimalFormat formatter = new DecimalFormat("0.#");
-			for(int i = 0; i < period_length(); ++i) {
+			for(int i = 0; i < local_period_length(); ++i) {
 				int position = juggler + i*mNumberOfJugglers;
 				str += formatter.format(at(position) / (double) mNumberOfJugglers);
 				if (Siteswap.isPass(at(position), mNumberOfJugglers)) {
