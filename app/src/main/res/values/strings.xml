@@ -147,6 +147,7 @@
     <string name="detailed_siteswap__local_siteswap"><![CDATA[<big>Local Siteswap:</big>]]></string>
     <string name="detailed_siteswap__causal_diagram">Causal Diagram: </string>
     <string name="detailed_siteswap__ladder_diagram">Ladder Diagram: </string>
+    <string name="detailed_siteswap__share_global">Global:</string>
 
     <string name="detailed_siteswap__legend_html">
         <![CDATA[

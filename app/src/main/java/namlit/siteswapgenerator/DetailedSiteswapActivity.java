@@ -19,9 +19,13 @@
 package namlit.siteswapgenerator;
 
 import android.content.Intent;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.ShareActionProvider;
 import android.text.Html;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -41,6 +45,7 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
     private TextView mLocalSiteswapLegendTextview;
     private CausalDiagram mCausalDiagram;
     private CausalDiagram mLadderDiagram;
+    private ShareActionProvider mShareActionProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +76,45 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_detailed_siteswap, menu);
+        MenuItem item = menu.findItem(R.id.menu_item_share_detailed);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        setShareIntent();
+
+        return true;
+    }
+
+    private void setShareIntent() {
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        String siteswapString = "";
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(getString(R.string.detailed_siteswap__share_global) + " ");
+        Siteswap getin = mSiteswap.calculateGetin();
+        if (getin.period_length() != 0) {
+            stringBuilder.append(getin.toString());
+            stringBuilder.append(" | ");
+        }
+        stringBuilder.append(mSiteswap.toString());
+        Siteswap getout = mSiteswap.calculateGetout();
+        if (getout.period_length() != 0) {
+            stringBuilder.append(" | ");
+            stringBuilder.append(getout.toString());
+        }
+        stringBuilder.append("\n");
+        stringBuilder.append(Html.fromHtml(createLocalHtmlString("|")).toString());
+
+        siteswapString = stringBuilder.toString();
+        shareIntent.putExtra(Intent.EXTRA_TEXT, siteswapString);
+        shareIntent.setType("text/plain");
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(shareIntent);
+        }
+    }
+
     public void updateTextViews() {
 
         mIntefaceTextview.setText(mSiteswap.toInterface().toString());
@@ -88,6 +132,23 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
                 "</font> ";
         mGlobalSiteswapTextview.setText(Html.fromHtml(globalHtmlString));
 
+        String localHtmlString = createLocalHtmlString();
+
+        mLocalSiteswapTextview.setText(Html.fromHtml(localHtmlString));
+        //mLocalSiteswapTextview.setText(Html.fromHtml("Juggler A: 4 2.5 3.5"));
+
+        mCausalDiagram.invalidate();
+        mLadderDiagram.invalidate();
+        setShareIntent();
+
+        mLocalSiteswapLegendTextview.setText(Html.fromHtml(getString(R.string.detailed_siteswap__legend_html)));
+    }
+
+    private String createLocalHtmlString() {
+        return createLocalHtmlString("");
+    }
+
+    private String createLocalHtmlString(String getinoutSeparation) {
         String localHtmlString = "<big>Local Siteswap:</big><br>";
         Vector<String> localSiteswapStrings = mSiteswap.toLocalString();
         Siteswap[] localGetins = mSiteswap.calculateLocalGetins();
@@ -102,19 +163,16 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
             localHtmlString += ": ";
             localHtmlString += "<font color=\"grey\"><small>" +
                     localGetins[juggler].toDividedString() + "</small></font> ";
+            if (localGetins[juggler].period_length() != 0)
+                localHtmlString += getinoutSeparation + "&ensp;";
             localHtmlString += localSiteswapStrings.elementAt(juggler);
+            if (localGetouts[juggler].period_length() != 0)
+                localHtmlString += getinoutSeparation + "&ensp;";
             localHtmlString += "<font color=\"grey\"><small>" +
                     localGetouts[juggler].toDividedString() + "</small></font> ";
             localHtmlString += "<br>";
         }
-
-        mLocalSiteswapTextview.setText(Html.fromHtml(localHtmlString));
-        //mLocalSiteswapTextview.setText(Html.fromHtml("Juggler A: 4 2.5 3.5"));
-
-        mCausalDiagram.invalidate();
-        mLadderDiagram.invalidate();
-
-        mLocalSiteswapLegendTextview.setText(Html.fromHtml(getString(R.string.detailed_siteswap__legend_html)));
+        return localHtmlString;
     }
 
     public void rotateLeft(View view) {
