@@ -18,6 +18,7 @@
 
 package namlit.siteswapgenerator;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,6 +26,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.inputmethodservice.Keyboard;
+import android.inputmethodservice.KeyboardView;
+import android.inputmethodservice.KeyboardView.OnKeyboardActionListener;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -32,6 +36,7 @@ import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -72,11 +77,27 @@ public class MainActivity extends AppCompatActivity
     private Spinner mFilterTypeSpinner;
     private NonScrollListView mFilterListView;
     private ArrayAdapter<Filter> mFilterListAdapter;
+    private Keyboard mKeyboard;
+    private KeyboardView mKeyboardView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Create the Keyboard
+        mKeyboard = new Keyboard(this,R.xml.siteswap_keyboard);
+
+        // Lookup the KeyboardView
+        mKeyboardView = (KeyboardView)findViewById(R.id.keyboardview);
+        // Attach the keyboard to the view
+        mKeyboardView.setKeyboard( mKeyboard );
+
+        // Do not show the preview balloons
+        //mKeyboardView.setPreviewEnabled(false);
+
+        // Install the key handler
+        mKeyboardView.setOnKeyboardActionListener(mOnKeyboardActionListener);
 
         mNumberOfObjects    = (EditText) findViewById(R.id.number_of_objects);
         mPeriodLength       = (EditText) findViewById(R.id.period_length);
@@ -282,6 +303,45 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void openKeyboard(View v)
+    {
+        mKeyboardView.setVisibility(View.VISIBLE);
+        mKeyboardView.setEnabled(true);
+        if( v!=null)((InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(v.getWindowToken(), 0);
+    }
+
+    private OnKeyboardActionListener mOnKeyboardActionListener = new OnKeyboardActionListener() {
+        @Override public void onKey(int primaryCode, int[] keyCodes)
+        {
+            //Here check the primaryCode to see which key is pressed
+            //based on the android:codes property
+            if(primaryCode==1)
+            {
+                //Log.i("Key","You just pressed 1 button");
+            }
+        }
+
+        @Override public void onPress(int arg0) {
+        }
+
+        @Override public void onRelease(int primaryCode) {
+        }
+
+        @Override public void onText(CharSequence text) {
+        }
+
+        @Override public void swipeDown() {
+        }
+
+        @Override public void swipeLeft() {
+        }
+
+        @Override public void swipeRight() {
+        }
+
+        @Override public void swipeUp() {
+        }
+    };
 
 
     public void addFilter(View view) {
