@@ -77,6 +77,12 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        setShareIntent();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_siteswap_list, menu);
         MenuItem item = menu.findItem(R.id.menu_item_share);

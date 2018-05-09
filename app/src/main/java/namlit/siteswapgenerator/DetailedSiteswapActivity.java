@@ -77,6 +77,12 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        setShareIntent();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_detailed_siteswap, menu);
         MenuItem item = menu.findItem(R.id.menu_item_share_detailed);
