@@ -47,7 +47,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.LinkedList;
-import java.util.Locale;
 
 import siteswaplib.*;
 
@@ -58,13 +57,25 @@ public class MainActivity extends AppCompatActivity
 
     private LinkedList<Filter> mFilterList;
 
-    private EditText mNumberOfObjects;
-    private EditText mPeriodLength;
-    private EditText mMaxThrow;
-    private EditText mMinThrow;
-    private EditText mNumberOfJugglers;
-    private EditText mMaxResults;
-    private EditText mTimeout;
+    private int mNumberOfObjects;
+    private int mPeriodLength;
+    private int mMaxThrow;
+    private int mMinThrow;
+    private int mNumberOfJugglers;
+    private int mMaxResults;
+    private int mTimeout;
+    private boolean mIsRandomGenerationMode;
+    private boolean mIsZips;
+    private boolean mIsZaps;
+    private boolean mIsHolds;
+    private int mFilterSpinnerPosition;
+    private EditText mNumberOfObjectsEditText;
+    private EditText mPeriodLengthEditText;
+    private EditText mMaxThrowEditText;
+    private EditText mMinThrowEditText;
+    private EditText mNumberOfJugglersEditText;
+    private EditText mMaxResultsEditText;
+    private EditText mTimeoutEditText;
     private CheckBox mRandomGenerationModeCheckbox;
     private CheckBox mZipsCheckbox;
     private CheckBox mZapsCheckbox;
@@ -78,13 +89,13 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mNumberOfObjects    = (EditText) findViewById(R.id.number_of_objects);
-        mPeriodLength       = (EditText) findViewById(R.id.period_length);
-        mMaxThrow           = (EditText) findViewById(R.id.max_throw);
-        mMinThrow           = (EditText) findViewById(R.id.min_throw);
-        mNumberOfJugglers   = (EditText) findViewById(R.id.number_of_jugglers);
-        mMaxResults         = (EditText) findViewById(R.id.max_results);
-        mTimeout            = (EditText) findViewById(R.id.timeout);
+        mNumberOfObjectsEditText = (EditText) findViewById(R.id.number_of_objects);
+        mPeriodLengthEditText = (EditText) findViewById(R.id.period_length);
+        mMaxThrowEditText = (EditText) findViewById(R.id.max_throw);
+        mMinThrowEditText = (EditText) findViewById(R.id.min_throw);
+        mNumberOfJugglersEditText = (EditText) findViewById(R.id.number_of_jugglers);
+        mMaxResultsEditText = (EditText) findViewById(R.id.max_results);
+        mTimeoutEditText = (EditText) findViewById(R.id.timeout);
         mZipsCheckbox       = (CheckBox) findViewById(R.id.include_zips_checkbox);
         mZapsCheckbox       = (CheckBox) findViewById(R.id.include_zaps_checkbox);
         mHoldsCheckbox      = (CheckBox) findViewById(R.id.include_holds_checkbox);
@@ -95,19 +106,19 @@ public class MainActivity extends AppCompatActivity
         mFilterList = new LinkedList<Filter>();
 
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        int numberOfObjects  = sharedPref.getInt(getString(R.string.main_activity__settings_number_of_objects),  7);
-        int periodLength     = sharedPref.getInt(getString(R.string.main_activity__settings_period_length),      5);
-        int maxThrow         = sharedPref.getInt(getString(R.string.main_activity__settings_max_throw),         10);
-        int minThrow         = sharedPref.getInt(getString(R.string.main_activity__settings_min_throw),          2);
-        int numberOfJugglers = sharedPref.getInt(getString(R.string.main_activity__settings_number_of_jugglers), 2);
-        int maxResults       = sharedPref.getInt(getString(R.string.main_activity__settings_max_results),      100);
-        int timeout          = sharedPref.getInt(getString(R.string.main_activity__settings_timeout),            5);
-        boolean isZips       = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_zips), true);
-        boolean isZaps       = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_zaps), false);
-        boolean isHolds      = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_holds), false);
-        boolean isRandomGenerationMode = sharedPref.getBoolean(
+        mNumberOfObjects  = sharedPref.getInt(getString(R.string.main_activity__settings_number_of_objects),  7);
+        mPeriodLength     = sharedPref.getInt(getString(R.string.main_activity__settings_period_length),      5);
+        mMaxThrow         = sharedPref.getInt(getString(R.string.main_activity__settings_max_throw),         10);
+        mMinThrow         = sharedPref.getInt(getString(R.string.main_activity__settings_min_throw),          2);
+        mNumberOfJugglers = sharedPref.getInt(getString(R.string.main_activity__settings_number_of_jugglers), 2);
+        mMaxResults       = sharedPref.getInt(getString(R.string.main_activity__settings_max_results),      100);
+        mTimeout          = sharedPref.getInt(getString(R.string.main_activity__settings_timeout),            5);
+        mIsZips       = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_zips), true);
+        mIsZaps       = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_zaps), false);
+        mIsHolds      = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_holds), false);
+        mIsRandomGenerationMode = sharedPref.getBoolean(
                 getString(R.string.main_activity__settings_is_random_generation_mode), false);
-        int filterSpinnerPosition = sharedPref.getInt(getString(R.string.main_activity__settings_filter_spinner_position), 0);
+        mFilterSpinnerPosition = sharedPref.getInt(getString(R.string.main_activity__settings_filter_spinner_position), 0);
         String serializedFilterList = sharedPref.getString(getString(R.string.main_activity__settings_filter_list), "");
 
         if (serializedFilterList != "") {
@@ -124,18 +135,18 @@ public class MainActivity extends AppCompatActivity
         }
 
 
-        mNumberOfObjects.setText(String.valueOf(numberOfObjects));
-        mPeriodLength.setText(String.valueOf(periodLength));
-        mMaxThrow.setText(String.valueOf(maxThrow));
-        mMinThrow.setText(String.valueOf(minThrow));
-        mNumberOfJugglers.setText(String.valueOf(numberOfJugglers));
-        mMaxResults.setText(String.valueOf(maxResults));
-        mTimeout.setText(String.valueOf(timeout));
-        mRandomGenerationModeCheckbox.setChecked(isRandomGenerationMode);
-        mZipsCheckbox.setChecked(isZips);
-        mZapsCheckbox.setChecked(isZaps);
-        mHoldsCheckbox.setChecked(isHolds);
-        mFilterTypeSpinner.setSelection(filterSpinnerPosition);
+        mNumberOfObjectsEditText.setText(String.valueOf(mNumberOfObjects));
+        mPeriodLengthEditText.setText(String.valueOf(mPeriodLength));
+        mMaxThrowEditText.setText(String.valueOf(mMaxThrow));
+        mMinThrowEditText.setText(String.valueOf(mMinThrow));
+        mNumberOfJugglersEditText.setText(String.valueOf(mNumberOfJugglers));
+        mMaxResultsEditText.setText(String.valueOf(mMaxResults));
+        mTimeoutEditText.setText(String.valueOf(mTimeout));
+        mRandomGenerationModeCheckbox.setChecked(mIsRandomGenerationMode);
+        mZipsCheckbox.setChecked(mIsZips);
+        mZapsCheckbox.setChecked(mIsZaps);
+        mHoldsCheckbox.setChecked(mIsHolds);
+        mFilterTypeSpinner.setSelection(mFilterSpinnerPosition);
 
 
         mFilterListAdapter = new ArrayAdapter<Filter>(
@@ -147,54 +158,53 @@ public class MainActivity extends AppCompatActivity
 
                 Filter filter = (Filter) parent.getItemAtPosition(position);
 
-                try {
-                    int periodLength = Integer.valueOf(mPeriodLength.getText().toString());
-                    int maxThrow = Integer.valueOf(mMaxThrow.getText().toString());
-                    int minThrow = Integer.valueOf(mMinThrow.getText().toString());
-                    int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
-                    if (numberOfJugglers < 1 || periodLength < 1)
-                        throw new IllegalArgumentException();
+                updateFromTextEdits();
+                if (filter instanceof NumberFilter) {
 
-                    if (filter instanceof NumberFilter) {
-
-                            new NumberFilterDialog().show(getSupportFragmentManager(),
-                                    getString(R.string.number_filter__dialog_tag),
-                                    minThrow, maxThrow, periodLength, filter);
-                    }
-                    else if (filter instanceof PatternFilter)
-                        new PatternFilterDialog().show(getSupportFragmentManager(),
-                                getString(R.string.pattern_filter__dialog_tag), numberOfJugglers, filter);
-
-                } catch (IllegalArgumentException e) {
-                    Toast.makeText(getApplicationContext(), getString(R.string.main_activity__invalid_input_value),
-                            Toast.LENGTH_SHORT).show();
+                        new NumberFilterDialog().show(getSupportFragmentManager(),
+                                getString(R.string.number_filter__dialog_tag),
+                                mMinThrow, mMaxThrow, mPeriodLength, filter);
                 }
+                else if (filter instanceof PatternFilter)
+                    new PatternFilterDialog().show(getSupportFragmentManager(),
+                            getString(R.string.pattern_filter__dialog_tag), mNumberOfJugglers, filter);
+
             }
         });
 
         updateAutoFilters();
 
-        mNumberOfJugglers.addTextChangedListener(new TextWatcher() {
+        mNumberOfJugglersEditText.addTextChangedListener(new TextWatcher() {
+            private boolean was_invalid = false;
+            private int invalid_filter_list_length = 0;
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() == 0) {
+                    was_invalid = true;
+                    invalid_filter_list_length = 0;
+                    return;
+                }
+                if (!updateAutoFilters()) {
+                    was_invalid = true;
+                    invalid_filter_list_length = mFilterList.size();
+                }
+            }
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                try {
-                    int numberOfJugglers = Integer.valueOf(s.toString());
-                    if (numberOfJugglers < 1 || numberOfJugglers > 20)
-                        throw new IllegalArgumentException();
-                    Filter.removeDefaultFilters(mFilterList, numberOfJugglers);
-                    Filter.addZips(mFilterList, numberOfJugglers);
-                    Filter.addZaps(mFilterList, numberOfJugglers);
-                    Filter.addHolds(mFilterList, numberOfJugglers);
-                    mFilterListAdapter.notifyDataSetChanged();
+                if (was_invalid && invalid_filter_list_length == mFilterList.size()) {
+                    was_invalid = false;
+                    return;
                 }
-                catch (IllegalArgumentException e) {
-                }
+                updateFromTextEdits();
+                Filter.removeDefaultFilters(mFilterList, mNumberOfJugglers);
+                Filter.addZips(mFilterList, mNumberOfJugglers);
+                Filter.addZaps(mFilterList, mNumberOfJugglers);
+                Filter.addHolds(mFilterList, mNumberOfJugglers);
+                mFilterListAdapter.notifyDataSetChanged();
             }
             @Override
             public void afterTextChanged(Editable s) {
-                updateAutoFilters();
             }
         });
 
@@ -229,84 +239,103 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    private boolean updateFromTextEdits() {
+
+        try {
+            mNumberOfObjects = Integer.valueOf(mNumberOfObjectsEditText.getText().toString());
+            mPeriodLength = Integer.valueOf(mPeriodLengthEditText.getText().toString());
+            mMaxThrow = Integer.valueOf(mMaxThrowEditText.getText().toString());
+            mMinThrow = Integer.valueOf(mMinThrowEditText.getText().toString());
+            mNumberOfJugglers = Integer.valueOf(mNumberOfJugglersEditText.getText().toString());
+            mMaxResults = Integer.valueOf(mMaxResultsEditText.getText().toString());
+            mTimeout = Integer.valueOf(mTimeoutEditText.getText().toString());
+            mIsRandomGenerationMode = mRandomGenerationModeCheckbox.isChecked();
+            mIsZips = mZipsCheckbox.isChecked();
+            mIsZaps = mZapsCheckbox.isChecked();
+            mIsHolds = mHoldsCheckbox.isChecked();
+            mFilterSpinnerPosition = mFilterTypeSpinner.getSelectedItemPosition();
+
+            if (mPeriodLength < 1)
+                throw new IllegalArgumentException(getString(R.string.main_activity__invalid_period_length));
+
+            if (mNumberOfObjects < 1)
+                throw new IllegalArgumentException(getString(R.string.main_activity__invalid_number_of_objects));
+
+            if (mNumberOfJugglers < 1 || mNumberOfJugglers > 10)
+                throw new IllegalArgumentException(getString(R.string.main_activity__invalid_number_of_jugglers));
+
+            if (mMaxThrow < mNumberOfObjects)
+                throw new IllegalArgumentException(getString(R.string.main_activity__invalid_max_throw_smaller_average));
+
+            if (mMinThrow > mNumberOfObjects)
+                throw new IllegalArgumentException(getString(R.string.main_activity__invalid_min_throw_greater_average));
+        }
+        catch (NumberFormatException e) {
+            Toast.makeText(this, getString(R.string.main_activity__invalid_input_value) + " " +
+                            String.format(getString(R.string.main_activity__could_not_convert_to_int), e.getMessage()),
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        catch (IllegalArgumentException e) {
+            Toast.makeText(this, getString(R.string.main_activity__invalid_input_value) + " " + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        return true;
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
 
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        updateFromTextEdits();
+
+        editor.putInt(getString(R.string.main_activity__settings_number_of_objects), mNumberOfObjects);
+        editor.putInt(getString(R.string.main_activity__settings_period_length), mPeriodLength);
+        editor.putInt(getString(R.string.main_activity__settings_max_throw), mMaxThrow);
+        editor.putInt(getString(R.string.main_activity__settings_min_throw), mMinThrow);
+        editor.putInt(getString(R.string.main_activity__settings_number_of_jugglers), mNumberOfJugglers);
+        editor.putInt(getString(R.string.main_activity__settings_max_results), mMaxResults);
+        editor.putInt(getString(R.string.main_activity__settings_timeout), mTimeout);
+        editor.putBoolean(getString(R.string.main_activity__settings_is_random_generation_mode), mIsRandomGenerationMode);
+        editor.putBoolean(getString(R.string.main_activity__settings_is_zips), mIsZips);
+        editor.putBoolean(getString(R.string.main_activity__settings_is_zaps), mIsZaps);
+        editor.putBoolean(getString(R.string.main_activity__settings_is_holds), mIsHolds);
+        editor.putInt(getString(R.string.main_activity__settings_filter_spinner_position), mFilterSpinnerPosition);
+
         try {
-            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
-
-            int numberOfObjects = Integer.valueOf(mNumberOfObjects.getText().toString());
-            int periodLength = Integer.valueOf(mPeriodLength.getText().toString());
-            int maxThrow = Integer.valueOf(mMaxThrow.getText().toString());
-            int minThrow = Integer.valueOf(mMinThrow.getText().toString());
-            int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
-            int maxResults = Integer.valueOf(mMaxResults.getText().toString());
-            int timeout = Integer.valueOf(mTimeout.getText().toString());
-            boolean isRandomGenerationMode = mRandomGenerationModeCheckbox.isChecked();
-            boolean isZips = mZipsCheckbox.isChecked();
-            boolean isZaps = mZapsCheckbox.isChecked();
-            boolean isHolds = mHoldsCheckbox.isChecked();
-            int filterSpinnerPosition = mFilterTypeSpinner.getSelectedItemPosition();
-
-            editor.putInt(getString(R.string.main_activity__settings_number_of_objects), numberOfObjects);
-            editor.putInt(getString(R.string.main_activity__settings_period_length), periodLength);
-            editor.putInt(getString(R.string.main_activity__settings_max_throw), maxThrow);
-            editor.putInt(getString(R.string.main_activity__settings_min_throw), minThrow);
-            editor.putInt(getString(R.string.main_activity__settings_number_of_jugglers), numberOfJugglers);
-            editor.putInt(getString(R.string.main_activity__settings_max_results), maxResults);
-            editor.putInt(getString(R.string.main_activity__settings_timeout), timeout);
-            editor.putBoolean(getString(R.string.main_activity__settings_is_random_generation_mode), isRandomGenerationMode);
-            editor.putBoolean(getString(R.string.main_activity__settings_is_zips), isZips);
-            editor.putBoolean(getString(R.string.main_activity__settings_is_zaps), isZaps);
-            editor.putBoolean(getString(R.string.main_activity__settings_is_holds), isHolds);
-            editor.putInt(getString(R.string.main_activity__settings_filter_spinner_position), filterSpinnerPosition);
-
-            try {
-                ByteArrayOutputStream bo = new ByteArrayOutputStream();
-                ObjectOutputStream so = new ObjectOutputStream(bo);
-                so.writeObject(mFilterList);
-                so.close();
-                editor.putString(getString(R.string.main_activity__settings_filter_list), Base64.encodeToString(bo.toByteArray(), Base64.DEFAULT));
-            } catch (Exception e) {
-                Toast.makeText(this, getString(R.string.main_activity__serialization_error_toast),
-                        Toast.LENGTH_SHORT).show();
-            }
-
-            editor.commit();
-        }
-        catch (NumberFormatException e) {
-            Toast.makeText(this, getString(R.string.main_activity__invalid_input_value),
+            ByteArrayOutputStream bo = new ByteArrayOutputStream();
+            ObjectOutputStream so = new ObjectOutputStream(bo);
+            so.writeObject(mFilterList);
+            so.close();
+            editor.putString(getString(R.string.main_activity__settings_filter_list), Base64.encodeToString(bo.toByteArray(), Base64.DEFAULT));
+        } catch (Exception e) {
+            Toast.makeText(this, getString(R.string.main_activity__serialization_error_toast),
                     Toast.LENGTH_SHORT).show();
         }
+
+        editor.commit();
     }
 
 
 
     public void addFilter(View view) {
 
-        try {
-            int periodLength = Integer.valueOf(mPeriodLength.getText().toString());
-            int maxThrow = Integer.valueOf(mMaxThrow.getText().toString());
-            int minThrow = Integer.valueOf(mMinThrow.getText().toString());
-            int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
-            if (periodLength < 1 || numberOfJugglers < 1)
-                throw new IllegalArgumentException();
+        if (!updateFromTextEdits())
+            return;
 
-            if (mFilterTypeSpinner.getSelectedItemPosition() == PATTERN_FILTER_ITEM_NUMBER) {
+        if (mFilterTypeSpinner.getSelectedItemPosition() == PATTERN_FILTER_ITEM_NUMBER) {
 
-                new PatternFilterDialog().show(getSupportFragmentManager(),
-                        getString(R.string.pattern_filter__dialog_tag), numberOfJugglers);
-            } else {
-                new NumberFilterDialog().show(getSupportFragmentManager(),
-                        getString(R.string.number_filter__dialog_tag), minThrow, maxThrow, periodLength);
+            new PatternFilterDialog().show(getSupportFragmentManager(),
+                    getString(R.string.pattern_filter__dialog_tag), mNumberOfJugglers);
+        } else {
+            new NumberFilterDialog().show(getSupportFragmentManager(),
+                    getString(R.string.number_filter__dialog_tag), mMinThrow, mMaxThrow, mPeriodLength);
 
-            }
-        }
-        catch (IllegalArgumentException e) {
-            Toast.makeText(this, getString(R.string.main_activity__invalid_input_value),
-                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -339,102 +368,67 @@ public class MainActivity extends AppCompatActivity
 
     public void enterSiteswap(View button) {
 
-        try {
-            int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
-            if (numberOfJugglers < 1)
-                throw new IllegalArgumentException();
+        if (!updateFromTextEdits())
+            return;
 
-            new EnterSiteswapDialog().show(getSupportFragmentManager(),
-                    getString(R.string.enter_siteswap__dialog_tag), numberOfJugglers);
-        }
-        catch (IllegalArgumentException e) {
-            Toast.makeText(this, getString(R.string.main_activity__invalid_input_value),
-                    Toast.LENGTH_SHORT).show();
-        }
+        new EnterSiteswapDialog().show(getSupportFragmentManager(),
+                getString(R.string.enter_siteswap__dialog_tag), mNumberOfJugglers);
     }
 
     public void generateSiteswaps(View view) {
+
+        if (!updateFromTextEdits())
+            return;
+
+        SiteswapGenerator siteswapGenerator = new SiteswapGenerator(mPeriodLength, mMaxThrow,
+                mMinThrow, mNumberOfObjects, mNumberOfJugglers, mFilterList);
+        siteswapGenerator.setMaxResults(mMaxResults);
+        siteswapGenerator.setTimeoutSeconds(mTimeout);
+        siteswapGenerator.setRandomGeneration(mIsRandomGenerationMode);
+
         Intent intent = new Intent(this, ShowSiteswaps.class);
-
-        try {
-            int numberOfObjects = Integer.valueOf(mNumberOfObjects.getText().toString());
-            int periodLength = Integer.valueOf(mPeriodLength.getText().toString());
-            int maxThrow = Integer.valueOf(mMaxThrow.getText().toString());
-            int minThrow = Integer.valueOf(mMinThrow.getText().toString());
-            int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
-            int maxResults = Integer.valueOf(mMaxResults.getText().toString());
-            int timeout = Integer.valueOf(mTimeout.getText().toString());
-            boolean isRandomGenerationMode = mRandomGenerationModeCheckbox.isChecked();
-
-            if (numberOfObjects < 1 || periodLength < 1 || numberOfJugglers < 1)
-                throw new IllegalArgumentException();
-
-
-            SiteswapGenerator siteswapGenerator = new SiteswapGenerator(periodLength, maxThrow,
-                    minThrow, numberOfObjects, numberOfJugglers, mFilterList);
-            siteswapGenerator.setMaxResults(maxResults);
-            siteswapGenerator.setTimeoutSeconds(timeout);
-            siteswapGenerator.setRandomGeneration(isRandomGenerationMode);
-
-            intent.putExtra(getString(R.string.intent__siteswap_generator), siteswapGenerator);
-            startActivity(intent);
-
-        }
-        catch (IllegalArgumentException e) {
-            Toast.makeText(this, getString(R.string.main_activity__invalid_input_value),
-                    Toast.LENGTH_SHORT).show();
-        }
+        intent.putExtra(getString(R.string.intent__siteswap_generator), siteswapGenerator);
+        startActivity(intent);
     }
 
     public void onCheckboxClicked(View view) {
 
-        try {
-            boolean checked = ((CheckBox) view).isChecked();
-            int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
-            if (numberOfJugglers < 1)
-                throw new IllegalArgumentException();
+        boolean checked = ((CheckBox) view).isChecked();
+        updateFromTextEdits();
 
-            switch (view.getId()) {
-                case R.id.include_zips_checkbox:
-                    if (checked)
-                        Filter.addZips(mFilterList, numberOfJugglers);
-                    else
-                        Filter.removeZips(mFilterList, numberOfJugglers);
-                    break;
-                case R.id.include_zaps_checkbox:
-                    if (checked)
-                        Filter.addZaps(mFilterList, numberOfJugglers);
-                    else
-                        Filter.removeZaps(mFilterList, numberOfJugglers);
-                    break;
-                case R.id.include_holds_checkbox:
-                    if (checked)
-                        Filter.addHolds(mFilterList, numberOfJugglers);
-                    else
-                        Filter.removeHolds(mFilterList, numberOfJugglers);
-                    break;
-            }
-            mFilterListAdapter.notifyDataSetChanged();
+        switch (view.getId()) {
+            case R.id.include_zips_checkbox:
+                if (checked)
+                    Filter.addZips(mFilterList, mNumberOfJugglers);
+                else
+                    Filter.removeZips(mFilterList, mNumberOfJugglers);
+                break;
+            case R.id.include_zaps_checkbox:
+                if (checked)
+                    Filter.addZaps(mFilterList, mNumberOfJugglers);
+                else
+                    Filter.removeZaps(mFilterList, mNumberOfJugglers);
+                break;
+            case R.id.include_holds_checkbox:
+                if (checked)
+                    Filter.addHolds(mFilterList, mNumberOfJugglers);
+                else
+                    Filter.removeHolds(mFilterList, mNumberOfJugglers);
+                break;
         }
-        catch (IllegalArgumentException e) {
-        }
+        mFilterListAdapter.notifyDataSetChanged();
 
     }
 
-    private void updateAutoFilters() {
-        try {
-            int numberOfJugglers = Integer.valueOf(mNumberOfJugglers.getText().toString());
-            if (numberOfJugglers < 1 || numberOfJugglers > 20)
-                throw new IllegalArgumentException();
-            int minThrow = Integer.valueOf(mMinThrow.getText().toString());
-            Filter.addDefaultFilters(mFilterList, numberOfJugglers, minThrow);
-            onCheckboxClicked(mZipsCheckbox);   // Updates the filter list corresponding to checkbox
-            onCheckboxClicked(mZapsCheckbox);   // Updates the filter list corresponding to checkbox
-            onCheckboxClicked(mHoldsCheckbox);  // Updates the filter list corresponding to checkbox
-            mFilterListAdapter.notifyDataSetChanged();
-        }
-        catch (IllegalArgumentException e) {
-        }
+    private boolean updateAutoFilters() {
+        if (!updateFromTextEdits())
+            return false;
+        Filter.addDefaultFilters(mFilterList, mNumberOfJugglers, mMinThrow);
+        onCheckboxClicked(mZipsCheckbox);   // Updates the filter list corresponding to checkbox
+        onCheckboxClicked(mZapsCheckbox);   // Updates the filter list corresponding to checkbox
+        onCheckboxClicked(mHoldsCheckbox);  // Updates the filter list corresponding to checkbox
+        mFilterListAdapter.notifyDataSetChanged();
+        return true;
     }
 
 

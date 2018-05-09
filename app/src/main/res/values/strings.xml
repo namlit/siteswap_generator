@@ -41,11 +41,17 @@
     <string name="main_activity__enter_siteswap_button">Enter Siteswap</string>
     <string name="main_activity__generate_siteswaps_button">Generate Siteswaps</string>
 
-    <string name="main_activity__invalid_input_value">Invalid Input Value</string>
-    <string name="main_activity__invalid_site_swap">The siteswap is invalid: </string>
+    <string name="main_activity__invalid_input_value">Invalid Input Value:</string>
+    <string name="main_activity__invalid_site_swap">The siteswap is invalid:</string>
     <string name="main_activity__jugglers">jugglers</string>
     <string name="main_activity__serialization_error_toast">Error during filter list serialization</string>
     <string name="main_activity__deserialization_error_toast">Error during filter list deserialization</string>
+    <string name="main_activity__could_not_convert_to_int">Conversion to int not possible %s</string>
+    <string name="main_activity__invalid_period_length">The period length must be greater than zero</string>
+    <string name="main_activity__invalid_number_of_objects">The number of objects must be greater than zero</string>
+    <string name="main_activity__invalid_number_of_jugglers">The number of jugglers must be between one and ten</string>
+    <string name="main_activity__invalid_max_throw_smaller_average">The maximum throw needs to be at least the number of objects</string>
+    <string name="main_activity__invalid_min_throw_greater_average">The minimum throw needs to be at maximum the number of objects</string>
 
     <string name="main_activity__option_about">About</string>
     <string name="main_activity__option_help">Help</string>
