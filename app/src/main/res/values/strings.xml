@@ -85,6 +85,8 @@
     <string name="show_siteswaps__title_cancelled">Siteswap Generation Cancelled</string>
     <string name="show_siteswaps__saved_is_no_timeout">IS_NO_TIMEOUT</string>
     <string name="show_siteswaps__saved_siteswap_generator">SITESWAP_GENERATOR</string>
+    <string name="show_siteswaps__share_to_many_siteswaps">...</string>
+
 
     <string name="filter__add_button">Add</string>
     <string name="filter__remove_button">Remove</string>

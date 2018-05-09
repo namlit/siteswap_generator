@@ -98,9 +98,16 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
         String siteswapString = "";
         if (mSiteswapList != null) {
             StringBuilder stringBuilder = new StringBuilder();
+            int char_counter = 0;
             for (Siteswap siteswap: mSiteswapList)
             {
                 stringBuilder.append(siteswap.toString() + "\n");
+                char_counter += siteswap.period_length();
+                if (char_counter >= 1000) {
+                    stringBuilder.append(getString(
+                            R.string.show_siteswaps__share_to_many_siteswaps));
+                    break;
+                }
             }
             siteswapString = stringBuilder.toString();
         }
