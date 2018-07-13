@@ -33,6 +33,9 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	protected CyclicByteArray mData;
 	protected int mNumberOfJugglers = 1;
 
+	private String mInvalidCharacters = "";
+	private boolean mIsParsingError = false;
+
 	public Siteswap() {
 		this(new byte[0]);
 	}
@@ -817,6 +820,14 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
         return true;
     }
 
+    public boolean isParsingError() {
+		return mIsParsingError;
+	}
+
+    public String getInvalidCharactersFromParsing() {
+		return mInvalidCharacters;
+	}
+
 	static public boolean isPass(int value, int numberOfJugglers) {
         return value % numberOfJugglers != 0;
 	}
@@ -827,8 +838,14 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 
 	private byte[] parseString(String str) {
 		byte[] siteswap = new byte[str.length()];
+		mInvalidCharacters = "";
+		mIsParsingError = false;
 		for (int i = 0; i < str.length(); ++i) {
 			siteswap[i] = (byte) charToInt(str.charAt(i));
+			if (siteswap[i] == INVALID) {
+				mIsParsingError = true;
+				mInvalidCharacters += str.charAt(i);
+			}
 		}
 		return siteswap;
 	}

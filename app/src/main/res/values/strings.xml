@@ -125,6 +125,7 @@
     <string name="pattern_filter__shared_preferences_local_checked">PATTERN_FILTER__SHARED_PREFERNECES_LOCAL_CHECKED</string>
     <string name="pattern_filter__shared_preferences_include_checked">PATTERN_FILTER__SHARED_PREFERNECES_INCLUDE_CHECKED</string>
     <string name="pattern_filter__shared_preferences_exclude_checked">PATTERN_FILTER__SHARED_PREFERNECES_EXCLUDE_CHECKED</string>
+    <string name="pattern_filter__parsing_error">Found the following invalid characters:</string>
     <string name="pattern_filter__toast_no_input">Empty pattern, filter could not be added.</string>
     <string name="pattern_filter__dialog_tag">PATTERN_FILTER__DIALOG_TAG</string>
 

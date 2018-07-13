@@ -27,10 +27,11 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import siteswaplib.Filter;
 import siteswaplib.InterfaceFilter;
@@ -65,34 +66,47 @@ public class PatternFilterDialog extends AddFilterDialog {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(R.layout.pattern_filter_layout)
-                .setPositiveButton(positiveButtonStringId, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which
-                    ) {
-                        Filter filter = readPatternFilter();
-                        if (filter != null) {
-                            if (mOldFilter != null)
-                                mListener.onChangeSiteswapFilter(mOldFilter, filter);
-                            else
-                                mListener.onAddSiteswapFilter(filter);
-                        }
-                    }
-                })
+                .setPositiveButton(positiveButtonStringId, null)
                 .setNegativeButton(R.string.filter__cancel_button, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
                 })
-                .setNeutralButton(R.string.filter__remove_button, new DialogInterface.OnClickListener() {
+                .setNeutralButton(R.string.filter__remove_button, null);
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialog) {
+                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
+                    public void onClick(View v) {
                         Filter filter = readPatternFilter();
-                        if (filter != null)
-                            mListener.onRemoveSiteswapFilter(filter);
+                        if (filter == null)
+                            return;
+                        if (mOldFilter != null)
+                            mListener.onChangeSiteswapFilter(mOldFilter, filter);
+                        else
+                            mListener.onAddSiteswapFilter(filter);
+                        dialog.dismiss();
                     }
                 });
+                button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-        return builder.create();
+
+                        Filter filter = readPatternFilter();
+                        if (filter == null)
+                            return;
+                        mListener.onRemoveSiteswapFilter(filter);
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+        return dialog;
     }
 
     @Override
@@ -196,9 +210,19 @@ public class PatternFilterDialog extends AddFilterDialog {
 
         PatternFilter.Type filterType = PatternFilter.Type.INCLUDE;
         Siteswap pattern = new Siteswap( mPatternEditText.getText().toString() );
+        if (pattern.isParsingError()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage(getString(R.string.pattern_filter__parsing_error) + " " +
+                                    pattern.getInvalidCharactersFromParsing())
+                    .setNeutralButton(getString(R.string.back), null);
+            builder.create().show();
+            return null;
+        }
         if (pattern.period_length() == 0) {
-            Toast.makeText(getActivity(), getString(R.string.pattern_filter__toast_no_input),
-                    Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage(getString(R.string.pattern_filter__toast_no_input))
+                    .setNeutralButton(getString(R.string.back), null);
+            builder.create().show();
             return null;
         }
 

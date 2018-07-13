@@ -29,7 +29,6 @@ import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import siteswaplib.Siteswap;
 
@@ -96,9 +95,10 @@ public class EnterSiteswapDialog extends DialogFragment {
             return true;
         }
         catch (IllegalArgumentException e) {
-            Toast.makeText(getContext(),
-                    getString(R.string.main_activity__invalid_site_swap) + e.getMessage(),
-                    Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage(getString(R.string.main_activity__invalid_site_swap) + e.getMessage())
+                    .setNeutralButton(getString(R.string.back), null);
+            builder.create().show();
         }
         return false;
     }

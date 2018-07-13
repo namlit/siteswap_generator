@@ -271,14 +271,18 @@ public class MainActivity extends AppCompatActivity
                 throw new IllegalArgumentException(getString(R.string.main_activity__invalid_min_throw_greater_average));
         }
         catch (NumberFormatException e) {
-            Toast.makeText(this, getString(R.string.main_activity__invalid_input_value) + " " +
-                            String.format(getString(R.string.main_activity__could_not_convert_to_int), e.getMessage()),
-                    Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(getString(R.string.main_activity__invalid_input_value) + " " +
+                            String.format(getString(R.string.main_activity__could_not_convert_to_int), e.getMessage()))
+                    .setNeutralButton(getString(R.string.back), null);
+            builder.create().show();
             return false;
         }
         catch (IllegalArgumentException e) {
-            Toast.makeText(this, getString(R.string.main_activity__invalid_input_value) + " " + e.getMessage(),
-                    Toast.LENGTH_LONG).show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(getString(R.string.main_activity__invalid_input_value) + " " + e.getMessage())
+                    .setNeutralButton(getString(R.string.back), null);
+            builder.create().show();
             return false;
         }
 
