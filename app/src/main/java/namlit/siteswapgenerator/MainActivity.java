@@ -225,7 +225,11 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_about)
+        if (id == R.id.action_named_siteswaps)
+        {
+            showNamedSiteswaps();
+        }
+        else if (id == R.id.action_about)
         {
             showAboutDialog();
         }
@@ -435,6 +439,11 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    private void showNamedSiteswaps() {
+
+        Intent intent = new Intent(this, NamedSiteswapActivity.class);
+        startActivity(intent);
+    }
 
     private void showAboutDialog()
     {

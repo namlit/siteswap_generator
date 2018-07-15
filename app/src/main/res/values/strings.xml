@@ -53,6 +53,7 @@
     <string name="main_activity__invalid_max_throw_smaller_average">The maximum throw needs to be at least the number of objects</string>
     <string name="main_activity__invalid_min_throw_greater_average">The minimum throw needs to be at maximum the number of objects</string>
 
+    <string name="main_activity__option_named_siteswaps">Named Siteswaps</string>
     <string name="main_activity__option_about">About</string>
     <string name="main_activity__option_help">Help</string>
 
@@ -78,6 +79,8 @@
     <string name="abort">abort</string>
     <string name="back">back</string>
     <string name="share">Share</string>
+
+    <string name="named_siteswaps__title">Named Siteswaps</string>
 
     <string name="option_about__source_code_at">Source Code at:</string>
     <string name="option_about__github_address">https://github.com/namlit/siteswap_generator</string>
@@ -148,6 +151,7 @@
     <string name="detailed_siteswap__title">Siteswap Info</string>
     <string name="detailed_siteswap__rotate_left">&lt;</string>
     <string name="detailed_siteswap__rotate_right">&gt;</string>
+    <string name="detailed_siteswap__name">Name: </string>
     <string name="detailed_siteswap__interface">Interface: </string>
     <string name="detailed_siteswap__interface_pattern">Interface Pattern: </string>
     <string name="detailed_siteswap__number_of_objects">Number of Objects: </string>

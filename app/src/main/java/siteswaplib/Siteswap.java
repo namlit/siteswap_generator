@@ -33,6 +33,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	protected CyclicByteArray mData;
 	protected int mNumberOfJugglers = 1;
 
+	private String mSiteswapName = "";
 	private String mInvalidCharacters = "";
 	private boolean mIsParsingError = false;
 
@@ -43,11 +44,17 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	public Siteswap(Siteswap s) {
 		this.mData = new CyclicByteArray(s.mData);
 		setNumberOfJugglers(s.getNumberOfJugglers());
+		setSiteswapName(s.getSiteswapName());
 	}
-	
+
 	public Siteswap(byte[] data, int numberOfJugglers) {
 		this.mData = new CyclicByteArray(data);
 		setNumberOfJugglers(numberOfJugglers);
+	}
+
+	public Siteswap(String siteswap, int numberOfJugglers, String name) {
+	    this(siteswap, numberOfJugglers);
+		setSiteswapName(name);
 	}
 
 	public Siteswap(String siteswap, int numberOfJugglers) {
@@ -58,19 +65,19 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	public Siteswap(String siteswap) {
 		this(siteswap, 1);
 	}
-	
+
 	public Siteswap(byte[] data) {
 		this(data, 1);
 	}
-	
+
 	public byte at(int index) {
 		return mData.at(index);
 	}
-	
+
 	public void set(int index, int value) {
 		mData.modify(index, (byte) value);
 	}
-	
+
 	public int period_length() {
 		return mData.length();
 	}
@@ -93,7 +100,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	public int getNumberOfHands() {
 		return 2 * getNumberOfJugglers();
 	}
-	
+
 	public void swap(int index) {
 		byte temp = mData.at(index + 1);
 		mData.modify(index+1, (byte) (mData.at(index) - 1));
@@ -108,7 +115,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		}
 		return max;
 	}
-	
+
 	public int getNumberOfObjects() {
 		if (period_length() == 0)
 			return 0;
@@ -124,7 +131,15 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		if (numberOfJugglers < 1)
 			this.mNumberOfJugglers = 1;
 	}
-	
+
+	public String getSiteswapName() {
+		return mSiteswapName;
+	}
+
+	public void setSiteswapName(String name) {
+		mSiteswapName = name;
+	}
+
 	public int getPartialSum(int startIndex, int stopIndex) {
 		int sum = 0;
 		for (int i = startIndex; i <= stopIndex; ++i) {
@@ -132,7 +147,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		}
 		return sum;
 	}
-	
+
 	public boolean is_in_range(byte min, byte max) {
 		for (Byte value : mData) {
 			if(value < min || value > max)
@@ -140,7 +155,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		}
 		return true;
 	}
-	
+
 	public int countValue(byte value) {
 		int counter = 0;
 		for (byte i : mData) {
@@ -158,21 +173,21 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
         }
         return counter;
     }
-	
+
 	public void rotateRight(int positions) {
 		mData.rotateRight(positions);
 	}
-	
+
 	public void rotateLeft(int positions) {
 		mData.rotateLeft(positions);
 	}
-	
+
 	public void make_unique_representation()
 	{
 
 		Siteswap temp = new Siteswap(this);
 		int rotate_counter = 0;
-		
+
 		for(int i = 0; i < period_length(); ++i) {
 			if (compareTo(temp) < 0) {
 				mData.rotateRight(rotate_counter);
@@ -183,7 +198,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		}
 	}
 
-	
+
 	public boolean rotateGetinFree() {
 		for (int i = 0; i < period_length(); ++i) {
 			if (isGetinFree())
@@ -192,7 +207,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		}
 		return false;
 	}
-	
+
 	public Siteswap calculateGetin() {
 
 		Siteswap siteswapInterface = toInterface(Siteswap.FREE, period_length() + getMaxThrow(),
@@ -220,10 +235,10 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 				getin.set(i, getin.at(i) + 1);
 			siteswapInterface.set(getin.at(i) + offset, getin.at(i));
 		}
-		
+
 		return getin;
 	}
-	
+
 	public Siteswap calculateGetout() {
 
 		Siteswap siteswapInterface = toInterface(Siteswap.FREE, period_length() + getMaxThrow(), period_length());
@@ -524,14 +539,14 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	@Override
 	public int compareTo(Siteswap o) {
 		int length = period_length() < o.period_length() ? period_length() : o.period_length();
-		
+
 		for(int i = 0; i < length; ++i) {
 			if(at(i) < o.at(i))
 				return -1;
 			if(at(i) > o.at(i))
 				return 1;
 		}
-		
+
 		if(period_length() < o.period_length())
 			return -1;
 		if(period_length() > o.period_length())
@@ -586,7 +601,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 			localSiteswapStrings.add(toString());
 			return localSiteswapStrings;
 		}
-		
+
 		for(int juggler = 0; juggler < mNumberOfJugglers; ++juggler) {
 			String str = new String();
 			DecimalFormat formatter = new DecimalFormat("0.#");
@@ -607,11 +622,11 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 			}
 			localSiteswapStrings.add(str);
 		}
-		
+
 		return localSiteswapStrings;
-		
+
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
         if (! (obj instanceof Siteswap))
@@ -849,5 +864,5 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		}
 		return siteswap;
 	}
-	
+
 }

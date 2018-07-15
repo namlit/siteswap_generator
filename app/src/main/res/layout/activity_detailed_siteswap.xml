@@ -57,6 +57,26 @@
                     android:layout_height="match_parent">
 
                     <TextView
+                        android:id="@+id/name_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/detailed_siteswap__name" />
+
+                    <TextView
+                        android:id="@+id/name_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@android:style/TextAppearance.Large"
+                        android:text="@string/detailed_siteswap__interface" />
+
+                </TableRow>
+
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
                         android:id="@+id/number_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

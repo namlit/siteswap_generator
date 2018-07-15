@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import java.util.Vector;
 
+import siteswaplib.NamedSiteswaps;
 import siteswaplib.Siteswap;
 
 public class DetailedSiteswapActivity extends AppCompatActivity {
@@ -38,8 +39,9 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
     private Siteswap mSiteswap;
     private TextView mGlobalSiteswapTextview;
     private TextView mLocalSiteswapTextview;
-    private TextView mIntefaceTextview;
-    private TextView mIntefacePatternTextview;
+    private TextView mNameTextview;
+    private TextView mInterfaceTextview;
+    private TextView mInterfacePatternTextview;
     private TextView mNumberOfObjectsTextview;
     private TextView mPeriodLengthTextview;
     private TextView mLocalSiteswapLegendTextview;
@@ -58,12 +60,20 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
         if (mSiteswap == null)
             mSiteswap = new Siteswap();
 
+        if (mSiteswap.getSiteswapName() == "") {
+            int index = NamedSiteswaps.getListOfNamedSiteswaps().indexOf(mSiteswap);
+            if (index != -1) {
+                mSiteswap.setSiteswapName(((Siteswap)
+                        NamedSiteswaps.getListOfNamedSiteswaps().get(index)).getSiteswapName());
+            }
+        }
         mSiteswap.rotateToBestStartingPosition();
 
         mGlobalSiteswapTextview = (TextView) findViewById(R.id.global_siteswap_textview);
         mLocalSiteswapTextview = (TextView) findViewById(R.id.local_siteswap_textview);
-        mIntefaceTextview = (TextView) findViewById(R.id.interface_textview);
-        mIntefacePatternTextview = (TextView) findViewById(R.id.interface_pattern_text_view);
+        mNameTextview = (TextView) findViewById(R.id.name_textview);
+        mInterfaceTextview = (TextView) findViewById(R.id.interface_textview);
+        mInterfacePatternTextview = (TextView) findViewById(R.id.interface_pattern_text_view);
         mNumberOfObjectsTextview = (TextView) findViewById(R.id.number_of_objects_textview);
         mPeriodLengthTextview = (TextView) findViewById(R.id.period_length_textview);
         mLocalSiteswapLegendTextview = (TextView) findViewById(R.id.local_siteswap_legend_textview);
@@ -123,8 +133,10 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
 
     public void updateTextViews() {
 
-        mIntefaceTextview.setText(mSiteswap.toInterface().toString());
-        mIntefacePatternTextview.setText(mSiteswap.toInterface().toPattern().toString());
+        String name = (mSiteswap.getSiteswapName() == "") ? "Unnamed" : mSiteswap.getSiteswapName();
+        mNameTextview.setText(name);
+        mInterfaceTextview.setText(mSiteswap.toInterface().toString());
+        mInterfacePatternTextview.setText(mSiteswap.toInterface().toPattern().toString());
         mNumberOfObjectsTextview.setText(String.valueOf(mSiteswap.getNumberOfObjects()));
         mPeriodLengthTextview.setText(String.valueOf(mSiteswap.period_length()));
 
