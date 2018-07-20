@@ -164,12 +164,23 @@
 
     <string name="detailed_siteswap__legend_html">
         <![CDATA[
-       <big>Legend:</big><br>
+       <h1>Legend:</h1>
        <b>A <small>1|2</small></b>: Juggler A starts with one club in the left hand and two clubs in the right hand<br>
        <b>x</b>: cross pass<br>
        <b>s</b>: straight pass<br>
        <b>Ax/Bx/Cs...</b>: cross/straight pass to juggler A/B/C (more than two jugglers)<br>
        <b>small grey numbers</b>: getin/getout throws
+       <br>
+       <h2>Typical Throws (2 Persons):</h2>
+       Global | Local | Description<br>
+       2 | 1 | zip<br>
+       4 | 2 | hold<br>
+       5 | 2,5 | zap (Joe pass)<br>
+       6 | 3 | single self<br>
+       7 | 3,5 | single pass<br>
+       8 | 4 | heff (double self column)<br>
+       9 | 4,5 | double pass<br>
+       a | 5 | triple self (crossed)<br>
         ]]>
     </string>
 
