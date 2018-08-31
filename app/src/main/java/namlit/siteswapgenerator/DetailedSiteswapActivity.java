@@ -202,4 +202,22 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
         mSiteswap.rotateRight(1);
         updateTextViews();
     }
+
+    public void favorites(View view) {
+        // TODO if not in favorites: add to favorites else remove from favorites
+        addToFavorites();
+        // TODO update Siteswap name
+        updateTextViews();
+    }
+
+
+    private void addToFavorites() {
+
+        new AddToFavoritesDialog().show(getSupportFragmentManager(),
+                getString(R.string.add_to_favorites__dialog_tag));
+    }
+
+    private void removeFromFavorites() {
+
+    }
 }
