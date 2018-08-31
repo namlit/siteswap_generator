@@ -296,11 +296,21 @@ public class CausalDiagram extends View {
         mCirclePaint.setStyle(Paint.Style.STROKE);
         mCirclePaint.setStrokeWidth(mStrokeWidth);
         mConnectionPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mConnectionPaint.setColor(Color.BLUE);
+        if(mIsLadderDiagram) {
+            mConnectionPaint.setColor(0xff00aa00);
+        }
+        else {
+            mConnectionPaint.setColor(Color.BLUE);
+        }
         mConnectionPaint.setStyle(Paint.Style.STROKE);
         mConnectionPaint.setStrokeWidth(mStrokeWidth);
         mArrowHeadPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mArrowHeadPaint.setColor(Color.BLUE);
+        if(mIsLadderDiagram) {
+            mArrowHeadPaint.setColor(0xff00aa00);
+        }
+        else {
+            mArrowHeadPaint.setColor(Color.BLUE);
+        }
         mArrowHeadPaint.setStyle(Paint.Style.FILL);
         mArrowHeadPaint.setStrokeWidth(mStrokeWidth);
         mArrowHeadPath = new Path();
