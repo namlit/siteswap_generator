@@ -30,12 +30,17 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	public static final byte FREE = -4;
 	public static final byte INVALID = -5;
 
-	protected CyclicByteArray mData;
-	protected int mNumberOfJugglers = 1;
+	private CyclicByteArray mData;
+	private int mNumberOfJugglers = 1;
 
 	private String mSiteswapName = "";
 	private String mInvalidCharacters = "";
 	private boolean mIsParsingError = false;
+	private int mNumberOfSynchronousHands = 1;
+    // when there are n throws at the same time, each siteswap number can be at position
+	// 0, ... n-1 within the synchronous throws. The position of siteswap.at(0) is coded
+	// in mSynchronousStartPosition and is adapted on every rotation of the siteswap.
+	private int mSynchronousStartPosition = 0;
 
 	public Siteswap() {
 		this(new byte[0]);
@@ -45,6 +50,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		this.mData = new CyclicByteArray(s.mData);
 		setNumberOfJugglers(s.getNumberOfJugglers());
 		setSiteswapName(s.getSiteswapName());
+		setNumberOfSynchronousHands(s.getNumberOfSynchronousHands());
 	}
 
 	public Siteswap(byte[] data, int numberOfJugglers) {
@@ -74,6 +80,11 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return mData.at(index);
 	}
 
+	public byte atSyncCorrected(int index) {
+		return (byte) (getNumberOfSynchronousHands() *
+				((getSynchronousPosition(index) + at(index)) / getNumberOfSynchronousHands()));
+	}
+
 	public void set(int index, int value) {
 		mData.modify(index, (byte) value);
 	}
@@ -86,6 +97,17 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		if (period_length() % getNumberOfJugglers() == 0)
 			return period_length() / getNumberOfJugglers();
 		return period_length();
+	}
+
+	// TODO rename
+    public int global_period_length() {
+        int length = period_length();
+        if (period_length() % getNumberOfSynchronousHands() != 0) {
+            while (length % getNumberOfSynchronousHands() != 0) {
+                length += period_length();
+            }
+        }
+		return length;
 	}
 
 	public int getNonMirroredPeriod() {
@@ -132,6 +154,25 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 			this.mNumberOfJugglers = 1;
 	}
 
+	public boolean setNumberOfSynchronousHands(int numberOfSynchronousHands) {
+		if (getNumberOfHands() % numberOfSynchronousHands != 0)
+			return false;
+		mNumberOfSynchronousHands = numberOfSynchronousHands;
+		return true;
+	}
+
+	public int getNumberOfSynchronousHands() {
+		return mNumberOfSynchronousHands;
+	}
+
+	public void setSynchronousStartPosition(int synchronousStartPosition) {
+		mSynchronousStartPosition = synchronousStartPosition;
+	}
+
+	public int getmSynchronousStartPosition() {
+		return mSynchronousStartPosition;
+	}
+
 	public String getSiteswapName() {
 		return mSiteswapName;
 	}
@@ -156,6 +197,14 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return true;
 	}
 
+	public boolean isSynchronous() {
+		return mNumberOfSynchronousHands != 1;
+	}
+
+	public int getSynchronousPosition(int position) {
+		return (getmSynchronousStartPosition() + position) % getNumberOfSynchronousHands();
+	}
+
 	public int countValue(byte value) {
 		int counter = 0;
 		for (byte i : mData) {
@@ -176,10 +225,14 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 
 	public void rotateRight(int positions) {
 		mData.rotateRight(positions);
+		mSynchronousStartPosition = (mSynchronousStartPosition + positions) % period_length();
 	}
 
 	public void rotateLeft(int positions) {
 		mData.rotateLeft(positions);
+		mSynchronousStartPosition = (mSynchronousStartPosition - positions) % period_length();
+		if (mSynchronousStartPosition < 0)
+			mSynchronousStartPosition += period_length();
 	}
 
 	public void make_unique_representation()
@@ -607,7 +660,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 			DecimalFormat formatter = new DecimalFormat("0.#");
 			for(int i = 0; i < local_period_length(); ++i) {
 				int position = juggler + i*mNumberOfJugglers;
-				str += formatter.format(at(position) / (double) mNumberOfJugglers);
+				str += formatter.format(atSyncCorrected(position) / (double) mNumberOfJugglers);
 				if (Siteswap.isPass(at(position), mNumberOfJugglers)) {
 					str += "<sub><small>";
 					if (mNumberOfJugglers >= 3)
@@ -631,14 +684,41 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	public boolean equals(Object obj) {
         if (! (obj instanceof Siteswap))
             return false;
+        if (getNumberOfSynchronousHands() != ((Siteswap) obj).getNumberOfSynchronousHands())
+            return false;
+        // TODO synchronous start position
 		return compareTo((Siteswap) obj) == 0;
 	}
 
 	@Override
-	public String toString() {
+    public String toString() {
+        if (isSynchronous()) {
+            return toAsyncString() + ": " + toSyncString(); // todo async only
+        }
+        else {
+            return toAsyncString();
+        }
+    }
+
+	public String toAsyncString() {
 		String str = new String();
 		for (byte value : mData) {
 			str += Character.toString(intToChar(value));
+		}
+		return str;
+	}
+
+	public String toSyncString() {
+		String str = new String();
+		for (int i = 0; i < global_period_length(); ++i) {
+		    byte value = atSyncCorrected(i);
+			if (getSynchronousPosition(i) == 0)
+				str += "[";
+			str += Character.toString(intToChar(value));
+			if (isPass(at(i), getNumberOfJugglers()))
+				str += "p";
+			if (getSynchronousPosition(i) == (getNumberOfSynchronousHands() - 1))
+				str += "]";
 		}
 		return str;
 	}

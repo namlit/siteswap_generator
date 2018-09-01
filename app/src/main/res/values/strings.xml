@@ -24,7 +24,9 @@
     <string name="main_activity__number_of_jugglers">Number of Jugglers:</string>
     <string name="main_activity__max_results">Max Results:</string>
     <string name="main_activity__timeout">Timeout [s]:</string>
+    <string name="main_activity__sync_mode">Synchronous Siteswaps</string>
     <string name="main_activity__random_generation_mode">Activate Random Generation Mode</string>
+
 
     <string name="main_activity__applied_filters">Filters:</string>
     <string name="main_activity__include_zips">zips</string>

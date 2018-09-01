@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity
     private int mNumberOfJugglers;
     private int mMaxResults;
     private int mTimeout;
+    private boolean mIsSyncPattern;
     private boolean mIsRandomGenerationMode;
     private boolean mIsZips;
     private boolean mIsZaps;
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity
     private EditText mNumberOfJugglersEditText;
     private EditText mMaxResultsEditText;
     private EditText mTimeoutEditText;
+    private CheckBox mSyncModeCheckbox;
     private CheckBox mRandomGenerationModeCheckbox;
     private CheckBox mZipsCheckbox;
     private CheckBox mZapsCheckbox;
@@ -101,6 +103,7 @@ public class MainActivity extends AppCompatActivity
         mHoldsCheckbox      = (CheckBox) findViewById(R.id.include_holds_checkbox);
         mFilterTypeSpinner  = (Spinner) findViewById(R.id.filter_type_spinner);
         mFilterListView     = (NonScrollListView) findViewById(R.id.filter_list);
+        mSyncModeCheckbox   = (CheckBox) findViewById(R.id.sync_mode_checkbox);
         mRandomGenerationModeCheckbox = (CheckBox) findViewById(R.id.random_generation_mode_checkbox);
 
         mFilterList = new LinkedList<Filter>();
@@ -253,6 +256,7 @@ public class MainActivity extends AppCompatActivity
             mNumberOfJugglers = Integer.valueOf(mNumberOfJugglersEditText.getText().toString());
             mMaxResults = Integer.valueOf(mMaxResultsEditText.getText().toString());
             mTimeout = Integer.valueOf(mTimeoutEditText.getText().toString());
+            mIsSyncPattern = mSyncModeCheckbox.isChecked();
             mIsRandomGenerationMode = mRandomGenerationModeCheckbox.isChecked();
             mIsZips = mZipsCheckbox.isChecked();
             mIsZaps = mZapsCheckbox.isChecked();
@@ -392,6 +396,7 @@ public class MainActivity extends AppCompatActivity
                 mMinThrow, mNumberOfObjects, mNumberOfJugglers, mFilterList);
         siteswapGenerator.setMaxResults(mMaxResults);
         siteswapGenerator.setTimeoutSeconds(mTimeout);
+        siteswapGenerator.setSyncPattern(mIsSyncPattern);
         siteswapGenerator.setRandomGeneration(mIsRandomGenerationMode);
 
         Intent intent = new Intent(this, ShowSiteswaps.class);
