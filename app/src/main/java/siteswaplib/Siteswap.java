@@ -51,6 +51,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		setNumberOfJugglers(s.getNumberOfJugglers());
 		setSiteswapName(s.getSiteswapName());
 		setNumberOfSynchronousHands(s.getNumberOfSynchronousHands());
+		setSynchronousStartPosition(s.getSynchronousStartPosition());
 	}
 
 	public Siteswap(byte[] data, int numberOfJugglers) {
@@ -166,10 +167,10 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	}
 
 	public void setSynchronousStartPosition(int synchronousStartPosition) {
-		mSynchronousStartPosition = synchronousStartPosition;
+		mSynchronousStartPosition = synchronousStartPosition % getNumberOfSynchronousHands();
 	}
 
-	public int getmSynchronousStartPosition() {
+	public int getSynchronousStartPosition() {
 		return mSynchronousStartPosition;
 	}
 
@@ -202,7 +203,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	}
 
 	public int getSynchronousPosition(int position) {
-		return (getmSynchronousStartPosition() + position) % getNumberOfSynchronousHands();
+		return (getSynchronousStartPosition() + position) % getNumberOfSynchronousHands();
 	}
 
 	public int countValue(byte value) {
@@ -686,7 +687,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
             return false;
         if (getNumberOfSynchronousHands() != ((Siteswap) obj).getNumberOfSynchronousHands())
             return false;
-        // TODO synchronous start position
+        // TODO synchronous start position: attention: use same rotation for comparison
 		return compareTo((Siteswap) obj) == 0;
 	}
 

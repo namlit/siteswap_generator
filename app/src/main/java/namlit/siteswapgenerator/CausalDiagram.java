@@ -87,7 +87,7 @@ public class CausalDiagram extends View {
         int circleSize = 2 * (int) mNodeRadius + (int) mStrokeWidth;
         int rowOffset = (int) mNodeLocalBeatXDistance / mSiteswap.getNumberOfJugglers();
         if (mSiteswap.isSynchronous()) {
-            if (mSiteswap.getmSynchronousStartPosition() == 0)
+            if (mSiteswap.getSynchronousStartPosition() == 0)
                 rowOffset = (int) mNodeLocalBeatXDistance;
             else
                 rowOffset = 0;
@@ -267,12 +267,9 @@ public class CausalDiagram extends View {
 
         int row = nodeIndex % mSiteswap.getNumberOfJugglers();
         int column = nodeIndex;
-        if (mSiteswap.getmSynchronousStartPosition() != 0) {
-            column += (mSiteswap.getNumberOfSynchronousHands() - 1);
-        }
+        column += mSiteswap.getSynchronousStartPosition();
         column -= mSiteswap.getSynchronousPosition(nodeIndex);
         float columnXDistance = mNodeLocalBeatXDistance / mSiteswap.getNumberOfJugglers();
-        int rowOffset = (int) mNodeLocalBeatXDistance / mSiteswap.getNumberOfJugglers();
         int xPos = xPosStart + column * (int) columnXDistance;
         int yPos = yPosFirstRow + row * (int) mNodeYDistance;
         return new Point(xPos, yPos);
