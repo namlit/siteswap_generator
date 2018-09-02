@@ -225,12 +225,12 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 
 	public void rotateRight(int positions) {
 		mData.rotateRight(positions);
-		mSynchronousStartPosition = (mSynchronousStartPosition + positions) % period_length();
+		mSynchronousStartPosition = (mSynchronousStartPosition + positions) % getNumberOfSynchronousHands();
 	}
 
 	public void rotateLeft(int positions) {
 		mData.rotateLeft(positions);
-		mSynchronousStartPosition = (mSynchronousStartPosition - positions) % period_length();
+		mSynchronousStartPosition = (mSynchronousStartPosition - positions) % getNumberOfSynchronousHands();
 		if (mSynchronousStartPosition < 0)
 			mSynchronousStartPosition += period_length();
 	}
@@ -799,7 +799,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	}
 
 	public String stringAt(int index) {
-		return Character.toString(intToChar(at(index)));
+		return Character.toString(intToChar(atSyncCorrected(index)));
 	}
 
 	public static String intToString(int value) {
