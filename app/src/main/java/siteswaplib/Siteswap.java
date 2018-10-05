@@ -714,12 +714,12 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		for (int i = 0; i < global_period_length(); ++i) {
 		    byte value = atSyncCorrected(i);
 			if (getSynchronousPosition(i) == 0)
-				str += "[";
+				str += "(";
 			str += Character.toString(intToChar(value));
 			if (isPass(at(i), getNumberOfJugglers()))
 				str += "p";
 			if (getSynchronousPosition(i) == (getNumberOfSynchronousHands() - 1))
-				str += "]";
+				str += ")";
 		}
 		return str;
 	}
