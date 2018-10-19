@@ -420,6 +420,7 @@ public class MainActivity extends AppCompatActivity
     public void onCheckboxClicked(View view) {
 
         boolean checked = ((CheckBox) view).isChecked();
+        int oldNumberOfSynchronousHands = getNumberOfSynchronousHands();
         updateFromTextEdits();
 
         switch (view.getId()) {
@@ -441,6 +442,10 @@ public class MainActivity extends AppCompatActivity
                 else
                     Filter.removeHolds(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
                 break;
+            case R.id.sync_mode_checkbox:
+                removeAutoFilters(oldNumberOfSynchronousHands);
+                addAutoFilters();
+                break;
         }
         mFilterListAdapter.notifyDataSetChanged();
 
@@ -449,13 +454,30 @@ public class MainActivity extends AppCompatActivity
     private boolean updateAutoFilters() {
         if (!updateFromTextEdits())
             return false;
-        Filter.addDefaultFilters(mFilterList, mNumberOfJugglers, mMinThrow,
-                getNumberOfSynchronousHands());
-        onCheckboxClicked(mZipsCheckbox);   // Updates the filter list corresponding to checkbox
-        onCheckboxClicked(mZapsCheckbox);   // Updates the filter list corresponding to checkbox
-        onCheckboxClicked(mHoldsCheckbox);  // Updates the filter list corresponding to checkbox
+        removeAutoFilters(getNumberOfSynchronousHands());
+        addAutoFilters();
         mFilterListAdapter.notifyDataSetChanged();
         return true;
+    }
+
+    private void removeAutoFilters(int numberOfSynchronousHands) {
+        Filter.removeDefaultFilters(mFilterList, mNumberOfJugglers, mMinThrow, numberOfSynchronousHands);
+        Filter.addZips(mFilterList, mNumberOfJugglers, numberOfSynchronousHands);
+        Filter.addZaps(mFilterList, mNumberOfJugglers, numberOfSynchronousHands);
+        Filter.addHolds(mFilterList, mNumberOfJugglers, numberOfSynchronousHands);
+
+    }
+
+    private void addAutoFilters() {
+
+        Filter.addDefaultFilters(mFilterList, mNumberOfJugglers, mMinThrow,
+                getNumberOfSynchronousHands());
+        if (!mIsZips)
+            Filter.removeZips(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+        if (!mIsZaps)
+            Filter.removeZaps(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+        if (!mIsHolds)
+            Filter.removeHolds(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
     }
 
     private void showNamedSiteswaps() {
