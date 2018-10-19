@@ -40,6 +40,7 @@ public class EnterSiteswapDialog extends DialogFragment {
 
     private EditText mSiteswapTextEdit;
     private int mNumberOfJugglers;
+    private int mNumberOfSynchronousHands;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -87,6 +88,7 @@ public class EnterSiteswapDialog extends DialogFragment {
     private boolean validateAndShowSiteswap() {
         try {
             Siteswap siteswap = new Siteswap(mSiteswapTextEdit.getText().toString(), mNumberOfJugglers);
+            siteswap.setNumberOfSynchronousHands(mNumberOfSynchronousHands);
             if (!siteswap.isValid() )
                 throw new IllegalArgumentException(siteswap.toString());
             Intent intent = new Intent(getContext(), DetailedSiteswapActivity.class);
@@ -103,8 +105,10 @@ public class EnterSiteswapDialog extends DialogFragment {
         return false;
     }
 
-    public void show(FragmentManager manager, String tag, int numberOfJugglers) {
+    public void show(FragmentManager manager, String tag, int numberOfJugglers,
+                     int numberOfSynchronousHands) {
         mNumberOfJugglers = numberOfJugglers;
+        mNumberOfSynchronousHands =  numberOfSynchronousHands;
         show(manager, tag);
     }
 }
