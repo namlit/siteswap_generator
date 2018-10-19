@@ -250,25 +250,30 @@ public class NumberFilter extends Filter {
 			}
 			return arr;
 		}
-		int length = 2 * ((maxThrow - minThrow + 1) / numberOfSynchronousHands);
-		int distToValidThrow = minThrow % numberOfSynchronousHands;
-		if (distToValidThrow != 0) {
+		int distMinToValidThrow = minThrow % numberOfSynchronousHands;
+		int distMaxToValidThrow = maxThrow % numberOfSynchronousHands;
+		int length = 2 * ((maxThrow - distMaxToValidThrow - minThrow) / numberOfSynchronousHands + 1);
+		if (distMinToValidThrow != 0) {
 			length += 1;
 		}
-        length += 2;
-		// todo correct length for max_throw % num.. != 0
+		if (distMaxToValidThrow != 0) {
+			length += 1;
+		}
 		String[] arr = new String[length];
 		int i = 0;
 		int currentThrow = minThrow;
-		if (distToValidThrow != 0) {
-			arr[i] = Siteswap.intToString(minThrow - distToValidThrow) + "p";
-			currentThrow = minThrow + (numberOfSynchronousHands - distToValidThrow);
+		if (distMinToValidThrow != 0) {
+			arr[i] = Siteswap.intToString(minThrow - distMinToValidThrow) + "p";
+			currentThrow = minThrow + (numberOfSynchronousHands - distMinToValidThrow);
 			++i;
 		}
-		for(; i < length; i += 2) {
+		for(; i < length - 1; i += 2) {
 			arr[i] = Siteswap.intToString(currentThrow);
 			arr[i+1] = Siteswap.intToString(currentThrow) + "p";
 			currentThrow += numberOfSynchronousHands;
+		}
+		if (distMaxToValidThrow != 0) {
+			arr[i] = Siteswap.intToString(currentThrow) + "p";
 		}
 		return arr;
 	}
