@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity
     private int mNumberOfJugglers;
     private int mMaxResults;
     private int mTimeout;
+    private boolean mIsSyncPattern;
     private boolean mIsRandomGenerationMode;
     private boolean mIsZips;
     private boolean mIsZaps;
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity
     private EditText mNumberOfJugglersEditText;
     private EditText mMaxResultsEditText;
     private EditText mTimeoutEditText;
+    private CheckBox mSyncModeCheckbox;
     private CheckBox mRandomGenerationModeCheckbox;
     private CheckBox mZipsCheckbox;
     private CheckBox mZapsCheckbox;
@@ -101,6 +103,7 @@ public class MainActivity extends AppCompatActivity
         mHoldsCheckbox      = (CheckBox) findViewById(R.id.include_holds_checkbox);
         mFilterTypeSpinner  = (Spinner) findViewById(R.id.filter_type_spinner);
         mFilterListView     = (NonScrollListView) findViewById(R.id.filter_list);
+        mSyncModeCheckbox   = (CheckBox) findViewById(R.id.sync_mode_checkbox);
         mRandomGenerationModeCheckbox = (CheckBox) findViewById(R.id.random_generation_mode_checkbox);
 
         mFilterList = new LinkedList<Filter>();
@@ -116,6 +119,8 @@ public class MainActivity extends AppCompatActivity
         mIsZips       = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_zips), true);
         mIsZaps       = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_zaps), false);
         mIsHolds      = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_holds), false);
+        mIsSyncPattern = sharedPref.getBoolean(
+                getString(R.string.main_activity__settings_is_sync_pattern), false);
         mIsRandomGenerationMode = sharedPref.getBoolean(
                 getString(R.string.main_activity__settings_is_random_generation_mode), false);
         mFilterSpinnerPosition = sharedPref.getInt(getString(R.string.main_activity__settings_filter_spinner_position), 0);
@@ -142,6 +147,7 @@ public class MainActivity extends AppCompatActivity
         mNumberOfJugglersEditText.setText(String.valueOf(mNumberOfJugglers));
         mMaxResultsEditText.setText(String.valueOf(mMaxResults));
         mTimeoutEditText.setText(String.valueOf(mTimeout));
+        mSyncModeCheckbox.setChecked(mIsSyncPattern);
         mRandomGenerationModeCheckbox.setChecked(mIsRandomGenerationMode);
         mZipsCheckbox.setChecked(mIsZips);
         mZapsCheckbox.setChecked(mIsZaps);
@@ -163,7 +169,8 @@ public class MainActivity extends AppCompatActivity
 
                         new NumberFilterDialog().show(getSupportFragmentManager(),
                                 getString(R.string.number_filter__dialog_tag),
-                                mMinThrow, mMaxThrow, mPeriodLength, filter);
+                                mMinThrow, mMaxThrow, mPeriodLength,
+                                getNumberOfSynchronousHands(), filter);
                 }
                 else if (filter instanceof PatternFilter)
                     new PatternFilterDialog().show(getSupportFragmentManager(),
@@ -197,10 +204,10 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
                 updateFromTextEdits();
-                Filter.removeDefaultFilters(mFilterList, mNumberOfJugglers);
-                Filter.addZips(mFilterList, mNumberOfJugglers);
-                Filter.addZaps(mFilterList, mNumberOfJugglers);
-                Filter.addHolds(mFilterList, mNumberOfJugglers);
+                Filter.removeDefaultFilters(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+                Filter.addZips(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+                Filter.addZaps(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+                Filter.addHolds(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
                 mFilterListAdapter.notifyDataSetChanged();
             }
             @Override
@@ -253,6 +260,7 @@ public class MainActivity extends AppCompatActivity
             mNumberOfJugglers = Integer.valueOf(mNumberOfJugglersEditText.getText().toString());
             mMaxResults = Integer.valueOf(mMaxResultsEditText.getText().toString());
             mTimeout = Integer.valueOf(mTimeoutEditText.getText().toString());
+            mIsSyncPattern = mSyncModeCheckbox.isChecked();
             mIsRandomGenerationMode = mRandomGenerationModeCheckbox.isChecked();
             mIsZips = mZipsCheckbox.isChecked();
             mIsZaps = mZapsCheckbox.isChecked();
@@ -309,6 +317,7 @@ public class MainActivity extends AppCompatActivity
         editor.putInt(getString(R.string.main_activity__settings_number_of_jugglers), mNumberOfJugglers);
         editor.putInt(getString(R.string.main_activity__settings_max_results), mMaxResults);
         editor.putInt(getString(R.string.main_activity__settings_timeout), mTimeout);
+        editor.putBoolean(getString(R.string.main_activity__settings_is_sync_pattern), mIsSyncPattern);
         editor.putBoolean(getString(R.string.main_activity__settings_is_random_generation_mode), mIsRandomGenerationMode);
         editor.putBoolean(getString(R.string.main_activity__settings_is_zips), mIsZips);
         editor.putBoolean(getString(R.string.main_activity__settings_is_zaps), mIsZaps);
@@ -330,6 +339,13 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    public int getNumberOfSynchronousHands() {
+        if (mIsSyncPattern) {
+            return mNumberOfJugglers;
+        }
+        return 1;
+    }
+
 
     public void addFilter(View view) {
 
@@ -342,7 +358,8 @@ public class MainActivity extends AppCompatActivity
                     getString(R.string.pattern_filter__dialog_tag), mNumberOfJugglers);
         } else {
             new NumberFilterDialog().show(getSupportFragmentManager(),
-                    getString(R.string.number_filter__dialog_tag), mMinThrow, mMaxThrow, mPeriodLength);
+                    getString(R.string.number_filter__dialog_tag),
+                    mMinThrow, mMaxThrow, mPeriodLength, getNumberOfSynchronousHands());
 
         }
     }
@@ -380,7 +397,8 @@ public class MainActivity extends AppCompatActivity
             return;
 
         new EnterSiteswapDialog().show(getSupportFragmentManager(),
-                getString(R.string.enter_siteswap__dialog_tag), mNumberOfJugglers);
+                getString(R.string.enter_siteswap__dialog_tag),
+                mNumberOfJugglers, getNumberOfSynchronousHands());
     }
 
     public void generateSiteswaps(View view) {
@@ -392,6 +410,7 @@ public class MainActivity extends AppCompatActivity
                 mMinThrow, mNumberOfObjects, mNumberOfJugglers, mFilterList);
         siteswapGenerator.setMaxResults(mMaxResults);
         siteswapGenerator.setTimeoutSeconds(mTimeout);
+        siteswapGenerator.setSyncPattern(mIsSyncPattern);
         siteswapGenerator.setRandomGeneration(mIsRandomGenerationMode);
 
         Intent intent = new Intent(this, ShowSiteswaps.class);
@@ -402,26 +421,32 @@ public class MainActivity extends AppCompatActivity
     public void onCheckboxClicked(View view) {
 
         boolean checked = ((CheckBox) view).isChecked();
+        int oldNumberOfSynchronousHands = getNumberOfSynchronousHands();
         updateFromTextEdits();
 
         switch (view.getId()) {
             case R.id.include_zips_checkbox:
                 if (checked)
-                    Filter.addZips(mFilterList, mNumberOfJugglers);
+                    Filter.addZips(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
                 else
-                    Filter.removeZips(mFilterList, mNumberOfJugglers);
+                    Filter.removeZips(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
                 break;
             case R.id.include_zaps_checkbox:
                 if (checked)
-                    Filter.addZaps(mFilterList, mNumberOfJugglers);
+                    Filter.addZaps(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
                 else
-                    Filter.removeZaps(mFilterList, mNumberOfJugglers);
+                    Filter.removeZaps(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
                 break;
             case R.id.include_holds_checkbox:
                 if (checked)
-                    Filter.addHolds(mFilterList, mNumberOfJugglers);
+                    Filter.addHolds(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
                 else
-                    Filter.removeHolds(mFilterList, mNumberOfJugglers);
+                    Filter.removeHolds(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+                break;
+            case R.id.sync_mode_checkbox:
+                removeAutoFilters(oldNumberOfSynchronousHands);
+                updateFiltersWithNumberOfSynchronousHands(getNumberOfSynchronousHands());
+                addAutoFilters();
                 break;
         }
         mFilterListAdapter.notifyDataSetChanged();
@@ -431,12 +456,38 @@ public class MainActivity extends AppCompatActivity
     private boolean updateAutoFilters() {
         if (!updateFromTextEdits())
             return false;
-        Filter.addDefaultFilters(mFilterList, mNumberOfJugglers, mMinThrow);
-        onCheckboxClicked(mZipsCheckbox);   // Updates the filter list corresponding to checkbox
-        onCheckboxClicked(mZapsCheckbox);   // Updates the filter list corresponding to checkbox
-        onCheckboxClicked(mHoldsCheckbox);  // Updates the filter list corresponding to checkbox
+        removeAutoFilters(getNumberOfSynchronousHands());
+        addAutoFilters();
         mFilterListAdapter.notifyDataSetChanged();
         return true;
+    }
+
+    private void removeAutoFilters(int numberOfSynchronousHands) {
+        Filter.removeDefaultFilters(mFilterList, mNumberOfJugglers, mMinThrow, numberOfSynchronousHands);
+        Filter.addZips(mFilterList, mNumberOfJugglers, numberOfSynchronousHands);
+        Filter.addZaps(mFilterList, mNumberOfJugglers, numberOfSynchronousHands);
+        Filter.addHolds(mFilterList, mNumberOfJugglers, numberOfSynchronousHands);
+
+    }
+
+    private void addAutoFilters() {
+
+        Filter.addDefaultFilters(mFilterList, mNumberOfJugglers, mMinThrow,
+                getNumberOfSynchronousHands());
+        if (!mIsZips)
+            Filter.removeZips(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+        if (!mIsZaps)
+            Filter.removeZaps(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+        if (!mIsHolds)
+            Filter.removeHolds(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+    }
+
+    private void updateFiltersWithNumberOfSynchronousHands(int numberOfSynchronousHands) {
+        for (Filter filter : mFilterList) {
+            if (filter instanceof NumberFilter) {
+                ((NumberFilter) filter).setNumberOfSynchronousHands(numberOfSynchronousHands);
+            }
+        }
     }
 
     private void showNamedSiteswaps() {

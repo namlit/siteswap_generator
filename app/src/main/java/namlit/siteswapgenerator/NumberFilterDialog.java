@@ -52,6 +52,7 @@ public class NumberFilterDialog extends AddFilterDialog {
     int mMinThrow = 0;
     int mMaxThrow = 0;
     int mPeriodLength = 0;
+    int mNumberOfSynchronousHands = 1;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -112,6 +113,8 @@ public class NumberFilterDialog extends AddFilterDialog {
         int throwHeightIndex = sharedPref.getInt(getString(R.string.number_filter__shared_preferences_throw_height_index), 0);
         int numberIndex = sharedPref.getInt(getString(R.string.number_filter__shared_preferences_number_index), 1);
 
+        List<String> throwHeightArray =  new ArrayList<String>();
+
         if (mOldFilter != null) {
             if (mOldFilter instanceof NumberFilter) {
                 NumberFilter filter = (NumberFilter) mOldFilter;
@@ -130,28 +133,26 @@ public class NumberFilterDialog extends AddFilterDialog {
                         break;
                 }
 
-                int throwHeight = filter.getFilterValue();
+                NumberFilter.FilterValue throwHeight = filter.getFilterValue();
                 int threshold = filter.getThresholdValue();
-
-                if(throwHeight == Siteswap.PASS)
+                if(throwHeight.isPass())
                     throwHeightIndex = 0;
-                else if(throwHeight == Siteswap.SELF)
+                else if(throwHeight.isSelf())
                     throwHeightIndex = 1;
-                else
-                    throwHeightIndex = throwHeight + 2 - mMinThrow;
+                else {
+                    throwHeightArray.add(throwHeight.toString());
+                    throwHeightIndex = 0;
+                }
                 numberIndex = threshold;
             }
 
         }
 
-        List<String> throwHeightArray =  new ArrayList<String>();
         throwHeightArray.add(Siteswap.intToString(Siteswap.PASS));
         throwHeightArray.add(Siteswap.intToString(Siteswap.SELF));
-        int max = mMaxThrow;
-        if (throwHeightIndex > max)
-            max = throwHeightIndex;
-        for (int i = mMinThrow; i <= max; ++i) {
-            throwHeightArray.add(Siteswap.intToString(i));
+        for (String str : NumberFilter.getPossibleValues(mMinThrow, mMaxThrow,
+                mNumberOfSynchronousHands)) {
+            throwHeightArray.add(str);
         }
 
         ArrayAdapter<String> throwHeightAdapter = new ArrayAdapter<String>(
@@ -212,7 +213,7 @@ public class NumberFilterDialog extends AddFilterDialog {
         boolean isAtLeast = mAtLeastRadioButton.isChecked();
         boolean isNotMore = mNotMoreRadioButton.isChecked();
         boolean isExactly = mExactlyRadioButton.isChecked();
-        int height = Siteswap.stringToInt((String) mHeightSpinner.getSelectedItem());
+        String height = (String) mHeightSpinner.getSelectedItem();
         int threshold = Integer.valueOf((String) mNumberSpinner.getSelectedItem());
 
         NumberFilter.Type type = NumberFilter.Type.GREATER_EQUAL;
@@ -221,19 +222,22 @@ public class NumberFilterDialog extends AddFilterDialog {
         if (isExactly)
             type = NumberFilter.Type.EQUAL;
 
-        return new NumberFilter(height, type, threshold);
+        return new NumberFilter(height, type, threshold, mNumberOfSynchronousHands);
 
     }
 
-    public void show(FragmentManager manager, String tag, int minThrow, int maxThrow, int periodLength, Filter filter) {
+    public void show(FragmentManager manager, String tag, int minThrow, int maxThrow,
+                     int periodLength, int numberOfSynchronousHands, Filter filter) {
         mOldFilter = filter;
-        show(manager, tag, minThrow, maxThrow, periodLength);
+        show(manager, tag, minThrow, maxThrow, periodLength, numberOfSynchronousHands);
     }
 
-    public void show(FragmentManager manager, String tag, int minThrow, int maxThrow, int periodLength) {
+    public void show(FragmentManager manager, String tag, int minThrow, int maxThrow,
+                     int periodLength, int numberOfSynchronousHands) {
         mMinThrow = minThrow;
         mMaxThrow = maxThrow;
         mPeriodLength = periodLength;
+        mNumberOfSynchronousHands = numberOfSynchronousHands;
         show(manager, tag);
     }
 }

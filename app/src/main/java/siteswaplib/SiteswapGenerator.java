@@ -39,6 +39,7 @@ public class SiteswapGenerator implements Serializable{
 	private boolean mCalculationComplete = false;
 	private AtomicBoolean mIsCanceled;
 	private int mBacktrackingCount = 0; // Just for algorithm performance analysis
+	private int mNumberOfSynchronousHands = 1;
 	private boolean mIsRandomGeneration = false;
 
 	public SiteswapGenerator(int length, int max, int min, int objects, int number_of_jugglers) {
@@ -54,7 +55,7 @@ public class SiteswapGenerator implements Serializable{
 		mIsCanceled = new AtomicBoolean(false);
 		setNumberOfJugglers(number_of_jugglers);
         mFilterList = new LinkedList<Filter>();
-        Filter.addDefaultFilters(mFilterList, number_of_jugglers);
+        Filter.addDefaultFilters(mFilterList, number_of_jugglers, mNumberOfSynchronousHands);
 	}
 
     public SiteswapGenerator(int length, int max, int min, int objects, int number_of_jugglers,
@@ -63,11 +64,11 @@ public class SiteswapGenerator implements Serializable{
         this(length, max, min, objects, number_of_jugglers);
         mFilterList = filterList;
     }
-	
+
 	public LinkedList<Filter> getFilterList() {
 		return mFilterList;
 	}
-	
+
 	public void setFilterList(LinkedList<Filter> filterList) {
 		this.mFilterList = filterList;
 	}
@@ -82,20 +83,28 @@ public class SiteswapGenerator implements Serializable{
 		byte[] interfaceArray = new byte[mPeriodLength];
 		Arrays.fill(siteswapArray, Siteswap.FREE);
 		Arrays.fill(interfaceArray, Siteswap.FREE);
-		Siteswap siteswap = new Siteswap(siteswapArray, mNumberOfJugglers);
+		Siteswap siteswap;
+		Siteswap siteswapInterface;
+		Status status = Status.GENERATING;
 
-		// The inteface describes, where throws are coming down
-		Siteswap siteswapInterface = new Siteswap(interfaceArray, mNumberOfJugglers);
-
-		Status status = backtracking(siteswap, siteswapInterface, 0, 0);
-		if (status == Status.GENERATING && !mIsRandomGeneration)
-			status = Status.ALL_SITESWAPS_FOUND;
+		for (int i = 0; i < mNumberOfSynchronousHands; ++i) {
+			siteswap = new Siteswap(siteswapArray, mNumberOfJugglers);
+			siteswap.setNumberOfSynchronousHands(mNumberOfSynchronousHands);
+			siteswap.setSynchronousStartPosition(i);
+			siteswapInterface = new Siteswap(interfaceArray, mNumberOfJugglers);
+			status = backtracking(siteswap, siteswapInterface, 0, 0);
+			if (status != Status.GENERATING || mIsRandomGeneration)
+				break;
+            status = Status.ALL_SITESWAPS_FOUND;
+		}
 
 		if (mIsRandomGeneration) {
 			while (status == Status.GENERATING || status == Status.RANDOM_SITESWAP_FOUND) {
 				Arrays.fill(siteswapArray, Siteswap.FREE);
 				Arrays.fill(interfaceArray, Siteswap.FREE);
 				siteswap = new Siteswap(siteswapArray, mNumberOfJugglers);
+				siteswap.setNumberOfSynchronousHands((mNumberOfSynchronousHands));
+				siteswap.setSynchronousStartPosition((new Random().nextInt(mNumberOfSynchronousHands)));
 				siteswapInterface = new Siteswap(interfaceArray, mNumberOfJugglers);
 				status = backtracking(siteswap, siteswapInterface, 0, 0);
 			}
@@ -103,7 +112,8 @@ public class SiteswapGenerator implements Serializable{
 		mCalculationComplete = true;
 		return status;
 	}
-	
+
+
 	public void setNumberOfJugglers(int numberOfJugglers) {
 		this.mNumberOfJugglers = numberOfJugglers;
 		if (numberOfJugglers < 1)
@@ -134,10 +144,17 @@ public class SiteswapGenerator implements Serializable{
         this.mTimeoutSeconds = timeoutSeconds;
     }
 
+	public void setSyncPattern(boolean isSyncPattern) {
+		if (isSyncPattern)
+            mNumberOfSynchronousHands = getNumberOfJugglers();
+		else
+			mNumberOfSynchronousHands = 1;
+	}
+
     public void setRandomGeneration(boolean isRandomGeneration) {
 		mIsRandomGeneration = isRandomGeneration;
 	}
-	
+
 	public LinkedList<Siteswap> getSiteswaps() {
 		return mSiteswaps;
 	}

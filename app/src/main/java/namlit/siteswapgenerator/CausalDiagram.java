@@ -52,7 +52,7 @@ public class CausalDiagram extends View {
     private float mMediumTextSize;
     private float mLargeTextSize;
     private float mNodeRadius;
-    private float mNodeXDistance;
+    private float mNodeLocalBeatXDistance;
     private float mNodeYDistance;
     private float mStrokeWidth;
     private float mJugglerNameDist;
@@ -83,14 +83,20 @@ public class CausalDiagram extends View {
         mNumberOfNodes = mSiteswap.getNonMirroredPeriod();
         int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
         int rowLengthCenterPoints = (mNumberOfNodes /
-                mSiteswap.getNumberOfJugglers()) * (int) mNodeXDistance;
+                mSiteswap.getNumberOfJugglers()) * (int) mNodeLocalBeatXDistance;
         int circleSize = 2 * (int) mNodeRadius + (int) mStrokeWidth;
-        int rowOffset = (int) mNodeXDistance / mSiteswap.getNumberOfJugglers();
+        int rowOffset = (int) mNodeLocalBeatXDistance / mSiteswap.getNumberOfJugglers();
+        if (mSiteswap.isSynchronous()) {
+            if (mSiteswap.getSynchronousStartPosition() == 0)
+                rowOffset = (int) mNodeLocalBeatXDistance;
+            else
+                rowOffset = 0;
+        }
         int minw = getPaddingLeft() + getPaddingRight() + (int) mJugglerNameDist +
                 rowLengthCenterPoints + circleSize - rowOffset;
         if (minw < parentWidth) {
             minw = parentWidth;
-            mNumberOfNodes = (int) ((minw / mNodeXDistance * mSiteswap.getNumberOfJugglers()) - 1);
+            mNumberOfNodes = (int) ((minw / mNodeLocalBeatXDistance * mSiteswap.getNumberOfJugglers()) - 1);
         }
         int w = resolveSizeAndState(minw, widthMeasureSpec, 1);
 
@@ -260,9 +266,11 @@ public class CausalDiagram extends View {
                 getPaddingLeft() + (int) mJugglerNameDist;
 
         int row = nodeIndex % mSiteswap.getNumberOfJugglers();
-        int column = nodeIndex / mSiteswap.getNumberOfJugglers();
-        int rowOffset = (int) mNodeXDistance / mSiteswap.getNumberOfJugglers();
-        int xPos = xPosStart + column * (int) mNodeXDistance + row * rowOffset;
+        int column = nodeIndex;
+        column += mSiteswap.getSynchronousStartPosition();
+        column -= mSiteswap.getSynchronousPosition(nodeIndex);
+        float columnXDistance = mNodeLocalBeatXDistance / mSiteswap.getNumberOfJugglers();
+        int xPos = xPosStart + column * (int) columnXDistance;
         int yPos = yPosFirstRow + row * (int) mNodeYDistance;
         return new Point(xPos, yPos);
     }
@@ -274,7 +282,7 @@ public class CausalDiagram extends View {
         mMediumTextSize = mDensity * 25;
         mLargeTextSize = mDensity * 30;
         mNodeRadius = mSmallTextSize * 2 / 3;
-        mNodeXDistance = mDensity * 60;
+        mNodeLocalBeatXDistance = mDensity * 60;
         mNodeYDistance = mDensity * 80;
         mStrokeWidth = mDensity * 2;
         mArrowHeadSize = mDensity * 12;

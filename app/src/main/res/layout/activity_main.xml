@@ -184,6 +184,13 @@
                 </TableLayout>
 
                 <CheckBox
+                    android:id="@+id/sync_mode_checkbox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="onCheckboxClicked"
+                    android:text="@string/main_activity__sync_mode" />
+
+                <CheckBox
                     android:id="@+id/random_generation_mode_checkbox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
