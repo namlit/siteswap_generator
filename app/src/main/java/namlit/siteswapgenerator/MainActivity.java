@@ -119,6 +119,8 @@ public class MainActivity extends AppCompatActivity
         mIsZips       = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_zips), true);
         mIsZaps       = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_zaps), false);
         mIsHolds      = sharedPref.getBoolean(getString(R.string.main_activity__settings_is_holds), false);
+        mIsSyncPattern = sharedPref.getBoolean(
+                getString(R.string.main_activity__settings_is_sync_pattern), false);
         mIsRandomGenerationMode = sharedPref.getBoolean(
                 getString(R.string.main_activity__settings_is_random_generation_mode), false);
         mFilterSpinnerPosition = sharedPref.getInt(getString(R.string.main_activity__settings_filter_spinner_position), 0);
@@ -145,6 +147,7 @@ public class MainActivity extends AppCompatActivity
         mNumberOfJugglersEditText.setText(String.valueOf(mNumberOfJugglers));
         mMaxResultsEditText.setText(String.valueOf(mMaxResults));
         mTimeoutEditText.setText(String.valueOf(mTimeout));
+        mSyncModeCheckbox.setChecked(mIsSyncPattern);
         mRandomGenerationModeCheckbox.setChecked(mIsRandomGenerationMode);
         mZipsCheckbox.setChecked(mIsZips);
         mZapsCheckbox.setChecked(mIsZaps);
@@ -314,6 +317,7 @@ public class MainActivity extends AppCompatActivity
         editor.putInt(getString(R.string.main_activity__settings_number_of_jugglers), mNumberOfJugglers);
         editor.putInt(getString(R.string.main_activity__settings_max_results), mMaxResults);
         editor.putInt(getString(R.string.main_activity__settings_timeout), mTimeout);
+        editor.putBoolean(getString(R.string.main_activity__settings_is_sync_pattern), mIsSyncPattern);
         editor.putBoolean(getString(R.string.main_activity__settings_is_random_generation_mode), mIsRandomGenerationMode);
         editor.putBoolean(getString(R.string.main_activity__settings_is_zips), mIsZips);
         editor.putBoolean(getString(R.string.main_activity__settings_is_zaps), mIsZaps);

@@ -10,6 +10,7 @@
     <string name="main_activity__settings_number_of_jugglers">NUMBER_OF_JUGGLERS</string>
     <string name="main_activity__settings_max_results">MAX_RESULTS</string>
     <string name="main_activity__settings_timeout">TIMEOUT</string>
+    <string name="main_activity__settings_is_sync_pattern">IS_SYNC_PATTERN</string>
     <string name="main_activity__settings_is_random_generation_mode">IS_RANDOM_GENERATION_MODE</string>
     <string name="main_activity__settings_is_zips">IS_ZIPS</string>
     <string name="main_activity__settings_is_zaps">IS_ZAPS</string>
