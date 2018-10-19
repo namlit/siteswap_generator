@@ -55,7 +55,7 @@ public class SiteswapGenerator implements Serializable{
 		mIsCanceled = new AtomicBoolean(false);
 		setNumberOfJugglers(number_of_jugglers);
         mFilterList = new LinkedList<Filter>();
-        Filter.addDefaultFilters(mFilterList, number_of_jugglers);
+        Filter.addDefaultFilters(mFilterList, number_of_jugglers, mNumberOfSynchronousHands);
 	}
 
     public SiteswapGenerator(int length, int max, int min, int objects, int number_of_jugglers,

@@ -206,34 +206,38 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return (getSynchronousStartPosition() + position) % getNumberOfSynchronousHands();
 	}
 
-	public int countValue(byte value) {
+	public int countFilterValue(NumberFilter.FilterValue siteswapValue) {
 		int counter = 0;
-		for (byte i : mData) {
-			if(isPatternSingleValue(value, i))
-				counter++;
+        for (int i = 0; i < global_period_length(); ++i) {
+			for (int value : siteswapValue.getValues(getSynchronousPosition(i))) {
+				if (isPatternSingleValue((byte) value, at(i)))
+					counter++;
+			}
 		}
 		return counter;
 	}
 
-    public int countValuePartitially(byte value, int index) {
-        int counter = 0;
-        for (int i = 0; i <= index; ++i) {
-            if(isPatternSingleValue(value, mData.at(i)))
-                counter++;
-        }
-        return counter;
-    }
+    public int countFilterValuePartitially(NumberFilter.FilterValue siteswapValue, int index) {
+		int counter = 0;
+		for (int i = 0; i <= index; ++i) {
+			for (int value : siteswapValue.getValues(getSynchronousPosition(i))) {
+				if (isPatternSingleValue((byte) value, mData.at(i)))
+					counter++;
+			}
+		}
+		return counter;
+	}
 
 	public void rotateRight(int positions) {
 		mData.rotateRight(positions);
-		mSynchronousStartPosition = (mSynchronousStartPosition + positions) % getNumberOfSynchronousHands();
+		mSynchronousStartPosition = (mSynchronousStartPosition - positions) % getNumberOfSynchronousHands();
+		if (mSynchronousStartPosition < 0)
+			mSynchronousStartPosition += period_length();
 	}
 
 	public void rotateLeft(int positions) {
 		mData.rotateLeft(positions);
-		mSynchronousStartPosition = (mSynchronousStartPosition - positions) % getNumberOfSynchronousHands();
-		if (mSynchronousStartPosition < 0)
-			mSynchronousStartPosition += period_length();
+		mSynchronousStartPosition = (mSynchronousStartPosition + positions) % getNumberOfSynchronousHands();
 	}
 
 	public void make_unique_representation()
@@ -870,12 +874,12 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return INVALID;
 	}
 
-	static public boolean isPatternSingleValue(byte patternValue, byte siteswapValue, int numberOfJugglers) {
+	public boolean isPatternSingleValue(byte patternValue, byte siteswapValue) {
 		if (siteswapValue >= 0) {
 			if (patternValue == SELF)
-				return siteswapValue % numberOfJugglers == 0;
+				return siteswapValue % getNumberOfJugglers() == 0;
 			if (patternValue == PASS)
-				return siteswapValue % numberOfJugglers != 0;
+				return siteswapValue % getNumberOfJugglers() != 0;
 			if (patternValue == DONT_CARE)
 				return true;
 			// the Pattern should not have any free positions. Therefore false is returned in this case
@@ -891,12 +895,8 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 				return false;
 		}
 
-		return patternValue == siteswapValue;
+        return patternValue == siteswapValue;
 	}
-
-    public boolean isPatternSingleValue(byte patternValue, byte siteswapValue) {
-        return isPatternSingleValue(patternValue, siteswapValue, mNumberOfJugglers);
-    }
 
     public boolean isPattern(Siteswap pattern) {
         if (pattern.period_length() == 0)
