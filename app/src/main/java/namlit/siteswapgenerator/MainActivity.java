@@ -444,6 +444,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.sync_mode_checkbox:
                 removeAutoFilters(oldNumberOfSynchronousHands);
+                updateFiltersWithNumberOfSynchronousHands(getNumberOfSynchronousHands());
                 addAutoFilters();
                 break;
         }
@@ -478,6 +479,14 @@ public class MainActivity extends AppCompatActivity
             Filter.removeZaps(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
         if (!mIsHolds)
             Filter.removeHolds(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+    }
+
+    private void updateFiltersWithNumberOfSynchronousHands(int numberOfSynchronousHands) {
+        for (Filter filter : mFilterList) {
+            if (filter instanceof NumberFilter) {
+                ((NumberFilter) filter).setNumberOfSynchronousHands(numberOfSynchronousHands);
+            }
+        }
     }
 
     private void showNamedSiteswaps() {

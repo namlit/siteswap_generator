@@ -143,6 +143,10 @@ public class NumberFilter extends Filter {
 	}
 
 
+	public void setNumberOfSynchronousHands(int numberOfSynchronousHands) {
+	    this.mNumberOfSynchronousHands = numberOfSynchronousHands;
+	}
+
 	@Override
 	public boolean isFulfilled(Siteswap siteswap) {
 		if (mType == Type.GREATER_EQUAL)
@@ -215,10 +219,7 @@ public class NumberFilter extends Filter {
 		if (! (obj instanceof NumberFilter))
 			return false;
 		NumberFilter rhs = (NumberFilter) obj;
-		return mType == rhs.mType &&
-				mThresholdValue == rhs.mThresholdValue &&
-				mNumberOfSynchronousHands == rhs.mNumberOfSynchronousHands &&
-				mFilterValue.equals(rhs.mFilterValue);
+		return toString().equals(rhs.toString());
 	}
 
 	@Override
