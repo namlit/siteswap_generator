@@ -232,7 +232,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		mData.rotateRight(positions);
 		mSynchronousStartPosition = (mSynchronousStartPosition - positions) % getNumberOfSynchronousHands();
 		if (mSynchronousStartPosition < 0)
-			mSynchronousStartPosition += period_length();
+			mSynchronousStartPosition += getNumberOfSynchronousHands();
 	}
 
 	public void rotateLeft(int positions) {
