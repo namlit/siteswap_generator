@@ -17,6 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".NamedSiteswapActivity" />
+        <activity android:name=".FavoritesActivity" />
         <activity android:name=".ShowSiteswaps" />
         <activity android:name=".DetailedSiteswapActivity"></activity>
     </application>

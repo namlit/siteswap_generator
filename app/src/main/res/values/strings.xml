@@ -57,6 +57,7 @@
     <string name="main_activity__invalid_min_throw_greater_average">The minimum throw needs to be at maximum the number of objects</string>
 
     <string name="main_activity__option_named_siteswaps">Named Siteswaps</string>
+    <string name="main_activity__option_favorites">Favorites</string>
     <string name="main_activity__option_about">About</string>
     <string name="main_activity__option_help">Help</string>
 
@@ -85,6 +86,8 @@
     <string name="share">Share</string>
 
     <string name="named_siteswaps__title">Named Siteswaps</string>
+    <string name="favorites__title">Favorites</string>
+    <string name="favorites__title_waiting_for_database_query">Waiting for database query ...</string>
 
     <string name="option_about__source_code_at">Source Code at:</string>
     <string name="option_about__github_address">https://github.com/namlit/siteswap_generator</string>
@@ -152,7 +155,7 @@
     <string name="enter_siteswap__title">Enter Siteswap</string>
     <string name="enter_siteswap__dialog_tag">ENTER_SITESWAP__DIALOG_TAG</string>
 
-    <string name="add_to_favorites__title">Enter Siteswap Name</string>
+    <string name="add_to_favorites__title">Enter Favorite Name</string>
     <string name="add_to_favorites__dialog_tag">ADD_TO_FAVORITES__DIALOG_TAG</string>
 
     <string name="detailed_siteswap__title">Siteswap Info</string>
@@ -170,6 +173,8 @@
     <string name="detailed_siteswap__causal_diagram">Causal Diagram: </string>
     <string name="detailed_siteswap__ladder_diagram">Ladder Diagram: </string>
     <string name="detailed_siteswap__share_global">Global:</string>
+    <string name="detailed_siteswap__toast_duplicate_favorite">Abort add to favorites: same siteswap is already in favorites</string>
+
 
     <string name="detailed_siteswap__legend_html">
         <![CDATA[

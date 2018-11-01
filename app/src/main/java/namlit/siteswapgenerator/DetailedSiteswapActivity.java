@@ -34,7 +34,8 @@ import java.util.Vector;
 import siteswaplib.NamedSiteswaps;
 import siteswaplib.Siteswap;
 
-public class DetailedSiteswapActivity extends AppCompatActivity {
+public class DetailedSiteswapActivity extends AppCompatActivity
+        implements AddToFavoritesDialog.DatabaseTransactionComplete {
 
     private Siteswap mSiteswap;
     private TextView mGlobalSiteswapTextview;
@@ -48,6 +49,7 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
     private CausalDiagram mCausalDiagram;
     private CausalDiagram mLadderDiagram;
     private ShareActionProvider mShareActionProvider;
+    private SiteswapEntity mFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +83,25 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
         mCausalDiagram.setSiteswap(mSiteswap);
         mLadderDiagram = (CausalDiagram) findViewById(R.id.ladder_diagram_view);
         mLadderDiagram.setSiteswap(mSiteswap);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AppDatabase db = AppDatabase.getAppDatabase(getApplicationContext());
+                mFavorite = db.siteswapDao().getSiteswap(mSiteswap.toParsableString());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mFavorite != null) {
+                            mSiteswap.setSiteswapName(mFavorite.getName());
+                        }
+                        else {
+                        }
+                        updateTextViews();
+                    }
+                });
+            }
+        }).start();
 
         updateTextViews();
 
@@ -214,10 +235,15 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
     private void addToFavorites() {
 
         new AddToFavoritesDialog().show(getSupportFragmentManager(),
-                getString(R.string.add_to_favorites__dialog_tag));
+                getString(R.string.add_to_favorites__dialog_tag), mSiteswap);
     }
 
     private void removeFromFavorites() {
 
+    }
+
+    @Override
+    public void databaseTransactionComplete() {
+        updateTextViews();
     }
 }

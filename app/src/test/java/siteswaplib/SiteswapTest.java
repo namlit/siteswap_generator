@@ -33,4 +33,23 @@ public class SiteswapTest {
         assertEquals(expected, filter.getFilterValue().toString());
     }
 
+    @Test
+    public void testParseString() {
+        String siteswap_str_1 = "86277.2.1.0";
+        Siteswap siteswap_1 = new Siteswap(siteswap_str_1);
+        assertEquals("86277", siteswap_1.toAsyncString());
+        assertEquals(2, siteswap_1.getNumberOfJugglers());
+        assertEquals(1, siteswap_1.getNumberOfSynchronousHands());
+        assertEquals(0, siteswap_1.getSynchronousStartPosition());
+        assertEquals(siteswap_str_1, siteswap_1.toParsableString());
+
+        String siteswap_str_2 = "c9ec99bc39ac99a.3.3.1";
+        Siteswap siteswap_2 = new Siteswap(siteswap_str_2);
+        assertEquals("c9ec99bc39ac99a", siteswap_2.toAsyncString());
+        assertEquals(3, siteswap_2.getNumberOfJugglers());
+        assertEquals(3, siteswap_2.getNumberOfSynchronousHands());
+        assertEquals(1, siteswap_2.getSynchronousStartPosition());
+        assertEquals(siteswap_str_2, siteswap_2.toParsableString());
+    }
+
 }

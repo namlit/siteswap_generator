@@ -19,6 +19,7 @@
 package namlit.siteswapgenerator;
 
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import siteswaplib.Siteswap;
 
@@ -35,12 +37,21 @@ import siteswaplib.Siteswap;
 
 public class AddToFavoritesDialog extends DialogFragment {
 
+    public interface DatabaseTransactionComplete {
+        public void databaseTransactionComplete();
+    }
+
     private EditText mSiteswapNameTextEdit;
+    private Siteswap mSiteswap;
+    private DatabaseTransactionComplete mDatabaseTransactionComplete;
+    private Activity mActivity;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        mDatabaseTransactionComplete = (DatabaseTransactionComplete) getActivity();
+        mActivity = getActivity();
 
         builder.setView(R.layout.layout_add_to_favorites)
                 .setTitle(getString(R.string.add_to_favorites__title))
@@ -63,6 +74,7 @@ public class AddToFavoritesDialog extends DialogFragment {
     public void onStart() {
         super.onStart();
         mSiteswapNameTextEdit = (EditText) getDialog().findViewById(R.id.siteswap_name_text_edit);
+        mSiteswapNameTextEdit.setText(mSiteswap.getSiteswapName());
     }
 
 
@@ -73,10 +85,29 @@ public class AddToFavoritesDialog extends DialogFragment {
 
     private void addSiteswapToFavorites()
     {
-        // TODO
+        String name = mSiteswapNameTextEdit.getText().toString();
+        mSiteswap.setSiteswapName(name);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    AppDatabase db = AppDatabase.getAppDatabase(getContext());
+                    db.siteswapDao().insertFavorites(new SiteswapEntity(mSiteswap));
+                    mActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDatabaseTransactionComplete.databaseTransactionComplete();
+                        }
+                    });
+                } catch (android.database.sqlite.SQLiteConstraintException e) {
+                }
+            }
+        }).start();
+
     }
 
-    public void show(FragmentManager manager, String tag) {
+    public void show(FragmentManager manager, String tag, Siteswap siteswap) {
+        mSiteswap = siteswap;
         show(manager, tag);
     }
 }
