@@ -185,7 +185,10 @@
     <string name="detailed_siteswap__ladder_diagram">Ladder Diagram: </string>
     <string name="detailed_siteswap__share_global">Global:</string>
     <string name="detailed_siteswap__toast_duplicate_favorite">Abort add to favorites: same siteswap is already in favorites</string>
+    <string name="detailed_siteswap__toast_not_in_favorites">Siteswap was not found in favorites</string>
 
+    <string name="detailed_siteswap__option_add_to_favorites">Add to Favorites</string>
+    <string name="detailed_siteswap__option_remove_from_favorites">Remove from Favorites</string>
 
     <string name="detailed_siteswap__legend_html">
         <![CDATA[

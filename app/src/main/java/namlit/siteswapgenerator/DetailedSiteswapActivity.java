@@ -28,7 +28,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.List;
 import java.util.Vector;
 
 import siteswaplib.NamedSiteswaps;
@@ -116,11 +118,33 @@ public class DetailedSiteswapActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_detailed_siteswap, menu);
-        MenuItem item = menu.findItem(R.id.menu_item_share_detailed);
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-        setShareIntent();
-
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.menu_item_share_detailed)
+        {
+            mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+            setShareIntent();
+        }
+        else if (id == R.id.action_add_to_favorites)
+        {
+            addToFavorites();
+            updateTextViews();
+        }
+        else if (id == R.id.action_remove_from_favorites)
+        {
+            removeFromFavorites();
+            updateTextViews();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void setShareIntent() {
@@ -224,14 +248,6 @@ public class DetailedSiteswapActivity extends AppCompatActivity
         updateTextViews();
     }
 
-    public void favorites(View view) {
-        // TODO if not in favorites: add to favorites else remove from favorites
-        addToFavorites();
-        // TODO update Siteswap name
-        updateTextViews();
-    }
-
-
     private void addToFavorites() {
 
         new AddToFavoritesDialog().show(getSupportFragmentManager(),
@@ -239,6 +255,39 @@ public class DetailedSiteswapActivity extends AppCompatActivity
     }
 
     private void removeFromFavorites() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    AppDatabase db = AppDatabase.getAppDatabase(getApplicationContext());
+                    FavoriteDao dao = db.siteswapDao();
+                    List<SiteswapEntity> siteswapEntityList = dao.getSiteswaps(mSiteswap.toParsableString());
+                    if (siteswapEntityList.size() >= 1) {
+                        // TODO choose which to remove
+                        dao.deleteFavorite(siteswapEntityList.get(0));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // TODO Toas success
+                            }
+                        });
+                    }
+                    else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // TODO does not work
+                                Toast.makeText(getApplicationContext(),
+                                        getString(R.string.detailed_siteswap__toast_not_in_favorites),
+                                        Toast.LENGTH_LONG);
+                            }
+                        });
+                    }
+                } catch (android.database.sqlite.SQLiteConstraintException e) {
+                }
+            }
+        }).start();
 
     }
 

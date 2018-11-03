@@ -14,6 +14,9 @@ public interface FavoriteDao {
     List<SiteswapEntity> getAllFavorites();
 
     @Query("SELECT * FROM favorites WHERE siteswap IS :siteswap")
+    List<SiteswapEntity> getSiteswaps(String siteswap);
+
+    @Query("SELECT * FROM favorites WHERE siteswap IS :siteswap")
     SiteswapEntity getSiteswap(String siteswap);
 
     // TODO Why is the wrong column returned?

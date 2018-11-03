@@ -31,6 +31,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.Date;
+import java.text.DateFormat;
 
 import siteswaplib.Siteswap;
 
@@ -89,8 +90,11 @@ public class AddToFavoritesDialog extends DialogFragment {
         mLocationTextEdit = (EditText) getDialog().findViewById(R.id.location_text_edit);
         mDateTextEdit= (EditText) getDialog().findViewById(R.id.date_text_edit);
 
-        mSiteswapNameTextEdit.setText(mSiteswap.getSiteswapName());
-        // TODO load current date mDateTextEdit.setText();
+        if (mSiteswap.getSiteswapName() == "")
+            mSiteswapNameTextEdit.setText(mSiteswap.toString());
+        else
+            mSiteswapNameTextEdit.setText(mSiteswap.getSiteswapName() + ": " + mSiteswap.toString());
+        mDateTextEdit.setText(DateFormat.getDateInstance().format(new Date()));
     }
 
 
