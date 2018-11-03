@@ -35,8 +35,13 @@ public class SiteswapEntity implements Serializable {
 
     }
 
-    public SiteswapEntity(Siteswap siteswap) {
+    public SiteswapEntity(Siteswap siteswap, String name, String juggerNames,
+                          String location, String date) {
         fromSiteswap(siteswap);
+        setName(name);
+        setJuggerNames(juggerNames);
+        setLocation(location);
+        setDate(date);
     }
 
     public int getUid() {
@@ -99,7 +104,7 @@ public class SiteswapEntity implements Serializable {
 
     @Override
     public String toString() {
-        return getSiteswap() + ": " + getName();
+        return getName();
     }
 
 }

@@ -26,8 +26,11 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.text.format.DateUtils;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.util.Date;
 
 import siteswaplib.Siteswap;
 
@@ -42,7 +45,14 @@ public class AddToFavoritesDialog extends DialogFragment {
     }
 
     private EditText mSiteswapNameTextEdit;
+    private EditText mJugglerNameTextEdit;
+    private EditText mLocationTextEdit;
+    private EditText mDateTextEdit;
     private Siteswap mSiteswap;
+    private String mSiteswapName;
+    private String mJugglerName;
+    private String mLocation;
+    private String mDate;
     private DatabaseTransactionComplete mDatabaseTransactionComplete;
     private Activity mActivity;
 
@@ -73,8 +83,14 @@ public class AddToFavoritesDialog extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
+        // TODO auto complete
         mSiteswapNameTextEdit = (EditText) getDialog().findViewById(R.id.siteswap_name_text_edit);
+        mJugglerNameTextEdit = (EditText) getDialog().findViewById(R.id.juggler_name_text_edit);
+        mLocationTextEdit = (EditText) getDialog().findViewById(R.id.location_text_edit);
+        mDateTextEdit= (EditText) getDialog().findViewById(R.id.date_text_edit);
+
         mSiteswapNameTextEdit.setText(mSiteswap.getSiteswapName());
+        // TODO load current date mDateTextEdit.setText();
     }
 
 
@@ -85,14 +101,19 @@ public class AddToFavoritesDialog extends DialogFragment {
 
     private void addSiteswapToFavorites()
     {
-        String name = mSiteswapNameTextEdit.getText().toString();
-        mSiteswap.setSiteswapName(name);
+        mSiteswapName = mSiteswapNameTextEdit.getText().toString();
+        mSiteswap.setSiteswapName(mSiteswapName);
+        mJugglerName = mJugglerNameTextEdit.getText().toString();
+        mLocation = mLocationTextEdit.getText().toString();
+        mDate = mDateTextEdit.getText().toString();
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     AppDatabase db = AppDatabase.getAppDatabase(getContext());
-                    db.siteswapDao().insertFavorites(new SiteswapEntity(mSiteswap));
+                    db.siteswapDao().insertFavorites(new SiteswapEntity(mSiteswap, mSiteswapName,
+                            mJugglerName, mLocation, mDate));
                     mActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

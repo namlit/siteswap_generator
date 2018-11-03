@@ -86,8 +86,15 @@
     <string name="share">Share</string>
 
     <string name="named_siteswaps__title">Named Siteswaps</string>
-    <string name="favorites__title">Favorites</string>
+    <string name="favorites__title_siteswaps">Favorites</string>
+    <string name="favorites__title_jugglers">Favorites by Jugglers</string>
+    <string name="favorites__title_locations">Favorites by Locations</string>
+    <string name="favorites__title_dates">Favorites by Date</string>
     <string name="favorites__title_waiting_for_database_query">Waiting for database query ...</string>
+    <string name="favorites__option_show_all">Show All</string>
+    <string name="favorites__option_show_jugglers">Show Jugglers</string>
+    <string name="favorites__option_show_locations">Show Locations</string>
+    <string name="favorites__option_show_dates">Show Dates</string>
 
     <string name="option_about__source_code_at">Source Code at:</string>
     <string name="option_about__github_address">https://github.com/namlit/siteswap_generator</string>
@@ -155,7 +162,11 @@
     <string name="enter_siteswap__title">Enter Siteswap</string>
     <string name="enter_siteswap__dialog_tag">ENTER_SITESWAP__DIALOG_TAG</string>
 
-    <string name="add_to_favorites__title">Enter Favorite Name</string>
+    <string name="add_to_favorites__title">Add Favorite</string>
+    <string name="add_to_favorites__name">Favorite Name:</string>
+    <string name="add_to_favorites__juggler">Who:</string>
+    <string name="add_to_favorites__location">Where</string>
+    <string name="add_to_favorites__date">When</string>
     <string name="add_to_favorites__dialog_tag">ADD_TO_FAVORITES__DIALOG_TAG</string>
 
     <string name="detailed_siteswap__title">Siteswap Info</string>
