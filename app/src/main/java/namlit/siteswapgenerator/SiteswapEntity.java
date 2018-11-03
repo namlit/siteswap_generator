@@ -104,7 +104,10 @@ public class SiteswapEntity implements Serializable {
 
     @Override
     public String toString() {
-        return getName();
+        return getName() + ", " +
+                getJuggerNames() + ", " +
+                getLocation() + ", " +
+                getDate();
     }
 
 }

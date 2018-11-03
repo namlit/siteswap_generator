@@ -265,13 +265,9 @@ public class DetailedSiteswapActivity extends AppCompatActivity
                     List<SiteswapEntity> siteswapEntityList = dao.getSiteswaps(mSiteswap.toParsableString());
                     if (siteswapEntityList.size() >= 1) {
                         // TODO choose which to remove
-                        dao.deleteFavorite(siteswapEntityList.get(0));
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // TODO Toas success
-                            }
-                        });
+                        new ConfirmRemoveFavoriteDialog().show(getSupportFragmentManager(),
+                                getString(R.string.confirm_remove_favorite__dialog_tag),
+                                siteswapEntityList.get(0));
                     }
                     else {
                         runOnUiThread(new Runnable() {

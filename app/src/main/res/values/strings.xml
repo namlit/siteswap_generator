@@ -81,6 +81,7 @@
     <string name="ok">Ok</string>
     <string name="cancel">cancel</string>
     <string name="abort">abort</string>
+    <string name="remove">remove</string>
     <string name="back">back</string>
     <string name="add">add</string>
     <string name="share">Share</string>
@@ -185,6 +186,7 @@
     <string name="detailed_siteswap__ladder_diagram">Ladder Diagram: </string>
     <string name="detailed_siteswap__share_global">Global:</string>
     <string name="detailed_siteswap__toast_duplicate_favorite">Abort add to favorites: same siteswap is already in favorites</string>
+    <string name="detailed_siteswap__toast_favorite_removed">Removed Siteswap from Favorites</string>
     <string name="detailed_siteswap__toast_not_in_favorites">Siteswap was not found in favorites</string>
 
     <string name="detailed_siteswap__option_add_to_favorites">Add to Favorites</string>
@@ -212,6 +214,12 @@
         ]]>
     </string>
 
+    <string name="confirm_remove_favorite__title">Remove Favorite:</string>
+    <string name="confirm_remove_favorite__name">Name:</string>
+    <string name="confirm_remove_favorite__jugglers">Jugglers:</string>
+    <string name="confirm_remove_favorite__location">Location:</string>
+    <string name="confirm_remove_favorite__date">Date:</string>
+    <string name="confirm_remove_favorite__dialog_tag">CONFIRm_REMOVE_FAVORITE__DIALOG_TAG</string>
 
     <string name="intent__siteswap_number_of_objects">NUMBER_OF_OBECTS</string>
     <string name="intent__siteswap_period_length">PERIOD_LENGTH</string>

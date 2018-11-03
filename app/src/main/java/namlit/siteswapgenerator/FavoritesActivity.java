@@ -92,9 +92,6 @@ public class FavoritesActivity extends AppCompatActivity {
             public void run() {
                 AppDatabase db = AppDatabase.getAppDatabase(getApplicationContext());
                 mSiteswaps = db.siteswapDao().getAllFavorites();
-                mJugglers = db.siteswapDao().getJugglers();
-                mLocations = db.siteswapDao().getLocations();
-                mDates = db.siteswapDao().getDates();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
