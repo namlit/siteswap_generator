@@ -36,7 +36,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/add_to_favorites__juggler" />
 
-                        <EditText
+                        <AutoCompleteTextView
                             android:id="@+id/juggler_name_text_edit"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/add_to_favorites__location" />
 
-                        <EditText
+                        <AutoCompleteTextView
                             android:id="@+id/location_text_edit"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

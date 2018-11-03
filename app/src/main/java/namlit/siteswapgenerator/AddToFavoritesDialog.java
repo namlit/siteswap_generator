@@ -27,11 +27,14 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.text.format.DateUtils;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.Date;
 import java.text.DateFormat;
+import java.util.List;
 
 import siteswaplib.Siteswap;
 
@@ -46,8 +49,8 @@ public class AddToFavoritesDialog extends DialogFragment {
     }
 
     private EditText mSiteswapNameTextEdit;
-    private EditText mJugglerNameTextEdit;
-    private EditText mLocationTextEdit;
+    private AutoCompleteTextView mJugglerNameTextEdit;
+    private AutoCompleteTextView mLocationTextEdit;
     private EditText mDateTextEdit;
     private Siteswap mSiteswap;
     private String mSiteswapName;
@@ -56,6 +59,8 @@ public class AddToFavoritesDialog extends DialogFragment {
     private String mDate;
     private DatabaseTransactionComplete mDatabaseTransactionComplete;
     private Activity mActivity;
+    private ArrayAdapter mJugglerAdapter;
+    private ArrayAdapter mLocationAdapter;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -84,11 +89,11 @@ public class AddToFavoritesDialog extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        // TODO auto complete
         mSiteswapNameTextEdit = (EditText) getDialog().findViewById(R.id.siteswap_name_text_edit);
-        mJugglerNameTextEdit = (EditText) getDialog().findViewById(R.id.juggler_name_text_edit);
-        mLocationTextEdit = (EditText) getDialog().findViewById(R.id.location_text_edit);
+        mJugglerNameTextEdit = (AutoCompleteTextView) getDialog().findViewById(R.id.juggler_name_text_edit);
+        mLocationTextEdit = (AutoCompleteTextView) getDialog().findViewById(R.id.location_text_edit);
         mDateTextEdit= (EditText) getDialog().findViewById(R.id.date_text_edit);
+        setupAutocomplete();
 
         if (mSiteswap.getSiteswapName() == "")
             mSiteswapNameTextEdit.setText(mSiteswap.toString());
@@ -122,6 +127,35 @@ public class AddToFavoritesDialog extends DialogFragment {
                         @Override
                         public void run() {
                             mDatabaseTransactionComplete.databaseTransactionComplete();
+                        }
+                    });
+                } catch (android.database.sqlite.SQLiteConstraintException e) {
+                }
+            }
+        }).start();
+
+    }
+
+    private void setupAutocomplete() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    AppDatabase db = AppDatabase.getAppDatabase(getContext());
+                    List<String> jugglers = db.siteswapDao().getJugglers();
+                    List<String> locations = db.siteswapDao().getLocations();
+                    mJugglerAdapter = new ArrayAdapter(
+                            getContext(), android.R.layout.simple_list_item_1, jugglers);
+                    mLocationAdapter = new ArrayAdapter(
+                            getContext(), android.R.layout.simple_list_item_1, locations);
+                    mActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mJugglerNameTextEdit.setAdapter(mJugglerAdapter);
+                            mJugglerNameTextEdit.setThreshold(1);
+                            mLocationTextEdit.setAdapter(mLocationAdapter);
+                            mLocationTextEdit.setThreshold(1);
                         }
                     });
                 } catch (android.database.sqlite.SQLiteConstraintException e) {
