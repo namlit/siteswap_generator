@@ -105,7 +105,7 @@ public class ConfirmRemoveFavoriteDialog extends DialogFragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(getContext(), getString(R.string.detailed_siteswap__toast_favorite_removed), Toast.LENGTH_LONG);
+                            Toast.makeText(getContext(), getString(R.string.detailed_siteswap__toast_favorite_removed), Toast.LENGTH_LONG).show();
                         }
                     });
                 } catch (android.database.sqlite.SQLiteConstraintException e) {

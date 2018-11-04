@@ -219,7 +219,10 @@
     <string name="confirm_remove_favorite__jugglers">Jugglers:</string>
     <string name="confirm_remove_favorite__location">Location:</string>
     <string name="confirm_remove_favorite__date">Date:</string>
-    <string name="confirm_remove_favorite__dialog_tag">CONFIRm_REMOVE_FAVORITE__DIALOG_TAG</string>
+    <string name="confirm_remove_favorite__dialog_tag">CONFIRM_REMOVE_FAVORITE__DIALOG_TAG</string>
+
+    <string name="choose_remove_favorite__title">Choose Favorite to remove:</string>
+    <string name="choose_remove_favorite__dialog_tag">CHOOSE_REMOVE_FAVORITE__DIALOG_TAG</string>
 
     <string name="intent__siteswap_number_of_objects">NUMBER_OF_OBECTS</string>
     <string name="intent__siteswap_period_length">PERIOD_LENGTH</string>

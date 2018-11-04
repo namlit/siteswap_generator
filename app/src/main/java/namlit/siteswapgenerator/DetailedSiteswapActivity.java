@@ -263,8 +263,11 @@ public class DetailedSiteswapActivity extends AppCompatActivity
                     AppDatabase db = AppDatabase.getAppDatabase(getApplicationContext());
                     FavoriteDao dao = db.siteswapDao();
                     List<SiteswapEntity> siteswapEntityList = dao.getSiteswaps(mSiteswap.toParsableString());
-                    if (siteswapEntityList.size() >= 1) {
-                        // TODO choose which to remove
+                    if (siteswapEntityList.size() > 1) {
+                        new ChooseRemoveFavoriteDialog().show(getSupportFragmentManager(),
+                                getString(R.string.confirm_remove_favorite__dialog_tag),
+                                siteswapEntityList);
+                    } else if (siteswapEntityList.size() == 1) {
                         new ConfirmRemoveFavoriteDialog().show(getSupportFragmentManager(),
                                 getString(R.string.confirm_remove_favorite__dialog_tag),
                                 siteswapEntityList.get(0));
@@ -276,7 +279,7 @@ public class DetailedSiteswapActivity extends AppCompatActivity
                                 // TODO does not work
                                 Toast.makeText(getApplicationContext(),
                                         getString(R.string.detailed_siteswap__toast_not_in_favorites),
-                                        Toast.LENGTH_LONG);
+                                        Toast.LENGTH_LONG).show();
                             }
                         });
                     }
