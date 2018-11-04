@@ -19,6 +19,7 @@
 package namlit.siteswapgenerator;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -60,9 +61,28 @@ public class DetailedSiteswapActivity extends AppCompatActivity
         setTitle(R.string.detailed_siteswap__title);
 
         Intent intent = getIntent();
-        mSiteswap = (Siteswap) intent.getSerializableExtra(getString(R.string.intent_detailed_siteswap_view__siteswap));
-        if (mSiteswap == null)
-            mSiteswap = new Siteswap();
+        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+            Uri uri = intent.getData();
+            String siteswapString = uri.getPath().substring(1); // Starting / is ommited
+            mSiteswap = new Siteswap(siteswapString);
+            if (mSiteswap.isParsingError()) {
+                Toast.makeText(getApplicationContext(), getString(R.string.detailed_siteswap__parsing_error) + " " +
+                                   mSiteswap.getInvalidCharactersFromParsing(), Toast.LENGTH_LONG).show();
+                mSiteswap = new Siteswap();
+            }
+            if (!mSiteswap.isValid()) {
+                Toast.makeText(getApplicationContext(), getString(R.string.detailed_siteswap__invalid_siteswap) + " " +
+                        siteswapString, Toast.LENGTH_LONG).show();
+                mSiteswap = new Siteswap();
+            }
+        }
+        else {
+            mSiteswap = (Siteswap) intent.getSerializableExtra(getString(R.string.intent_detailed_siteswap_view__siteswap));
+            if (mSiteswap == null)
+                mSiteswap = new Siteswap();
+
+            mSiteswap.rotateToBestStartingPosition();
+        }
 
         if (mSiteswap.getSiteswapName() == "") {
             int index = NamedSiteswaps.getListOfNamedSiteswaps().indexOf(mSiteswap);
@@ -71,7 +91,6 @@ public class DetailedSiteswapActivity extends AppCompatActivity
                         NamedSiteswaps.getListOfNamedSiteswaps().get(index)).getSiteswapName());
             }
         }
-        mSiteswap.rotateToBestStartingPosition();
 
         mGlobalSiteswapTextview = (TextView) findViewById(R.id.global_siteswap_textview);
         mLocalSiteswapTextview = (TextView) findViewById(R.id.local_siteswap_textview);
