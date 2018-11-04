@@ -7,6 +7,8 @@
         app:showAsAction="ifRoom"
         app:actionProviderClass=
             "android.support.v7.widget.ShareActionProvider" />
+    <item android:id="@+id/action_rotate_default" android:title="@string/detailed_siteswap__option_rotate_default"
+        android:orderInCategory="100" app:showAsAction="never" />
     <item android:id="@+id/action_add_to_favorites" android:title="@string/detailed_siteswap__option_add_to_favorites"
         android:orderInCategory="100" app:showAsAction="never" />
     <item android:id="@+id/action_remove_from_favorites" android:title="@string/detailed_siteswap__option_remove_from_favorites"

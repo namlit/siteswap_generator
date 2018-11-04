@@ -191,6 +191,7 @@
     <string name="detailed_siteswap__parsing_error">Parsing error. Found the following invalid characters:</string>
     <string name="detailed_siteswap__invalid_siteswap">Siteswap is invalid:</string>
 
+    <string name="detailed_siteswap__option_rotate_default">Rotate to default starting position</string>
     <string name="detailed_siteswap__option_add_to_favorites">Add to Favorites</string>
     <string name="detailed_siteswap__option_remove_from_favorites">Remove from Favorites</string>
 

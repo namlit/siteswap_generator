@@ -154,6 +154,10 @@ public class DetailedSiteswapActivity extends AppCompatActivity
             mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
             setShareIntent();
         }
+        else if (id == R.id.action_rotate_default) {
+            mSiteswap.rotateToBestStartingPosition();
+            updateTextViews();
+        }
         else if (id == R.id.action_add_to_favorites)
         {
             addToFavorites();
