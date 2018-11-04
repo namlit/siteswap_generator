@@ -69,19 +69,10 @@ public class DetailedSiteswapActivity extends AppCompatActivity
             Intent intent = getIntent();
             if (Intent.ACTION_VIEW.equals(intent.getAction())) {
                 createFromImplicitIntent(intent);
-
             } else {
                 createFromExplicitIntent(intent);
-
             }
-
-            if (mSiteswap.getSiteswapName() == "") {
-                int index = NamedSiteswaps.getListOfNamedSiteswaps().indexOf(mSiteswap);
-                if (index != -1) {
-                    mSiteswap.setSiteswapName(((Siteswap)
-                            NamedSiteswaps.getListOfNamedSiteswaps().get(index)).getSiteswapName());
-                }
-            }
+            loadNameFromFavorites();
         }
 
         mGlobalSiteswapTextview = (TextView) findViewById(R.id.global_siteswap_textview);
@@ -196,6 +187,19 @@ public class DetailedSiteswapActivity extends AppCompatActivity
             Toast.makeText(getApplicationContext(), getString(R.string.detailed_siteswap__invalid_siteswap) + " " +
                     siteswapString, Toast.LENGTH_LONG).show();
             mSiteswap = new Siteswap();
+        }
+    }
+
+    private void loadNameFromFavorites() {
+
+        if (mSiteswap.getSiteswapName() == "") {
+            Siteswap normalizedSiteswap = new Siteswap(mSiteswap);
+            normalizedSiteswap.make_unique_representation();
+            int index = NamedSiteswaps.getListOfNamedSiteswaps().indexOf(normalizedSiteswap);
+            if (index != -1) {
+                mSiteswap.setSiteswapName(((Siteswap)
+                        NamedSiteswaps.getListOfNamedSiteswaps().get(index)).getSiteswapName());
+            }
         }
     }
 
