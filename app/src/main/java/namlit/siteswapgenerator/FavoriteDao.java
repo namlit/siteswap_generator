@@ -19,7 +19,6 @@ public interface FavoriteDao {
     @Query("SELECT * FROM favorites WHERE siteswap IS :siteswap")
     SiteswapEntity getSiteswap(String siteswap);
 
-    // TODO Why is the wrong column returned?
     @Query("SELECT DISTINCT juggler_names FROM favorites ORDER BY juggler_names")
     List<String> getJugglers();
 

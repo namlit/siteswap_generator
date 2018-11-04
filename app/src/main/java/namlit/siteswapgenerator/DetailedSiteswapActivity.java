@@ -276,7 +276,6 @@ public class DetailedSiteswapActivity extends AppCompatActivity
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                // TODO does not work
                                 Toast.makeText(getApplicationContext(),
                                         getString(R.string.detailed_siteswap__toast_not_in_favorites),
                                         Toast.LENGTH_LONG).show();
