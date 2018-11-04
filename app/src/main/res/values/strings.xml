@@ -238,6 +238,7 @@
     <string name="intent__siteswap_generator">SITESWAP_GENERATOR</string>
 
     <string name="intent_detailed_siteswap_view__siteswap">SITESWAP</string>
+    <string name="intent_detailed_siteswap_view__skip_rotation_to_starting_position">SKIP_ROTATION_TO_STARTING_POSITION</string>
 
     <string name="title_activity_siteswap_detailed">SiteswapDetailed</string>
 

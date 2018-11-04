@@ -212,6 +212,7 @@ public class FavoritesActivity extends AppCompatActivity {
                 Siteswap siteswap = siteswapEntity.toSiteswap();
                 Intent intent = new Intent(getApplicationContext(), DetailedSiteswapActivity.class);
                 intent.putExtra(getString(R.string.intent_detailed_siteswap_view__siteswap), siteswap);
+                intent.putExtra(getString(R.string.intent_detailed_siteswap_view__skip_rotation_to_starting_position), true);
                 startActivity(intent);
             }
         });

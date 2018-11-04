@@ -174,10 +174,13 @@ public class DetailedSiteswapActivity extends AppCompatActivity
 
     private void createFromExplicitIntent(Intent intent) {
         mSiteswap = (Siteswap) intent.getSerializableExtra(getString(R.string.intent_detailed_siteswap_view__siteswap));
+        boolean skipRotationToStartingPosition = intent.getBooleanExtra(getString(R.string.intent_detailed_siteswap_view__skip_rotation_to_starting_position), false);
         if (mSiteswap == null)
             mSiteswap = new Siteswap();
 
-        mSiteswap.rotateToBestStartingPosition();
+        if (!skipRotationToStartingPosition) {
+            mSiteswap.rotateToBestStartingPosition();
+        }
     }
 
     private void createFromImplicitIntent(Intent intent) {
