@@ -136,6 +136,9 @@ public class DetailedSiteswapActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_detailed_siteswap, menu);
+        MenuItem item = menu.findItem(R.id.menu_item_share_detailed);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        setShareIntent();
         return true;
     }
 
@@ -195,6 +198,7 @@ public class DetailedSiteswapActivity extends AppCompatActivity
         String siteswapString = "";
 
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("http://siteswap/" + mSiteswap.toParsableString() + "\n");
         stringBuilder.append(getString(R.string.detailed_siteswap__share_global) + " ");
         Siteswap getin = mSiteswap.calculateGetin();
         if (getin.period_length() != 0) {
