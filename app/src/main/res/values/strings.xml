@@ -57,6 +57,7 @@
     <string name="main_activity__invalid_min_throw_greater_average">The minimum throw needs to be at maximum the number of objects</string>
 
     <string name="main_activity__option_named_siteswaps">Named Siteswaps</string>
+    <string name="main_activity__option_favorites">Favorites</string>
     <string name="main_activity__option_about">About</string>
     <string name="main_activity__option_help">Help</string>
 
@@ -80,10 +81,21 @@
     <string name="ok">Ok</string>
     <string name="cancel">cancel</string>
     <string name="abort">abort</string>
+    <string name="remove">remove</string>
     <string name="back">back</string>
+    <string name="add">add</string>
     <string name="share">Share</string>
 
     <string name="named_siteswaps__title">Named Siteswaps</string>
+    <string name="favorites__title_siteswaps">Favorites</string>
+    <string name="favorites__title_jugglers">Favorites by Jugglers</string>
+    <string name="favorites__title_locations">Favorites by Locations</string>
+    <string name="favorites__title_dates">Favorites by Date</string>
+    <string name="favorites__title_waiting_for_database_query">Waiting for database query ...</string>
+    <string name="favorites__option_show_all">Show All</string>
+    <string name="favorites__option_show_jugglers">Show Jugglers</string>
+    <string name="favorites__option_show_locations">Show Locations</string>
+    <string name="favorites__option_show_dates">Show Dates</string>
 
     <string name="option_about__source_code_at">Source Code at:</string>
     <string name="option_about__github_address">https://github.com/namlit/siteswap_generator</string>
@@ -151,9 +163,18 @@
     <string name="enter_siteswap__title">Enter Siteswap</string>
     <string name="enter_siteswap__dialog_tag">ENTER_SITESWAP__DIALOG_TAG</string>
 
+    <string name="add_to_favorites__title">Add Favorite</string>
+    <string name="add_to_favorites__name">Favorite Name:</string>
+    <string name="add_to_favorites__juggler">Who:</string>
+    <string name="add_to_favorites__location">Where</string>
+    <string name="add_to_favorites__date">When</string>
+    <string name="add_to_favorites__dialog_tag">ADD_TO_FAVORITES__DIALOG_TAG</string>
+
     <string name="detailed_siteswap__title">Siteswap Info</string>
     <string name="detailed_siteswap__rotate_left">&lt;</string>
     <string name="detailed_siteswap__rotate_right">&gt;</string>
+    <string name="detailed_siteswap__add_to_favorites">Add to Favorites</string>
+    <string name="detailed_siteswap__remove_from_favorites">Remove from Favorites</string>
     <string name="detailed_siteswap__name">Name: </string>
     <string name="detailed_siteswap__interface">Interface: </string>
     <string name="detailed_siteswap__interface_pattern">Interface Pattern: </string>
@@ -164,6 +185,12 @@
     <string name="detailed_siteswap__causal_diagram">Causal Diagram: </string>
     <string name="detailed_siteswap__ladder_diagram">Ladder Diagram: </string>
     <string name="detailed_siteswap__share_global">Global:</string>
+    <string name="detailed_siteswap__toast_duplicate_favorite">Abort add to favorites: same siteswap is already in favorites</string>
+    <string name="detailed_siteswap__toast_favorite_removed">Removed Siteswap from Favorites</string>
+    <string name="detailed_siteswap__toast_not_in_favorites">Siteswap was not found in favorites</string>
+
+    <string name="detailed_siteswap__option_add_to_favorites">Add to Favorites</string>
+    <string name="detailed_siteswap__option_remove_from_favorites">Remove from Favorites</string>
 
     <string name="detailed_siteswap__legend_html">
         <![CDATA[
@@ -187,6 +214,15 @@
         ]]>
     </string>
 
+    <string name="confirm_remove_favorite__title">Remove Favorite:</string>
+    <string name="confirm_remove_favorite__name">Name:</string>
+    <string name="confirm_remove_favorite__jugglers">Jugglers:</string>
+    <string name="confirm_remove_favorite__location">Location:</string>
+    <string name="confirm_remove_favorite__date">Date:</string>
+    <string name="confirm_remove_favorite__dialog_tag">CONFIRM_REMOVE_FAVORITE__DIALOG_TAG</string>
+
+    <string name="choose_remove_favorite__title">Choose Favorite to remove:</string>
+    <string name="choose_remove_favorite__dialog_tag">CHOOSE_REMOVE_FAVORITE__DIALOG_TAG</string>
 
     <string name="intent__siteswap_number_of_objects">NUMBER_OF_OBECTS</string>
     <string name="intent__siteswap_period_length">PERIOD_LENGTH</string>

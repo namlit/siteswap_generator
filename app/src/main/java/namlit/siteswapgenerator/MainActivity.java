@@ -25,6 +25,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -47,6 +49,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.LinkedList;
+import java.util.List;
 
 import siteswaplib.*;
 
@@ -235,6 +238,10 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_named_siteswaps)
         {
             showNamedSiteswaps();
+        }
+        if (id == R.id.action_favorites)
+        {
+            favorites();
         }
         else if (id == R.id.action_about)
         {
@@ -494,6 +501,13 @@ public class MainActivity extends AppCompatActivity
 
         Intent intent = new Intent(this, NamedSiteswapActivity.class);
         startActivity(intent);
+    }
+
+
+    private void favorites() {
+        Intent intent = new Intent(this, FavoritesActivity.class);
+        startActivity(intent);
+
     }
 
     private void showAboutDialog()

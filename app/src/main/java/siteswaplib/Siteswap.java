@@ -65,8 +65,8 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	}
 
 	public Siteswap(String siteswap, int numberOfJugglers) {
-		this.mData = new CyclicByteArray(parseString(siteswap));
 		setNumberOfJugglers(numberOfJugglers);
+		fromParsableString(siteswap);
 	}
 
 	public Siteswap(String siteswap) {
@@ -726,6 +726,35 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 				str += ")";
 		}
 		return str;
+	}
+
+	public boolean fromParsableString(String str) {
+		String[] arr = str.split("\\.");
+		try {
+			if (arr.length >= 1) {
+				this.mData = new CyclicByteArray(parseString(arr[0]));
+			}
+			if (arr.length >= 2) {
+				setNumberOfJugglers(Integer.valueOf(arr[1]));
+			}
+			if (arr.length >= 3) {
+				setNumberOfSynchronousHands(Integer.valueOf(arr[2]));
+			}
+			if (arr.length >= 4) {
+				setSynchronousStartPosition(Integer.valueOf(arr[3]));
+			}
+		}
+        catch (NumberFormatException e) {
+			return false;
+		}
+		return true;
+	}
+
+	public String toParsableString() {
+		return toAsyncString() + "." +
+				String.valueOf(getNumberOfJugglers()) + "." +
+				String.valueOf(getNumberOfSynchronousHands()) + "." +
+				String .valueOf(getSynchronousStartPosition());
 	}
 
 	public Siteswap toPattern() {

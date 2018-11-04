@@ -28,13 +28,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.List;
 import java.util.Vector;
 
 import siteswaplib.NamedSiteswaps;
 import siteswaplib.Siteswap;
 
-public class DetailedSiteswapActivity extends AppCompatActivity {
+public class DetailedSiteswapActivity extends AppCompatActivity
+        implements AddToFavoritesDialog.DatabaseTransactionComplete {
 
     private Siteswap mSiteswap;
     private TextView mGlobalSiteswapTextview;
@@ -48,6 +51,7 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
     private CausalDiagram mCausalDiagram;
     private CausalDiagram mLadderDiagram;
     private ShareActionProvider mShareActionProvider;
+    private SiteswapEntity mFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +86,25 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
         mLadderDiagram = (CausalDiagram) findViewById(R.id.ladder_diagram_view);
         mLadderDiagram.setSiteswap(mSiteswap);
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AppDatabase db = AppDatabase.getAppDatabase(getApplicationContext());
+                mFavorite = db.siteswapDao().getSiteswap(mSiteswap.toParsableString());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mFavorite != null) {
+                            mSiteswap.setSiteswapName(mFavorite.getName());
+                        }
+                        else {
+                        }
+                        updateTextViews();
+                    }
+                });
+            }
+        }).start();
+
         updateTextViews();
 
     }
@@ -95,11 +118,33 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_detailed_siteswap, menu);
-        MenuItem item = menu.findItem(R.id.menu_item_share_detailed);
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-        setShareIntent();
-
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.menu_item_share_detailed)
+        {
+            mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+            setShareIntent();
+        }
+        else if (id == R.id.action_add_to_favorites)
+        {
+            addToFavorites();
+            updateTextViews();
+        }
+        else if (id == R.id.action_remove_from_favorites)
+        {
+            removeFromFavorites();
+            updateTextViews();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void setShareIntent() {
@@ -200,6 +245,52 @@ public class DetailedSiteswapActivity extends AppCompatActivity {
 
     public void rotateRight(View view) {
         mSiteswap.rotateRight(1);
+        updateTextViews();
+    }
+
+    private void addToFavorites() {
+
+        new AddToFavoritesDialog().show(getSupportFragmentManager(),
+                getString(R.string.add_to_favorites__dialog_tag), mSiteswap);
+    }
+
+    private void removeFromFavorites() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    AppDatabase db = AppDatabase.getAppDatabase(getApplicationContext());
+                    FavoriteDao dao = db.siteswapDao();
+                    List<SiteswapEntity> siteswapEntityList = dao.getSiteswaps(mSiteswap.toParsableString());
+                    if (siteswapEntityList.size() > 1) {
+                        new ChooseRemoveFavoriteDialog().show(getSupportFragmentManager(),
+                                getString(R.string.confirm_remove_favorite__dialog_tag),
+                                siteswapEntityList);
+                    } else if (siteswapEntityList.size() == 1) {
+                        new ConfirmRemoveFavoriteDialog().show(getSupportFragmentManager(),
+                                getString(R.string.confirm_remove_favorite__dialog_tag),
+                                siteswapEntityList.get(0));
+                    }
+                    else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(),
+                                        getString(R.string.detailed_siteswap__toast_not_in_favorites),
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                } catch (android.database.sqlite.SQLiteConstraintException e) {
+                }
+            }
+        }).start();
+
+    }
+
+    @Override
+    public void databaseTransactionComplete() {
         updateTextViews();
     }
 }
