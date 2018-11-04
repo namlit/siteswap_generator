@@ -70,7 +70,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	}
 
 	public Siteswap(String siteswap) {
-		this(siteswap, 1);
+		this(siteswap, 2);
 	}
 
 	public Siteswap(byte[] data) {
@@ -730,21 +730,27 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 
 	public boolean fromParsableString(String str) {
 		String[] arr = str.split("\\.");
+		int i = 0;
 		try {
 			if (arr.length >= 1) {
 				this.mData = new CyclicByteArray(parseString(arr[0]));
 			}
 			if (arr.length >= 2) {
+				i = 1;
 				setNumberOfJugglers(Integer.valueOf(arr[1]));
 			}
 			if (arr.length >= 3) {
+				i = 2;
 				setNumberOfSynchronousHands(Integer.valueOf(arr[2]));
 			}
 			if (arr.length >= 4) {
+				i = 3;
 				setSynchronousStartPosition(Integer.valueOf(arr[3]));
 			}
 		}
         catch (NumberFormatException e) {
+			mIsParsingError = true;
+			mInvalidCharacters += arr[i];
 			return false;
 		}
 		return true;
@@ -823,7 +829,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		Siteswap siteswapInterface = new Siteswap(interfaceArray);
 		for (int i = 0; i < siteswap.period_length(); ++i) {
 			if (siteswap.at(i) < 0)
-				continue;
+				return false;
 			if (siteswapInterface.at(i + siteswap.at(i)) != Siteswap.FREE)
 				return false;
 			siteswapInterface.set(i + siteswap.at(i), siteswap.at(i));

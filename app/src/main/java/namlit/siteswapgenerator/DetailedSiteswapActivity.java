@@ -19,6 +19,7 @@
 package namlit.siteswapgenerator;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ import siteswaplib.Siteswap;
 public class DetailedSiteswapActivity extends AppCompatActivity
         implements AddToFavoritesDialog.DatabaseTransactionComplete {
 
+    private static final String STATE_SITESWAP = "STATE_SITESWAP";
     private Siteswap mSiteswap;
     private TextView mGlobalSiteswapTextview;
     private TextView mLocalSiteswapTextview;
@@ -59,19 +61,28 @@ public class DetailedSiteswapActivity extends AppCompatActivity
         setContentView(R.layout.activity_detailed_siteswap);
         setTitle(R.string.detailed_siteswap__title);
 
-        Intent intent = getIntent();
-        mSiteswap = (Siteswap) intent.getSerializableExtra(getString(R.string.intent_detailed_siteswap_view__siteswap));
-        if (mSiteswap == null)
-            mSiteswap = new Siteswap();
+        if (savedInstanceState != null) {
 
-        if (mSiteswap.getSiteswapName() == "") {
-            int index = NamedSiteswaps.getListOfNamedSiteswaps().indexOf(mSiteswap);
-            if (index != -1) {
-                mSiteswap.setSiteswapName(((Siteswap)
-                        NamedSiteswaps.getListOfNamedSiteswaps().get(index)).getSiteswapName());
+            mSiteswap = (Siteswap) savedInstanceState.getSerializable(STATE_SITESWAP);
+        }
+        else {
+            Intent intent = getIntent();
+            if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+                createFromImplicitIntent(intent);
+
+            } else {
+                createFromExplicitIntent(intent);
+
+            }
+
+            if (mSiteswap.getSiteswapName() == "") {
+                int index = NamedSiteswaps.getListOfNamedSiteswaps().indexOf(mSiteswap);
+                if (index != -1) {
+                    mSiteswap.setSiteswapName(((Siteswap)
+                            NamedSiteswaps.getListOfNamedSiteswaps().get(index)).getSiteswapName());
+                }
             }
         }
-        mSiteswap.rotateToBestStartingPosition();
 
         mGlobalSiteswapTextview = (TextView) findViewById(R.id.global_siteswap_textview);
         mLocalSiteswapTextview = (TextView) findViewById(R.id.local_siteswap_textview);
@@ -116,8 +127,18 @@ public class DetailedSiteswapActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(STATE_SITESWAP, mSiteswap);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_detailed_siteswap, menu);
+        MenuItem item = menu.findItem(R.id.menu_item_share_detailed);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        setShareIntent();
         return true;
     }
 
@@ -147,12 +168,37 @@ public class DetailedSiteswapActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    private void createFromExplicitIntent(Intent intent) {
+        mSiteswap = (Siteswap) intent.getSerializableExtra(getString(R.string.intent_detailed_siteswap_view__siteswap));
+        if (mSiteswap == null)
+            mSiteswap = new Siteswap();
+
+        mSiteswap.rotateToBestStartingPosition();
+    }
+
+    private void createFromImplicitIntent(Intent intent) {
+        Uri uri = intent.getData();
+        String siteswapString = uri.getPath().substring(1); // Starting / is ommited
+        mSiteswap = new Siteswap(siteswapString);
+        if (mSiteswap.isParsingError()) {
+            Toast.makeText(getApplicationContext(), getString(R.string.detailed_siteswap__parsing_error) + " " +
+                    mSiteswap.getInvalidCharactersFromParsing(), Toast.LENGTH_LONG).show();
+            mSiteswap = new Siteswap();
+        }
+        if (!mSiteswap.isValid()) {
+            Toast.makeText(getApplicationContext(), getString(R.string.detailed_siteswap__invalid_siteswap) + " " +
+                    siteswapString, Toast.LENGTH_LONG).show();
+            mSiteswap = new Siteswap();
+        }
+    }
+
     private void setShareIntent() {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         String siteswapString = "";
 
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("http://siteswap/" + mSiteswap.toParsableString() + "\n");
         stringBuilder.append(getString(R.string.detailed_siteswap__share_global) + " ");
         Siteswap getin = mSiteswap.calculateGetin();
         if (getin.period_length() != 0) {

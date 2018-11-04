@@ -19,7 +19,14 @@
         <activity android:name=".NamedSiteswapActivity" />
         <activity android:name=".FavoritesActivity" />
         <activity android:name=".ShowSiteswaps" />
-        <activity android:name=".DetailedSiteswapActivity"></activity>
+        <activity android:name=".DetailedSiteswapActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http" android:host="siteswap" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
