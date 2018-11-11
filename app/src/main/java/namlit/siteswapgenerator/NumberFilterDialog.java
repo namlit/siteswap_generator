@@ -135,9 +135,9 @@ public class NumberFilterDialog extends AddFilterDialog {
 
                 NumberFilter.FilterValue throwHeight = filter.getFilterValue();
                 int threshold = filter.getThresholdValue();
-                if(throwHeight.isPass())
+                if(throwHeight.isGenericPass())
                     throwHeightIndex = 0;
-                else if(throwHeight.isSelf())
+                else if(throwHeight.isGenericSelf())
                     throwHeightIndex = 1;
                 else {
                     throwHeightArray.add(throwHeight.toString());

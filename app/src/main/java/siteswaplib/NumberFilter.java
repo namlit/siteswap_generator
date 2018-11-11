@@ -19,7 +19,6 @@
 package siteswaplib;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 public class NumberFilter extends Filter {
 
@@ -45,7 +44,7 @@ public class NumberFilter extends Filter {
 			if (isSpecialThrow()) {
 				return new int[]{mValue};
 			}
-			if (mNumberOfSynchronousHands == 1 || isSelf()) {
+			if (mValue % mNumberOfSynchronousHands == 0) {
 				return new int[]{mValue};
 			}
 
@@ -108,11 +107,11 @@ public class NumberFilter extends Filter {
 			return toString().hashCode();
 		}
 
-		public boolean isPass() {
+		public boolean isGenericPass() {
 			return mValue == Siteswap.PASS;
 		}
 
-		public boolean isSelf() {
+		public boolean isGenericSelf() {
 			return mValue == Siteswap.SELF;
 		}
 
@@ -196,7 +195,7 @@ public class NumberFilter extends Filter {
 			str += " " + mFilterValue.toString();
 
 			if (mThresholdValue != 1) { // Plural s on string representation needed
-				if (mFilterValue.isPass())
+				if (mFilterValue.isGenericPass())
 					str += "es";
 				else
 					str += "s";

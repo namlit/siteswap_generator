@@ -57,7 +57,8 @@ public class NumberFilterTest {
 
     @Test
     public void testCountValue() {
-        NumberFilter filter = new NumberFilter("9p", NumberFilter.Type.EQUAL, 1, 3);
+        NumberFilter filter1 = new NumberFilter("9p", NumberFilter.Type.EQUAL, 1, 3);
+        NumberFilter filter2 = new NumberFilter("9", NumberFilter.Type.EQUAL, 1, 3);
         Siteswap siteswap1 = new Siteswap("89a4945", 3);
         Siteswap siteswap2 = new Siteswap("8859a57889a059a49a5919a3783", 3);
         siteswap1.setNumberOfSynchronousHands(3);
@@ -65,8 +66,12 @@ public class NumberFilterTest {
         siteswap2.setSynchronousStartPosition(2);
         int expected1 = 4;
         int expected2 = 9;
-        assertEquals(expected1, siteswap1.countFilterValue(filter.getFilterValue()));
-        assertEquals(expected2, siteswap2.countFilterValue(filter.getFilterValue()));
+        int expected3 = 6; // Attention: counted over global period length
+        int expected4 = 6;
+        assertEquals(expected1, siteswap1.countFilterValue(filter1.getFilterValue()));
+        assertEquals(expected2, siteswap2.countFilterValue(filter1.getFilterValue()));
+        assertEquals(expected3, siteswap1.countFilterValue(filter2.getFilterValue()));
+        assertEquals(expected4, siteswap2.countFilterValue(filter2.getFilterValue()));
     }
 
 }
