@@ -26,6 +26,13 @@ import siteswaplib.NumberFilter.Type;
 
 public class FilterList extends LinkedList<Filter> implements Serializable {
 
+	public FilterList() {
+	}
+
+
+	public FilterList(int numberOfJugglers, int numberOfSynchronousHands) {
+		addDefaultFilters(numberOfJugglers, numberOfSynchronousHands);
+	}
 
     // TODO add and use method updateNumberOfJugglersAndSynchronousHands
 
@@ -46,8 +53,7 @@ public class FilterList extends LinkedList<Filter> implements Serializable {
 		}
 	}
 
-	public void addDefaultFilters(int numberOfJugglers,
-										 int numberOfSynchronousHands) {
+	public void addDefaultFilters(int numberOfJugglers, int numberOfSynchronousHands) {
 		addDefaultFilters(numberOfJugglers, 0, numberOfSynchronousHands);
 	}
 

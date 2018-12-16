@@ -60,7 +60,20 @@ public class GenerationParameterEntity implements Serializable {
     private String filterListString;
 
     public GenerationParameterEntity() {
-
+        name = "";
+        numberOfObjects = 7;
+        periodLength = 5;
+        maxThrow = 10;
+        minThrow = 2;
+        numberOfJugglers = 2;
+        maxResults = 100;
+        timeout = 5;
+        isSynchronous = false;
+        isRandomMode = false;
+        isZips = false;
+        isZaps = false;
+        isHolds = false;
+        setFilterList(new FilterList(numberOfJugglers, 1));
     }
 
     public int getUid() {

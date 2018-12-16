@@ -92,6 +92,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        populateDatabaseWithDefaultGenerationParameters();
+
         mNumberOfObjectsEditText = (EditText) findViewById(R.id.number_of_objects);
         mPeriodLengthEditText = (EditText) findViewById(R.id.period_length);
         mMaxThrowEditText = (EditText) findViewById(R.id.max_throw);
@@ -224,6 +226,48 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    public GenerationParameterEntity build7ClubDefaultGenerationEntity() {
+        GenerationParameterEntity entity = new GenerationParameterEntity();
+        entity.setName("Default: 7 clubs period 5");
+        entity.setNumberOfObjects(7);
+        entity.setPeriodLength(5);
+        entity.setMaxThrow(10);
+        entity.setMinThrow(2);
+        entity.setNumberOfJugglers(2);
+        entity.setMaxResults(100);
+        entity.setTimeout(5);
+        entity.setSynchronous(false);
+        entity.setRandomMode(false);
+        entity.setZips(true);
+        entity.setZaps(false);
+        entity.setHolds(false);
+        FilterList list = new FilterList();
+        list.addDefaultFilters(2, 2, 1);
+        list.removeZaps(2, 1);
+        list.removeHolds(2, 1);
+        entity.setFilterList(list);
+        return entity;
+    }
+
+    public void populateDatabaseWithDefaultGenerationParameters() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    AppDatabase db = AppDatabase.getAppDatabase(getApplicationContext());
+                    List<GenerationParameterEntity> entities =
+                            db.generationParameterDao().getAllGenerationParameters();
+                    if (entities.isEmpty()) {
+                        db.generationParameterDao().insertGenerationParameters(
+                                build7ClubDefaultGenerationEntity()
+                        );
+                    }
+                } catch (android.database.sqlite.SQLiteConstraintException e) {
+                }
+            }
+        }).start();
     }
 
     public void saveGenerationParameters() {
