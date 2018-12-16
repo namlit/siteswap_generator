@@ -24,7 +24,15 @@ package siteswaplib;
 
 public class LocalPatternFilter extends PatternFilter {
 
+    static final private String VERSION = "1";
     private Siteswap mLocalPattern;
+
+    public LocalPatternFilter() {
+    }
+
+    public LocalPatternFilter(String str) {
+        fromParsableString(str);
+    }
 
     public LocalPatternFilter(Siteswap pattern, Type type, int numberOfJugglers) {
         super(pattern, type);
@@ -44,6 +52,31 @@ public class LocalPatternFilter extends PatternFilter {
     }
 
     @Override
+    public String toParsableString() {
+        String str = new String();
+        str += String.valueOf(VERSION) + ",";
+        str += mLocalPattern.toParsableString() + ",";
+        str += super.toParsableString();
+        return str;
+    }
+
+    @Override
+    public LocalPatternFilter fromParsableString(String str) {
+        String[] splits = str.split(",");
+        int begin_index = 0;
+        if (splits.length < 3) {
+            return this;
+        }
+        if (!splits[0].equals(VERSION))
+            return this;
+        begin_index += splits[0].length() + 1;
+        mLocalPattern = new Siteswap(splits[1]);
+        begin_index += splits[1].length() + 1;
+        super.fromParsableString(str.substring(begin_index));
+        return this;
+    }
+
+    @Override
     public String toString() {
         String str;
 
@@ -54,6 +87,15 @@ public class LocalPatternFilter extends PatternFilter {
         str += mLocalPattern.toString();
         return str;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (! (obj instanceof LocalPatternFilter))
+            return false;
+        LocalPatternFilter rhs = (LocalPatternFilter) obj;
+        return mLocalPattern.equals(rhs.mLocalPattern) && super.equals(rhs);
+    }
+
 
     public Siteswap getGlobalPattern() {
         return mPattern;

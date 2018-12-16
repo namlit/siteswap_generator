@@ -48,8 +48,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.LinkedList;
-import java.util.List;
 
 import siteswaplib.*;
 
@@ -58,7 +56,7 @@ public class MainActivity extends AppCompatActivity
 
     final static int PATTERN_FILTER_ITEM_NUMBER = 0;
 
-    private LinkedList<Filter> mFilterList;
+    private FilterList mFilterList;
 
     private int mNumberOfObjects;
     private int mPeriodLength;
@@ -109,7 +107,7 @@ public class MainActivity extends AppCompatActivity
         mSyncModeCheckbox   = (CheckBox) findViewById(R.id.sync_mode_checkbox);
         mRandomGenerationModeCheckbox = (CheckBox) findViewById(R.id.random_generation_mode_checkbox);
 
-        mFilterList = new LinkedList<Filter>();
+        mFilterList = new FilterList();
 
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         mNumberOfObjects  = sharedPref.getInt(getString(R.string.main_activity__settings_number_of_objects),  7);
@@ -134,7 +132,7 @@ public class MainActivity extends AppCompatActivity
                 byte b[] = Base64.decode(serializedFilterList, Base64.DEFAULT);
                 ByteArrayInputStream bi = new ByteArrayInputStream(b);
                 ObjectInputStream si = new ObjectInputStream(bi);
-                mFilterList = (LinkedList<Filter>) si.readObject();
+                mFilterList = (FilterList) si.readObject();
                 si.close();
             } catch (Exception e) {
                 Toast.makeText(this, getString(R.string.main_activity__deserialization_error_toast),
@@ -207,10 +205,10 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
                 updateFromTextEdits();
-                Filter.removeDefaultFilters(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
-                Filter.addZips(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
-                Filter.addZaps(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
-                Filter.addHolds(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+                mFilterList.removeDefaultFilters(mNumberOfJugglers, getNumberOfSynchronousHands());
+                mFilterList.addZips(mNumberOfJugglers, getNumberOfSynchronousHands());
+                mFilterList.addZaps(mNumberOfJugglers, getNumberOfSynchronousHands());
+                mFilterList.addHolds(mNumberOfJugglers, getNumberOfSynchronousHands());
                 mFilterListAdapter.notifyDataSetChanged();
             }
             @Override
@@ -434,21 +432,21 @@ public class MainActivity extends AppCompatActivity
         switch (view.getId()) {
             case R.id.include_zips_checkbox:
                 if (checked)
-                    Filter.addZips(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+                    mFilterList.addZips(mNumberOfJugglers, getNumberOfSynchronousHands());
                 else
-                    Filter.removeZips(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+                    mFilterList.removeZips(mNumberOfJugglers, getNumberOfSynchronousHands());
                 break;
             case R.id.include_zaps_checkbox:
                 if (checked)
-                    Filter.addZaps(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+                    mFilterList.addZaps(mNumberOfJugglers, getNumberOfSynchronousHands());
                 else
-                    Filter.removeZaps(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+                    mFilterList.removeZaps(mNumberOfJugglers, getNumberOfSynchronousHands());
                 break;
             case R.id.include_holds_checkbox:
                 if (checked)
-                    Filter.addHolds(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+                    mFilterList.addHolds(mNumberOfJugglers, getNumberOfSynchronousHands());
                 else
-                    Filter.removeHolds(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+                    mFilterList.removeHolds(mNumberOfJugglers, getNumberOfSynchronousHands());
                 break;
             case R.id.sync_mode_checkbox:
                 removeAutoFilters(oldNumberOfSynchronousHands);
@@ -470,23 +468,23 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void removeAutoFilters(int numberOfSynchronousHands) {
-        Filter.removeDefaultFilters(mFilterList, mNumberOfJugglers, mMinThrow, numberOfSynchronousHands);
-        Filter.addZips(mFilterList, mNumberOfJugglers, numberOfSynchronousHands);
-        Filter.addZaps(mFilterList, mNumberOfJugglers, numberOfSynchronousHands);
-        Filter.addHolds(mFilterList, mNumberOfJugglers, numberOfSynchronousHands);
+        mFilterList.removeDefaultFilters(mNumberOfJugglers, mMinThrow, numberOfSynchronousHands);
+        mFilterList.addZips(mNumberOfJugglers, numberOfSynchronousHands);
+        mFilterList.addZaps(mNumberOfJugglers, numberOfSynchronousHands);
+        mFilterList.addHolds(mNumberOfJugglers, numberOfSynchronousHands);
 
     }
 
     private void addAutoFilters() {
 
-        Filter.addDefaultFilters(mFilterList, mNumberOfJugglers, mMinThrow,
+        mFilterList.addDefaultFilters(mNumberOfJugglers, mMinThrow,
                 getNumberOfSynchronousHands());
         if (!mIsZips)
-            Filter.removeZips(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+            mFilterList.removeZips(mNumberOfJugglers, getNumberOfSynchronousHands());
         if (!mIsZaps)
-            Filter.removeZaps(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+            mFilterList.removeZaps(mNumberOfJugglers, getNumberOfSynchronousHands());
         if (!mIsHolds)
-            Filter.removeHolds(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+            mFilterList.removeHolds(mNumberOfJugglers, getNumberOfSynchronousHands());
     }
 
     private void updateFiltersWithNumberOfSynchronousHands(int numberOfSynchronousHands) {

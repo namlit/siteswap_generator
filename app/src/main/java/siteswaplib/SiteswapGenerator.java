@@ -27,7 +27,7 @@ public class SiteswapGenerator implements Serializable{
 	public enum Status {GENERATING, ALL_SITESWAPS_FOUND, RANDOM_SITESWAP_FOUND, MAX_RESULTS_REACHED, TIMEOUT_REACHED, MEMORY_FULL, CANCELLED};
 
 	private LinkedList<Siteswap> mSiteswaps;
-	private LinkedList<Filter> mFilterList;
+	private FilterList mFilterList;
 	private int mPeriodLength;
 	private byte mMaxThrow;
 	private byte mMinThrow;
@@ -54,12 +54,12 @@ public class SiteswapGenerator implements Serializable{
 		}
 		mIsCanceled = new AtomicBoolean(false);
 		setNumberOfJugglers(number_of_jugglers);
-        mFilterList = new LinkedList<Filter>();
-        Filter.addDefaultFilters(mFilterList, number_of_jugglers, mNumberOfSynchronousHands);
+        mFilterList = new FilterList();
+        mFilterList.addDefaultFilters(number_of_jugglers, mNumberOfSynchronousHands);
 	}
 
     public SiteswapGenerator(int length, int max, int min, int objects, int number_of_jugglers,
-                             LinkedList<Filter> filterList) {
+                             FilterList filterList) {
 
         this(length, max, min, objects, number_of_jugglers);
         mFilterList = filterList;
@@ -69,7 +69,7 @@ public class SiteswapGenerator implements Serializable{
 		return mFilterList;
 	}
 
-	public void setFilterList(LinkedList<Filter> filterList) {
+	public void setFilterList(FilterList filterList) {
 		this.mFilterList = filterList;
 	}
 

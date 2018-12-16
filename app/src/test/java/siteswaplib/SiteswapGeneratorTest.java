@@ -35,8 +35,8 @@ public class SiteswapGeneratorTest {
         int maxThrow = 10;
         int numberOfObjects = 6;
         int numberOfSynchronousHands = 1;
-        LinkedList<Filter> filters = new LinkedList<Filter>();
-        Filter.addDefaultFilters(filters, numberOfJugglers, minThrow, numberOfSynchronousHands);
+        FilterList filters = new FilterList();
+        filters.addDefaultFilters(numberOfJugglers, minThrow, numberOfSynchronousHands);
         filters.add(new LocalInterfaceFilter(
                 new Siteswap("ppspsps"), PatternFilter.Type.INCLUDE, numberOfJugglers));
         filters.add(new LocalPatternFilter(
