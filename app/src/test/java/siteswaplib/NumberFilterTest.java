@@ -74,4 +74,28 @@ public class NumberFilterTest {
         assertEquals(expected4, siteswap2.countFilterValue(filter2.getFilterValue()));
     }
 
+    @Test
+    public void testParsableStringConversion() {
+        NumberFilter filter1 = new NumberFilter("9p", NumberFilter.Type.EQUAL, 1, 3);
+        NumberFilter filter2 = new NumberFilter("9", NumberFilter.Type.EQUAL, 1, 3);
+        NumberFilter filter3 = new NumberFilter("5", NumberFilter.Type.GREATER_EQUAL, 3, 1);
+        NumberFilter filter4 = new NumberFilter("a", NumberFilter.Type.SMALLER_EQUAL, 15, 1);
+
+        String filter1str = filter1.toParsableString();
+        String filter2str = filter2.toParsableString();
+        String filter3str = filter3.toParsableString();
+        String filter4str = filter4.toParsableString();
+
+        NumberFilter filter1conv = new NumberFilter().fromParsableString(filter1str);
+        NumberFilter filter2conv = new NumberFilter().fromParsableString(filter2str);
+        NumberFilter filter3conv = new NumberFilter().fromParsableString(filter3str);
+        NumberFilter filter4conv = new NumberFilter().fromParsableString(filter4str);
+
+        assertEquals(filter1, filter1conv);
+        assertEquals(filter2, filter2conv);
+        assertEquals(filter3, filter3conv);
+        assertEquals(filter4, filter4conv);
+
+    }
+
 }

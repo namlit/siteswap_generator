@@ -24,7 +24,16 @@ package siteswaplib;
 
 public class LocalInterfaceFilter extends InterfaceFilter {
 
+    static final private String VERSION = "1";
+
     private Siteswap mLocalPattern;
+
+    public LocalInterfaceFilter() {
+    }
+
+    public LocalInterfaceFilter(String str) {
+        fromParsableString(str);
+    }
 
     public LocalInterfaceFilter(Siteswap pattern, Type type, int numberOfJugglers) {
         super(pattern, type);
@@ -41,6 +50,31 @@ public class LocalInterfaceFilter extends InterfaceFilter {
         }
         mPattern = new Siteswap(globalPattern);
 
+    }
+
+    @Override
+    public String toParsableString() {
+        String str = new String();
+        str += String.valueOf(VERSION) + ",";
+        str += mLocalPattern.toParsableString() + ",";
+        str += super.toParsableString();
+        return str;
+    }
+
+    @Override
+    public LocalInterfaceFilter fromParsableString(String str) {
+        String[] splits = str.split(",");
+        int begin_index = 0;
+        if (splits.length < 3) {
+            return this;
+        }
+        if (!splits[0].equals(VERSION))
+            return this;
+        begin_index += splits[0].length() + 1;
+        mLocalPattern = new Siteswap(splits[1]);
+        begin_index += splits[1].length() + 1;
+        super.fromParsableString(str.substring(begin_index));
+        return this;
     }
 
     @Override

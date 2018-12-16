@@ -24,6 +24,15 @@ package siteswaplib;
 
 public class InterfaceFilter extends PatternFilter {
 
+    static final private String VERSION = "1";
+
+    public InterfaceFilter() {
+    }
+
+    public InterfaceFilter(String str) {
+        fromParsableString(str);
+    }
+
     public InterfaceFilter(Siteswap pattern, Type type) {
         super(pattern, type);
     }
@@ -38,6 +47,28 @@ public class InterfaceFilter extends PatternFilter {
             str = new String("Exclude Interface: ");
         str += mPattern.toString();
         return str;
+    }
+
+    @Override
+    public String toParsableString() {
+        String str = new String();
+        str += String.valueOf(VERSION) + ",";
+        str += super.toParsableString();
+        return str;
+    }
+
+    @Override
+    public InterfaceFilter fromParsableString(String str) {
+        String[] splits = str.split(",");
+        int begin_index = 0;
+        if (splits.length < 3) {
+            return this;
+        }
+        if (!splits[0].equals(VERSION))
+            return this;
+        begin_index += splits[0].length() + 1;
+        super.fromParsableString(str.substring(begin_index));
+        return this;
     }
 
     @Override

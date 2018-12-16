@@ -45,7 +45,7 @@
     <string name="main_activity__generate_siteswaps_button">Generate Siteswaps</string>
 
     <string name="main_activity__invalid_input_value">Invalid Input Value:</string>
-    <string name="main_activity__invalid_site_swap">The siteswap is invalid:</string>
+    <string name="main_activity__invalid_site_swap">The name is invalid:</string>
     <string name="main_activity__jugglers">jugglers</string>
     <string name="main_activity__serialization_error_toast">Error during filter list serialization</string>
     <string name="main_activity__deserialization_error_toast">Error during filter list deserialization</string>
@@ -56,6 +56,9 @@
     <string name="main_activity__invalid_max_throw_smaller_average">The maximum throw needs to be at least the number of objects</string>
     <string name="main_activity__invalid_min_throw_greater_average">The minimum throw needs to be at maximum the number of objects</string>
 
+    <string name="main_activity__option_load_generation_parameters">Load Generation Parameters</string>
+    <string name="main_activity__option_save_generation_parameters">Save Generation Parameters</string>
+    <string name="main_activity__option_delete_generation_parameters">Delete Generation Parameters</string>
     <string name="main_activity__option_named_siteswaps">Named Siteswaps</string>
     <string name="main_activity__option_favorites">Favorites</string>
     <string name="main_activity__option_about">About</string>
@@ -66,11 +69,11 @@
        <h2>Random Generation Mode</h2>
        <p>When generating very long siteswaps, typically you do not want
        to get all possible siteswaps, but just a hand ful of interesting
-       ones. With the systematic siteswap generation approach the first
+       ones. With the systematic name generation approach the first
        generated Siteswaps are all very similar and often boring. By using
        the random generation mode, siteswaps are generated in random order
        and thus avoid boring siteswaps. Note that in this mode, there is no
-       test of duplicate Siteswaps and the siteswap generation is only limited
+       test of duplicate Siteswaps and the name generation is only limited
        by the generation timeout and maximum number of results. Using
        this mode for short siteswaps results in many duplicate siteswaps in
        random order.r</p>
@@ -85,6 +88,7 @@
     <string name="back">back</string>
     <string name="add">add</string>
     <string name="share">Share</string>
+    <string name="save">save</string>
 
     <string name="named_siteswaps__title">Named Siteswaps</string>
     <string name="favorites__title_siteswaps">Favorites</string>
@@ -160,6 +164,9 @@
     <string name="number_filter__shared_preferences_number_index">PATTERN_FILTER__SHARED_PREFERNECES_NUMBER_INDEX</string>
     <string name="number_filter__dialog_tag">NUMBER_FILTER__DIALOG_TAG</string>
 
+    <string name="save_generation_parameters__title">Generation Parameter Name</string>
+    <string name="save_generation_parameters__dialog_tag">SAVE_GENERATION_PARAMETER__DIALOG_TAG</string>
+
     <string name="enter_siteswap__title">Enter Siteswap</string>
     <string name="enter_siteswap__dialog_tag">ENTER_SITESWAP__DIALOG_TAG</string>
 
@@ -185,7 +192,7 @@
     <string name="detailed_siteswap__causal_diagram">Causal Diagram: </string>
     <string name="detailed_siteswap__ladder_diagram">Ladder Diagram: </string>
     <string name="detailed_siteswap__share_global">Global:</string>
-    <string name="detailed_siteswap__toast_duplicate_favorite">Abort add to favorites: same siteswap is already in favorites</string>
+    <string name="detailed_siteswap__toast_duplicate_favorite">Abort add to favorites: same name is already in favorites</string>
     <string name="detailed_siteswap__toast_favorite_removed">Removed Siteswap from Favorites</string>
     <string name="detailed_siteswap__toast_not_in_favorites">Siteswap was not found in favorites</string>
     <string name="detailed_siteswap__parsing_error">Parsing error. Found the following invalid characters:</string>
@@ -223,6 +230,15 @@
     <string name="confirm_remove_favorite__location">Location:</string>
     <string name="confirm_remove_favorite__date">Date:</string>
     <string name="confirm_remove_favorite__dialog_tag">CONFIRM_REMOVE_FAVORITE__DIALOG_TAG</string>
+
+    <string name="confirm_delete_generation_parameters__title">Delete Generation Parameters:</string>
+    <string name="confirm_delete_generation_parameters__dialog_tag">CONFIRM_DELETE_GENERATION_PARAMETERS__DIALOG_TAG</string>
+
+    <string name="delete_generation_parameters__title">Delete generation parameters:</string>
+    <string name="delete_generation_parameters__dialog_tag">DELETE_GENERATION_PARAMETERS__DIALOG_TAG</string>
+
+    <string name="load_generation_parameters__title">Load generation parameters:</string>
+    <string name="load_generation_parameters__dialog_tag">LOAD_GENERATION_PARAMETERS__DIALOG_TAG</string>
 
     <string name="choose_remove_favorite__title">Choose Favorite to remove:</string>
     <string name="choose_remove_favorite__dialog_tag">CHOOSE_REMOVE_FAVORITE__DIALOG_TAG</string>

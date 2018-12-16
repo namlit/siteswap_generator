@@ -22,6 +22,8 @@ import java.io.Serializable;
 
 public class NumberFilter extends Filter {
 
+	static final private String VERSION = "1";
+
 	public class FilterValue implements Serializable {
 		private int mValue;
 
@@ -83,6 +85,18 @@ public class NumberFilter extends Filter {
 			mValue = Siteswap.stringToInt(strValue);
 		}
 
+		public String toParsableString() {
+			return String.valueOf(mValue);
+		}
+
+		void fromParsableString(String str) {
+			try {
+				mValue = Integer.valueOf(str);
+			}
+			catch (NumberFormatException e) {
+			}
+		}
+
 		@Override
 		public String toString() {
 			if (mValue < 0) { // Pass or Self: use String conversion of Siteswap class
@@ -126,6 +140,12 @@ public class NumberFilter extends Filter {
 	private int mThresholdValue;
 	private int mNumberOfSynchronousHands;
 
+	public NumberFilter() {
+	}
+
+	public NumberFilter(String str) {
+		fromParsableString(str);
+	}
 
 	public NumberFilter(int filterValue, Type type, int threshold, int numberOfSynchronousHands) {
 		this.mType = type;
@@ -172,6 +192,37 @@ public class NumberFilter extends Filter {
         }
         return true;
     }
+
+    @Override
+	public String toParsableString() {
+		String str = new String();
+		str += String.valueOf(VERSION) + ",";
+		str += mType.toString() + ",";
+		str += String.valueOf(mFilterValue.mValue) + ",";
+		str += String.valueOf(mNumberOfSynchronousHands) + ",";
+		str += String.valueOf(mThresholdValue) + ",";
+		return str;
+	}
+
+	@Override
+	public NumberFilter fromParsableString(String str) {
+		String[] splits = str.split(",");
+		if (splits.length < 5) {
+			return this;
+		}
+		if (!splits[0].equals(VERSION))
+			return this;
+		mType = Type.valueOf(splits[1]);
+		try {
+			mFilterValue = new FilterValue(Integer.valueOf(splits[2]));
+			mNumberOfSynchronousHands = Integer.valueOf(splits[3]);
+			mThresholdValue = Integer.valueOf(splits[4]);
+		}
+		catch (NumberFormatException e) {
+			return this;
+		}
+		return this;
+	}
 
 	@Override
 	public String toString() {

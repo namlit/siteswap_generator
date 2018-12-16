@@ -21,15 +21,23 @@ package siteswaplib;
 public class PatternFilter extends Filter {
 
 	public enum Type {EXCLUDE, INCLUDE}
-	
+	static final private String VERSION = "1";
+
 	protected Siteswap mPattern;
 	protected Type mType;
-	
+
+	public PatternFilter() {
+	}
+
+	public PatternFilter(String str) {
+		fromParsableString(str);
+	}
+
 	public PatternFilter(Siteswap pattern, Type type) {
 		this.mPattern = pattern;
 		this.mType = type;
 	}
-	
+
 	@Override
 	public boolean isFulfilled(Siteswap siteswap) {
 		if (mType == Type.INCLUDE)
@@ -55,9 +63,30 @@ public class PatternFilter extends Filter {
 	}
 
 	@Override
+	public String toParsableString() {
+		String str = new String();
+		str += String.valueOf(VERSION) + ",";
+		str += mPattern.toParsableString() + ",";
+		str += mType.toString() + ",";
+		return str;
+	}
+
+	@Override
+	public PatternFilter fromParsableString(String str) {
+		String[] splits = str.split(",");
+		if (splits.length < 3) {
+			return this;
+		}
+        if (!splits[0].equals(VERSION))
+            return this;
+        mPattern = new Siteswap(splits[1]);
+        mType = Type.valueOf(splits[2]);
+        return this;
+	}
+
+	@Override
 	public String toString() {
 		String str;
-		
 		if (mType == Type.INCLUDE)
 			str = new String("Include: ");
 		else
@@ -65,7 +94,7 @@ public class PatternFilter extends Filter {
 		str += mPattern.toString();
 		return str;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (! (obj instanceof PatternFilter))

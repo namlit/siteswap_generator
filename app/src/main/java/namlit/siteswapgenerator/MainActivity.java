@@ -25,8 +25,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
-import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -48,17 +46,17 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.LinkedList;
 import java.util.List;
 
 import siteswaplib.*;
 
 public class MainActivity extends AppCompatActivity
-        implements AddFilterDialog.FilterDialogListener {
+        implements AddFilterDialog.FilterDialogListener,
+        LoadGenerationParametersDialog.UpdateGenerationParameters {
 
     final static int PATTERN_FILTER_ITEM_NUMBER = 0;
 
-    private LinkedList<Filter> mFilterList;
+    private FilterList mFilterList;
 
     private int mNumberOfObjects;
     private int mPeriodLength;
@@ -94,6 +92,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        populateDatabaseWithDefaultGenerationParameters();
+
         mNumberOfObjectsEditText = (EditText) findViewById(R.id.number_of_objects);
         mPeriodLengthEditText = (EditText) findViewById(R.id.period_length);
         mMaxThrowEditText = (EditText) findViewById(R.id.max_throw);
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity
         mSyncModeCheckbox   = (CheckBox) findViewById(R.id.sync_mode_checkbox);
         mRandomGenerationModeCheckbox = (CheckBox) findViewById(R.id.random_generation_mode_checkbox);
 
-        mFilterList = new LinkedList<Filter>();
+        mFilterList = new FilterList();
 
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         mNumberOfObjects  = sharedPref.getInt(getString(R.string.main_activity__settings_number_of_objects),  7);
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity
                 byte b[] = Base64.decode(serializedFilterList, Base64.DEFAULT);
                 ByteArrayInputStream bi = new ByteArrayInputStream(b);
                 ObjectInputStream si = new ObjectInputStream(bi);
-                mFilterList = (LinkedList<Filter>) si.readObject();
+                mFilterList = (FilterList) si.readObject();
                 si.close();
             } catch (Exception e) {
                 Toast.makeText(this, getString(R.string.main_activity__deserialization_error_toast),
@@ -207,10 +207,10 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
                 updateFromTextEdits();
-                Filter.removeDefaultFilters(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
-                Filter.addZips(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
-                Filter.addZaps(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
-                Filter.addHolds(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+                mFilterList.removeDefaultFilters(mNumberOfJugglers, getNumberOfSynchronousHands());
+                mFilterList.addZips(mNumberOfJugglers, getNumberOfSynchronousHands());
+                mFilterList.addZaps(mNumberOfJugglers, getNumberOfSynchronousHands());
+                mFilterList.addHolds(mNumberOfJugglers, getNumberOfSynchronousHands());
                 mFilterListAdapter.notifyDataSetChanged();
             }
             @Override
@@ -228,6 +228,123 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    public GenerationParameterEntity build7ClubDefaultGenerationEntity() {
+        GenerationParameterEntity entity = new GenerationParameterEntity();
+        entity.setName("Default: 7 clubs period 5");
+        entity.setNumberOfObjects(7);
+        entity.setPeriodLength(5);
+        entity.setMaxThrow(10);
+        entity.setMinThrow(2);
+        entity.setNumberOfJugglers(2);
+        entity.setMaxResults(100);
+        entity.setTimeout(5);
+        entity.setSynchronous(false);
+        entity.setRandomMode(false);
+        entity.setZips(true);
+        entity.setZaps(false);
+        entity.setHolds(false);
+        FilterList list = new FilterList();
+        list.addDefaultFilters(2, 2, 1);
+        list.removeZaps(2, 1);
+        list.removeHolds(2, 1);
+        entity.setFilterList(list);
+        return entity;
+    }
+
+    public void populateDatabaseWithDefaultGenerationParameters() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    AppDatabase db = AppDatabase.getAppDatabase(getApplicationContext());
+                    List<GenerationParameterEntity> entities =
+                            db.generationParameterDao().getAllGenerationParameters();
+                    if (entities.isEmpty()) {
+                        db.generationParameterDao().insertGenerationParameters(
+                                build7ClubDefaultGenerationEntity()
+                        );
+                    }
+                } catch (android.database.sqlite.SQLiteConstraintException e) {
+                }
+            }
+        }).start();
+    }
+
+    public void saveGenerationParameters() {
+        GenerationParameterEntity entity = new GenerationParameterEntity();
+        if (!updateFromTextEdits())
+            return;
+        entity.setNumberOfObjects(mNumberOfObjects);
+        entity.setPeriodLength(mPeriodLength);
+        entity.setMaxThrow(mMaxThrow);
+        entity.setMinThrow(mMinThrow);
+        entity.setNumberOfJugglers(mNumberOfJugglers);
+        entity.setMaxResults(mMaxResults);
+        entity.setTimeout(mTimeout);
+        entity.setSynchronous(mIsSyncPattern);
+        entity.setRandomMode(mIsRandomGenerationMode);
+        entity.setZips(mIsZips);
+        entity.setZaps(mIsZaps);
+        entity.setHolds(mIsHolds);
+        entity.setFilterList(mFilterList);
+        new SaveGenerationParametersDialog().show(getSupportFragmentManager(),
+                getString(R.string.save_generation_parameters__dialog_tag), entity);
+    }
+
+    public void updateGenerationParameters(GenerationParameterEntity generationParameters) {
+
+        mNumberOfObjectsEditText.setText(String.valueOf(generationParameters.getNumberOfObjects()));
+        mPeriodLengthEditText.setText(String.valueOf(generationParameters.getPeriodLength()));
+        mMaxThrowEditText.setText(String.valueOf(generationParameters.getMaxThrow()));
+        mMinThrowEditText.setText(String.valueOf(generationParameters.getMinThrow()));
+        mNumberOfJugglersEditText.setText(String.valueOf(generationParameters.getNumberOfJugglers()));
+        mMaxResultsEditText.setText(String.valueOf(generationParameters.getMaxResults()));
+        mTimeoutEditText.setText(String.valueOf(generationParameters.getTimeout()));
+        mSyncModeCheckbox.setChecked(generationParameters.isSynchronous());
+        mRandomGenerationModeCheckbox.setChecked(generationParameters.isRandomMode());
+        mZipsCheckbox.setChecked(generationParameters.isZips());
+        mZapsCheckbox.setChecked(generationParameters.isZaps());
+        mHoldsCheckbox.setChecked(generationParameters.isHolds());
+        mFilterList.fromParsableString(generationParameters.getFilterListString());
+        mFilterListAdapter.notifyDataSetChanged();
+    }
+
+    public void loadGenerationParameters() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AppDatabase db = AppDatabase.getAppDatabase(getApplicationContext());
+                final List<GenerationParameterEntity> entities =
+                        db.generationParameterDao().getAllGenerationParameters();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new LoadGenerationParametersDialog().show(getSupportFragmentManager(),
+                                getString(R.string.load_generation_parameters__dialog_tag), entities);
+                    }
+                });
+            }
+        }).start();
+    }
+
+    public void deleteGenerationParameters() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AppDatabase db = AppDatabase.getAppDatabase(getApplicationContext());
+                final List<GenerationParameterEntity> entities =
+                        db.generationParameterDao().getAllGenerationParameters();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new DeleteGenerationParametersDialog().show(getSupportFragmentManager(),
+                                getString(R.string.delete_generation_parameters__dialog_tag), entities);
+                    }
+                });
+            }
+        }).start();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -235,11 +352,23 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_named_siteswaps)
+        if (id == R.id.action_load_generation_parameters)
+        {
+            loadGenerationParameters();
+        }
+        else if (id == R.id.action_save_generation_parameters)
+        {
+            saveGenerationParameters();
+        }
+        else if (id == R.id.action_delete_generation_parameters)
+        {
+            deleteGenerationParameters();
+        }
+        else if (id == R.id.action_named_siteswaps)
         {
             showNamedSiteswaps();
         }
-        if (id == R.id.action_favorites)
+        else if (id == R.id.action_favorites)
         {
             favorites();
         }
@@ -434,21 +563,21 @@ public class MainActivity extends AppCompatActivity
         switch (view.getId()) {
             case R.id.include_zips_checkbox:
                 if (checked)
-                    Filter.addZips(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+                    mFilterList.addZips(mNumberOfJugglers, getNumberOfSynchronousHands());
                 else
-                    Filter.removeZips(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+                    mFilterList.removeZips(mNumberOfJugglers, getNumberOfSynchronousHands());
                 break;
             case R.id.include_zaps_checkbox:
                 if (checked)
-                    Filter.addZaps(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+                    mFilterList.addZaps(mNumberOfJugglers, getNumberOfSynchronousHands());
                 else
-                    Filter.removeZaps(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+                    mFilterList.removeZaps(mNumberOfJugglers, getNumberOfSynchronousHands());
                 break;
             case R.id.include_holds_checkbox:
                 if (checked)
-                    Filter.addHolds(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+                    mFilterList.addHolds(mNumberOfJugglers, getNumberOfSynchronousHands());
                 else
-                    Filter.removeHolds(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+                    mFilterList.removeHolds(mNumberOfJugglers, getNumberOfSynchronousHands());
                 break;
             case R.id.sync_mode_checkbox:
                 removeAutoFilters(oldNumberOfSynchronousHands);
@@ -470,23 +599,23 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void removeAutoFilters(int numberOfSynchronousHands) {
-        Filter.removeDefaultFilters(mFilterList, mNumberOfJugglers, mMinThrow, numberOfSynchronousHands);
-        Filter.addZips(mFilterList, mNumberOfJugglers, numberOfSynchronousHands);
-        Filter.addZaps(mFilterList, mNumberOfJugglers, numberOfSynchronousHands);
-        Filter.addHolds(mFilterList, mNumberOfJugglers, numberOfSynchronousHands);
+        mFilterList.removeDefaultFilters(mNumberOfJugglers, mMinThrow, numberOfSynchronousHands);
+        mFilterList.addZips(mNumberOfJugglers, numberOfSynchronousHands);
+        mFilterList.addZaps(mNumberOfJugglers, numberOfSynchronousHands);
+        mFilterList.addHolds(mNumberOfJugglers, numberOfSynchronousHands);
 
     }
 
     private void addAutoFilters() {
 
-        Filter.addDefaultFilters(mFilterList, mNumberOfJugglers, mMinThrow,
+        mFilterList.addDefaultFilters(mNumberOfJugglers, mMinThrow,
                 getNumberOfSynchronousHands());
         if (!mIsZips)
-            Filter.removeZips(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+            mFilterList.removeZips(mNumberOfJugglers, getNumberOfSynchronousHands());
         if (!mIsZaps)
-            Filter.removeZaps(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+            mFilterList.removeZaps(mNumberOfJugglers, getNumberOfSynchronousHands());
         if (!mIsHolds)
-            Filter.removeHolds(mFilterList, mNumberOfJugglers, getNumberOfSynchronousHands());
+            mFilterList.removeHolds(mNumberOfJugglers, getNumberOfSynchronousHands());
     }
 
     private void updateFiltersWithNumberOfSynchronousHands(int numberOfSynchronousHands) {

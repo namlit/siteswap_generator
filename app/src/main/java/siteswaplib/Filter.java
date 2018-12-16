@@ -25,6 +25,9 @@ import siteswaplib.NumberFilter.Type;
 
 public abstract class Filter implements Serializable {
 
+	public enum FilterType {NUMBER_FILTER, PATTERN_FILTER, INTERFACE_FILTER,
+		LOCAL_PATTERN_FILTER, LOCAL_INTERFACE_FILTER};
+
 	public abstract boolean isFulfilled(Siteswap siteswap);
 
     /**
@@ -37,104 +40,6 @@ public abstract class Filter implements Serializable {
      * */
     public abstract boolean isPartlyFulfilled(Siteswap siteswap, int index);
 
-    // TODO add and use method updateNumberOfJugglersAndSynchronousHands
-
-	public static void addDefaultFilters(LinkedList<Filter> filterList,
-										 int numberOfJugglers, int minThrow,
-										 int numberOfSynchronousHands) {
-		if (numberOfJugglers <= 1)
-			return;
-
-		// remove Filters first, to avoid duplicate filters
-		removeDefaultFilters(filterList, numberOfJugglers, minThrow, numberOfSynchronousHands);
-		filterList.addFirst(new NumberFilter(Siteswap.PASS, Type.GREATER_EQUAL, 1, numberOfSynchronousHands));
-		for (int i = minThrow; i < 2*numberOfJugglers; ++i) {
-			if ( Siteswap.isPass(i, numberOfJugglers)) {
-			    NumberFilter filter = new NumberFilter(i, Type.EQUAL, 0, numberOfSynchronousHands);
-			    if (!filterList.contains(filter))
-                    filterList.addFirst(filter);
-			}
-		}
-	}
-
-	public static void addDefaultFilters(LinkedList<Filter> filterList, int numberOfJugglers,
-										 int numberOfSynchronousHands) {
-		addDefaultFilters(filterList, numberOfJugglers, 0, numberOfSynchronousHands);
-	}
-
-	public static void addZips(LinkedList<Filter> filterList, int numberOfJugglers,
-										 int numberOfSynchronousHands) {
-
-		while (filterList.remove(new NumberFilter(numberOfJugglers, Type.EQUAL, 0, numberOfSynchronousHands)))
-			;
-	}
-
-	public static void addZaps(LinkedList<Filter> filterList, int numberOfJugglers,
-										 int numberOfSynchronousHands) {
-
-		int max = 3*numberOfJugglers;
-		if (numberOfSynchronousHands > 1 && numberOfJugglers > 1)
-			max = 2 * numberOfJugglers + 2; // Where is just one zap in synchronous patters "2p"
-		for (int i = 2 * numberOfJugglers + 1; i < max; ++i) {
-			if ( Siteswap.isPass(i, numberOfJugglers))
-				while (filterList.remove(new NumberFilter(i, Type.EQUAL, 0,
-						numberOfSynchronousHands)))
-					;
-		}
-	}
-
-	public static void addHolds(LinkedList<Filter> filterList, int numberOfJugglers,
-										 int numberOfSynchronousHands) {
-		filterList.remove(new NumberFilter(2 * numberOfJugglers, Type.EQUAL, 0, numberOfSynchronousHands));
-	}
-
-	public static void removeDefaultFilters(LinkedList<Filter> filterList,
-											int numberOfJugglers, int minThrow,
-											int numberOfSynchronousHands) {
-		if (numberOfJugglers <= 1)
-			return;
-		while (filterList.remove(new NumberFilter(Siteswap.PASS, Type.GREATER_EQUAL, 1,
-				numberOfSynchronousHands)))
-			;
-		for (int i = minThrow; i < 2*numberOfJugglers; ++i) {
-			if ( Siteswap.isPass(i, numberOfJugglers))
-				while (filterList.remove(new NumberFilter(i, Type.EQUAL, 0,
-						numberOfSynchronousHands)))
-					;
-		}
-	}
-
-	public static void removeDefaultFilters(LinkedList<Filter> filterList, int numberOfJugglers,
-										 int numberOfSynchronousHands) {
-		removeDefaultFilters(filterList, numberOfJugglers, 0, numberOfSynchronousHands);
-	}
-
-	public static void removeZips(LinkedList<Filter> filterList, int numberOfJugglers,
-										 int numberOfSynchronousHands) {
-
-		addZips(filterList, numberOfJugglers, numberOfSynchronousHands);
-		filterList.addFirst(new NumberFilter(numberOfJugglers, Type.EQUAL, 0, 1));
-	}
-
-	public static void removeZaps(LinkedList<Filter> filterList, int numberOfJugglers,
-										 int numberOfSynchronousHands) {
-
-		addZaps(filterList, numberOfJugglers, numberOfSynchronousHands);
-		int max = 3*numberOfJugglers;
-		if (numberOfSynchronousHands > 1 && numberOfJugglers > 1)
-			max = 2 * numberOfJugglers + 2; // Where is just one zap in synchronous patters "2p"
-		for (int i = 2 * numberOfJugglers + 1; i < max; ++i) {
-			if ( Siteswap.isPass(i, numberOfJugglers))
-				filterList.addFirst(new NumberFilter(i, Type.EQUAL, 0,
-						numberOfSynchronousHands));
-		}
-	}
-
-	public static void removeHolds(LinkedList<Filter> filterList, int numberOfJugglers,
-										 int numberOfSynchronousHands) {
-
-		addHolds(filterList, numberOfJugglers, numberOfSynchronousHands);
-		filterList.addFirst(new NumberFilter(2 * numberOfJugglers, Type.EQUAL, 0, 1));
-	}
-
+    public abstract String toParsableString();
+	public abstract Filter fromParsableString(String str);
 }
