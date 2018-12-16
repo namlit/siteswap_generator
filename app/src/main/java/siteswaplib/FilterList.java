@@ -119,7 +119,7 @@ public class FilterList extends LinkedList<Filter> implements Serializable {
 		addFirst(new NumberFilter(2 * numberOfJugglers, Type.EQUAL, 0, 1));
 	}
 
-    String toParsableString() {
+    public String toParsableString() {
         String str = new String();
         for (Filter filter : this) {
             if (filter instanceof LocalPatternFilter) {
@@ -147,6 +147,7 @@ public class FilterList extends LinkedList<Filter> implements Serializable {
     }
 
     public FilterList fromParsableString(String str) {
+		clear();
         String[] filters = str.split(";");
         for (String f : filters) {
             String[] filter = f.split(":");

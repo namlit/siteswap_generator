@@ -25,8 +25,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
-import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -48,11 +46,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.List;
 
 import siteswaplib.*;
 
 public class MainActivity extends AppCompatActivity
-        implements AddFilterDialog.FilterDialogListener {
+        implements AddFilterDialog.FilterDialogListener,
+        LoadGenerationParametersDialog.UpdateGenerationParameters {
 
     final static int PATTERN_FILTER_ITEM_NUMBER = 0;
 
@@ -226,6 +226,81 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    public void saveGenerationParameters() {
+        GenerationParameterEntity entity = new GenerationParameterEntity();
+        if (!updateFromTextEdits())
+            return;
+        entity.setNumberOfObjects(mNumberOfObjects);
+        entity.setPeriodLength(mPeriodLength);
+        entity.setMaxThrow(mMaxThrow);
+        entity.setMinThrow(mMinThrow);
+        entity.setNumberOfJugglers(mNumberOfJugglers);
+        entity.setMaxResults(mMaxResults);
+        entity.setTimeout(mTimeout);
+        entity.setSynchronous(mIsSyncPattern);
+        entity.setRandomMode(mIsRandomGenerationMode);
+        entity.setZips(mIsZips);
+        entity.setZaps(mIsZaps);
+        entity.setHolds(mIsHolds);
+        entity.setFilterList(mFilterList);
+        new SaveGenerationParametersDialog().show(getSupportFragmentManager(),
+                getString(R.string.save_generation_parameters__dialog_tag), entity);
+    }
+
+    public void updateGenerationParameters(GenerationParameterEntity generationParameters) {
+
+        mNumberOfObjectsEditText.setText(String.valueOf(generationParameters.getNumberOfObjects()));
+        mPeriodLengthEditText.setText(String.valueOf(generationParameters.getPeriodLength()));
+        mMaxThrowEditText.setText(String.valueOf(generationParameters.getMaxThrow()));
+        mMinThrowEditText.setText(String.valueOf(generationParameters.getMinThrow()));
+        mNumberOfJugglersEditText.setText(String.valueOf(generationParameters.getNumberOfJugglers()));
+        mMaxResultsEditText.setText(String.valueOf(generationParameters.getMaxResults()));
+        mTimeoutEditText.setText(String.valueOf(generationParameters.getTimeout()));
+        mSyncModeCheckbox.setChecked(generationParameters.isSynchronous());
+        mRandomGenerationModeCheckbox.setChecked(generationParameters.isRandomMode());
+        mZipsCheckbox.setChecked(generationParameters.isZips());
+        mZapsCheckbox.setChecked(generationParameters.isZaps());
+        mHoldsCheckbox.setChecked(generationParameters.isHolds());
+        mFilterList.fromParsableString(generationParameters.getFilterListString());
+        mFilterListAdapter.notifyDataSetChanged();
+    }
+
+    public void loadGenerationParameters() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AppDatabase db = AppDatabase.getAppDatabase(getApplicationContext());
+                final List<GenerationParameterEntity> entities =
+                        db.generationParameterDao().getAllGenerationParameters();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new LoadGenerationParametersDialog().show(getSupportFragmentManager(),
+                                getString(R.string.load_generation_parameters__dialog_tag), entities);
+                    }
+                });
+            }
+        }).start();
+    }
+
+    public void deleteGenerationParameters() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AppDatabase db = AppDatabase.getAppDatabase(getApplicationContext());
+                final List<GenerationParameterEntity> entities =
+                        db.generationParameterDao().getAllGenerationParameters();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new DeleteGenerationParametersDialog().show(getSupportFragmentManager(),
+                                getString(R.string.delete_generation_parameters__dialog_tag), entities);
+                    }
+                });
+            }
+        }).start();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -233,11 +308,23 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_named_siteswaps)
+        if (id == R.id.action_load_generation_parameters)
+        {
+            loadGenerationParameters();
+        }
+        else if (id == R.id.action_save_generation_parameters)
+        {
+            saveGenerationParameters();
+        }
+        else if (id == R.id.action_delete_generation_parameters)
+        {
+            deleteGenerationParameters();
+        }
+        else if (id == R.id.action_named_siteswaps)
         {
             showNamedSiteswaps();
         }
-        if (id == R.id.action_favorites)
+        else if (id == R.id.action_favorites)
         {
             favorites();
         }
