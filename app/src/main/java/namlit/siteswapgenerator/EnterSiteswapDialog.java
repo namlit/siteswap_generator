@@ -28,6 +28,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import siteswaplib.Siteswap;
@@ -39,8 +40,10 @@ import siteswaplib.Siteswap;
 public class EnterSiteswapDialog extends DialogFragment {
 
     private EditText mSiteswapTextEdit;
-    private int mNumberOfJugglers;
-    private int mNumberOfSynchronousHands;
+    private EditText mNumberOfJugglersTextEdit;
+    private CheckBox mIsSynchronouscheckbox;
+    private int mNumberOfJugglersDefault;
+    private boolean mIsSyncDefault;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -76,7 +79,11 @@ public class EnterSiteswapDialog extends DialogFragment {
     public void onStart() {
         super.onStart();
 
-        mSiteswapTextEdit = (EditText) getDialog().findViewById(R.id.siteswap_text_edit);
+        mSiteswapTextEdit = (EditText) getDialog().findViewById(R.id.enter_siteswap_siteswap_text_edit);
+        mNumberOfJugglersTextEdit = (EditText) getDialog().findViewById(R.id.enter_siteswap_number_of_jugglers_text_edit);
+        mIsSynchronouscheckbox = (CheckBox) getDialog().findViewById(R.id.enter_siteswap_sync_mode_checkbox);
+        mNumberOfJugglersTextEdit.setText(String.valueOf(mNumberOfJugglersDefault));
+        mIsSynchronouscheckbox.setChecked(mIsSyncDefault);
     }
 
 
@@ -87,8 +94,14 @@ public class EnterSiteswapDialog extends DialogFragment {
 
     private boolean validateAndShowSiteswap() {
         try {
-            Siteswap siteswap = new Siteswap(mSiteswapTextEdit.getText().toString(), mNumberOfJugglers);
-            siteswap.setNumberOfSynchronousHands(mNumberOfSynchronousHands);
+            int numberOfJugglers = Integer.valueOf(mNumberOfJugglersTextEdit.getText().toString());
+            boolean isSync = mIsSynchronouscheckbox.isChecked();
+            int numberOfSynchronousHands = 1;
+            if (isSync) {
+                numberOfSynchronousHands = numberOfJugglers;
+            }
+            Siteswap siteswap = new Siteswap(mSiteswapTextEdit.getText().toString(), numberOfJugglers);
+            siteswap.setNumberOfSynchronousHands(numberOfSynchronousHands);
             if (!siteswap.isValid() )
                 throw new IllegalArgumentException(siteswap.toString());
             Intent intent = new Intent(getContext(), DetailedSiteswapActivity.class);
@@ -106,9 +119,9 @@ public class EnterSiteswapDialog extends DialogFragment {
     }
 
     public void show(FragmentManager manager, String tag, int numberOfJugglers,
-                     int numberOfSynchronousHands) {
-        mNumberOfJugglers = numberOfJugglers;
-        mNumberOfSynchronousHands =  numberOfSynchronousHands;
+                     boolean isSynchrounous) {
+        mNumberOfJugglersDefault = numberOfJugglers;
+        mIsSyncDefault = isSynchrounous;
         show(manager, tag);
     }
 }

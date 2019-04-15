@@ -725,7 +725,7 @@ public class MainActivity extends AppCompatActivity
 
         new EnterSiteswapDialog().show(getSupportFragmentManager(),
                 getString(R.string.enter_siteswap__dialog_tag),
-                mNumberOfJugglers, getNumberOfSynchronousHands());
+                mNumberOfJugglers, mIsSyncPattern);
     }
 
     public void generateSiteswaps(View view) {

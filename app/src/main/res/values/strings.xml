@@ -18,6 +18,7 @@
     <string name="main_activity__settings_filter_spinner_position">FILTER_SPINNER_POSITION</string>
     <string name="main_activity__settings_filter_list">FILTER_LIST</string>
 
+    <string name="main_activity__siteswap">Siteswap:</string>
     <string name="main_activity__number_of_objects">Number of Objects:</string>
     <string name="main_activity__period_length">Period Length:</string>
     <string name="main_activity__max_throw">Max Throw</string>
