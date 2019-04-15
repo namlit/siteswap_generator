@@ -214,8 +214,8 @@
        <h1>Legend:</h1>
        <b>A <small>1|2</small></b>: Juggler A starts with one club in the left hand and two clubs in the right hand<br>
        <b>x</b>: cross pass<br>
-       <b>s</b>: straight pass<br>
-       <b>Ax/Bx/Cs...</b>: cross/straight pass to juggler A/B/C (more than two jugglers)<br>
+       <b>||</b>: straight pass<br>
+       <b>Ax/Bx/C||...</b>: cross/straight pass to juggler A/B/C (more than two jugglers)<br>
        <b>small grey numbers</b>: getin/getout throws
        <br>
        <h2>Typical Throws (2 Persons):</h2>

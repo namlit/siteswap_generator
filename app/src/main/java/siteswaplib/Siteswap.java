@@ -673,7 +673,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 					if (((juggler + at(position)) / mNumberOfJugglers) % 2 == 0)
 						str += "x";
 					else
-						str += "s";
+						str += "||";
 					str += "</small></sub>";
 				}
 				str += "&ensp;";
