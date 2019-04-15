@@ -27,7 +27,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" android:host="name" />
+                <data android:scheme="http" android:host="siteswap" />
             </intent-filter>
         </activity>
     </application>
