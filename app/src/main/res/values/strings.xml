@@ -47,6 +47,10 @@
     <string name="main_activity__invalid_input_value">Invalid Input Value:</string>
     <string name="main_activity__invalid_site_swap">The name is invalid:</string>
     <string name="main_activity__jugglers">jugglers</string>
+    <string name="main_activity__io_exeption_toast">IO Exeption</string>
+    <string name="main_activity__file_not_found_toast">File not found exeption</string>
+    <string name="main_activity__successfully_exported_database_toast">Exported Database to %s</string>
+    <string name="main_activity__successfully_imported_database_toast">Imported Database from %s</string>
     <string name="main_activity__serialization_error_toast">Error during filter list serialization</string>
     <string name="main_activity__deserialization_error_toast">Error during filter list deserialization</string>
     <string name="main_activity__could_not_convert_to_int">Conversion to int not possible %s</string>
@@ -61,6 +65,8 @@
     <string name="main_activity__option_delete_generation_parameters">Delete Generation Parameters</string>
     <string name="main_activity__option_named_siteswaps">Named Siteswaps</string>
     <string name="main_activity__option_favorites">Favorites</string>
+    <string name="main_activity__option_export_database">Export App database</string>
+    <string name="main_activity__option_import_database">Import App database</string>
     <string name="main_activity__option_about">About</string>
     <string name="main_activity__option_help">Help</string>
 
