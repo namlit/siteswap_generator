@@ -10,6 +10,7 @@ import android.content.Context;
 @Database(entities = {SiteswapEntity.class, GenerationParameterEntity.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
 
+    public final static String database_name = "siteswap_generator_app_database";
     private static AppDatabase INSTANCE;
 
     public abstract FavoriteDao siteswapDao();
@@ -19,7 +20,7 @@ public abstract class AppDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             INSTANCE =
                     Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class,
-                            "siteswap_generator_app_database")
+                            database_name)
                             .addMigrations(MIGRATION_1_2)
                             .build();
         }
