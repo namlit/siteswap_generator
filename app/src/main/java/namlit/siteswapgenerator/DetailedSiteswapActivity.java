@@ -246,7 +246,7 @@ public class DetailedSiteswapActivity extends AppCompatActivity
         String globalHtmlString = "<font color=\"grey\">" +
                 mSiteswap.calculateGetin().toString() +
                 "</font> " +
-                " <big>" + mSiteswap.toString() + " </big> " +
+                " <big>" + mSiteswap.toGlobalString() + " </big> " +
                 "<font color=\"grey\">" +
                 mSiteswap.calculateGetout().toString() +
                 "</font> ";

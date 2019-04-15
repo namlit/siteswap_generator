@@ -696,9 +696,18 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	}
 
 	@Override
-    public String toString() {
+	public String toString() {
+		if (isSynchronous()) {
+			return toSyncStringLocalVsLocal();
+		}
+		else {
+			return toAsyncString();
+		}
+	}
+
+    public String toGlobalString() {
         if (isSynchronous()) {
-            return toAsyncString() + ": " + toSyncString(); // todo async only
+            return toSyncStringGlobalRepresentation();
         }
         else {
             return toAsyncString();
@@ -713,10 +722,27 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return str;
 	}
 
-	public String toSyncString() {
+	public String toSyncStringLocalVsLocal() {
+		String str = new String();
+		for (int juggler = 0; juggler < getNumberOfJugglers(); ++juggler) {
+			str += Character.toString((char) ('A' + juggler)) + ": ";
+			for (int i = 0; i < local_period_length(); ++i) {
+				int index = i*getNumberOfJugglers() + juggler;
+				int value = atSyncCorrected(index) / getNumberOfJugglers();
+				str += Character.toString(intToChar(value));
+				if (isPass(at(index), getNumberOfJugglers())) {
+					str += "p";
+				}
+			}
+			str += "  ";
+		}
+		return str;
+	}
+
+	public String toSyncStringGlobalRepresentation() {
 		String str = new String();
 		for (int i = 0; i < global_period_length(); ++i) {
-		    byte value = atSyncCorrected(i);
+			byte value = atSyncCorrected(i);
 			if (getSynchronousPosition(i) == 0)
 				str += "(";
 			str += Character.toString(intToChar(value));
