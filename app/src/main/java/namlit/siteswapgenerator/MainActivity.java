@@ -410,6 +410,10 @@ public class MainActivity extends AppCompatActivity
                     PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
             return;
         }
+        confirmDatabaseImportDialog();
+    }
+
+    private void copyAppDatabaseFromExternalStorage() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -494,6 +498,35 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void confirmDatabaseImportDialog()
+    {
+
+        try
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            String source = Environment.getExternalStorageDirectory().toString() + "/backup_" + AppDatabase.database_name.toString();
+            builder.setMessage(getString(R.string.main_activity__import_database_confirmation, source));
+            builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    copyAppDatabaseFromExternalStorage();
+                }
+            });
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+        } catch (Throwable t) {
+
+            t.printStackTrace();
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

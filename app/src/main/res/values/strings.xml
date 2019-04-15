@@ -51,6 +51,7 @@
     <string name="main_activity__file_not_found_toast">File not found exeption</string>
     <string name="main_activity__successfully_exported_database_toast">Exported Database to %s</string>
     <string name="main_activity__successfully_imported_database_toast">Imported Database from %s</string>
+    <string name="main_activity__import_database_confirmation">Override Favorites and Generation Parameters from %s?</string>
     <string name="main_activity__serialization_error_toast">Error during filter list serialization</string>
     <string name="main_activity__deserialization_error_toast">Error during filter list deserialization</string>
     <string name="main_activity__could_not_convert_to_int">Conversion to int not possible %s</string>
