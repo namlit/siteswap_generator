@@ -292,6 +292,9 @@ public class NumberFilter extends Filter {
 
 	static public String[] getPossibleValues(int minThrow, int maxThrow,
 											 int numberOfSynchronousHands) {
+		if (minThrow > maxThrow) {
+			return new String[0];
+		}
 		if (numberOfSynchronousHands == 1) {
 			int length = maxThrow - minThrow + 1;
 			String arr[] = new String[length];

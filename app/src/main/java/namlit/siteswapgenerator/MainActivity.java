@@ -181,7 +181,8 @@ public class MainActivity extends AppCompatActivity
 
                 Filter filter = (Filter) parent.getItemAtPosition(position);
 
-                updateFromTextEdits();
+                if (!updateFromTextEdits())
+                    return;
                 if (filter instanceof NumberFilter) {
 
                         new NumberFilterDialog().show(getSupportFragmentManager(),
@@ -749,7 +750,10 @@ public class MainActivity extends AppCompatActivity
 
         boolean checked = ((CheckBox) view).isChecked();
         int oldNumberOfSynchronousHands = getNumberOfSynchronousHands();
-        updateFromTextEdits();
+        if (!updateFromTextEdits()) {
+            ((CheckBox) view).setChecked(!checked);
+            return;
+        }
 
         switch (view.getId()) {
             case R.id.include_zips_checkbox:
