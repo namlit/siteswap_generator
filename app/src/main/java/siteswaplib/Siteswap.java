@@ -856,6 +856,9 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		}
 		int length = 2 * s1.period_length();
 		Siteswap mergedSiteswap = new Siteswap(new byte[length]);
+		mergedSiteswap.setSynchronousStartPosition(s1.getSynchronousStartPosition());
+		mergedSiteswap.setNumberOfSynchronousHands(s1.getNumberOfSynchronousHands());
+		mergedSiteswap.setNumberOfJugglers(s1.getNumberOfJugglers());
 		for (int i = 0; i < s1.period_length(); ++i) {
 			mergedSiteswap.set(2*i, s1.at(2*i));
 			mergedSiteswap.set(2*i+1, s2.at(2*i+1));

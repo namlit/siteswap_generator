@@ -41,6 +41,7 @@ public class SiteswapGenerator implements Serializable{
 	private int mBacktrackingCount = 0; // Just for algorithm performance analysis
 	private int mNumberOfSynchronousHands = 1;
 	private boolean mIsRandomGeneration = false;
+	private Siteswap mCompatibleSiteswap = null;
 
 	public SiteswapGenerator(int length, int max, int min, int objects, int number_of_jugglers) {
 		this.mPeriodLength = length;
@@ -153,6 +154,14 @@ public class SiteswapGenerator implements Serializable{
 
     public void setRandomGeneration(boolean isRandomGeneration) {
 		mIsRandomGeneration = isRandomGeneration;
+	}
+
+	public void setCompatibleSiteswap(Siteswap siteswap) {
+		mCompatibleSiteswap = siteswap;
+	}
+
+	public Siteswap getCompatibleSiteswap() {
+		return mCompatibleSiteswap;
 	}
 
 	public LinkedList<Siteswap> getSiteswaps() {

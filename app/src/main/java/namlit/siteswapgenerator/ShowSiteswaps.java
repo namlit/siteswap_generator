@@ -128,6 +128,13 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Siteswap siteswap = (Siteswap) parent.getItemAtPosition(position);
+                Siteswap compatible_siteswap = mGenerator.getCompatibleSiteswap();
+                if (compatible_siteswap != null) {
+                    siteswap = Siteswap.mergeCompatible(compatible_siteswap, siteswap);
+                    if (siteswap == null) {
+                        siteswap = (Siteswap) parent.getItemAtPosition(position);
+                    }
+                }
                 Intent intent = new Intent(getApplicationContext(), DetailedSiteswapActivity.class);
                 intent.putExtra(getString(R.string.intent_detailed_siteswap_view__siteswap), siteswap);
                 startActivity(intent);
