@@ -109,6 +109,7 @@ public class ConfirmRemoveFavoriteDialog extends DialogFragment {
                         }
                     });
                 } catch (android.database.sqlite.SQLiteConstraintException e) {
+                } catch (NullPointerException e) {
                 }
             }
         }).start();
