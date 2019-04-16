@@ -52,4 +52,20 @@ public class SiteswapTest {
         assertEquals(siteswap_str_2, siteswap_2.toParsableString());
     }
 
+    @Test
+    public void testMergeSyncSiteswapsFailOnInvalidSiteswap() {
+        Siteswap s1 = new Siteswap("86277");
+        Siteswap s2 = new Siteswap("6787a");
+        Siteswap merged = Siteswap.mergeCompatible(s1, s2);
+        assertEquals(merged, null);
+    }
+
+    @Test
+    public void testMergeSyncSiteswapsFailOnIncompatibility() {
+        Siteswap s1 = new Siteswap("86277");
+        Siteswap s2 = new Siteswap("86727");
+        Siteswap merged = Siteswap.mergeCompatible(s1, s2);
+        assertEquals(merged, null);
+    }
+
 }
