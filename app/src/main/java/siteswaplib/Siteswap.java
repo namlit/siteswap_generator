@@ -848,6 +848,27 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return isValid(this);
 	}
 
+	public static Siteswap mergeCompatible(Siteswap s1, Siteswap s2) {
+		Siteswap i1 = s1.toInterface().toPattern();
+		Siteswap i2 = s2.toInterface().toPattern();
+		if (!s2.rotateToInterface(i1)) {
+			return null;
+		}
+		int length = 2 * s1.period_length();
+		Siteswap mergedSiteswap = new Siteswap(new byte[length]);
+		mergedSiteswap.setSynchronousStartPosition(s1.getSynchronousStartPosition());
+		mergedSiteswap.setNumberOfSynchronousHands(s1.getNumberOfSynchronousHands());
+		mergedSiteswap.setNumberOfJugglers(s1.getNumberOfJugglers());
+		for (int i = 0; i < s1.period_length(); ++i) {
+			mergedSiteswap.set(2*i, s1.at(2*i));
+			mergedSiteswap.set(2*i+1, s2.at(2*i+1));
+		}
+		if (!mergedSiteswap.isValid()) {
+			return null;
+		}
+		return mergedSiteswap;
+	}
+
 	public static boolean isValid(Siteswap siteswap) {
 
 		byte[] interfaceArray = new byte[siteswap.period_length()];
@@ -976,6 +997,19 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
         }
         return true;
     }
+
+    public boolean rotateToInterface(Siteswap siteswapInterface) {
+		if (siteswapInterface.period_length() != period_length()) {
+			return false;
+		}
+		for(int i = 0; i < period_length(); ++i) {
+		    rotateLeft(1);
+			if (toInterface().isPattern(siteswapInterface, 0))
+				return true;
+		}
+		return false;
+
+	}
 
     public boolean isParsingError() {
 		return mIsParsingError;

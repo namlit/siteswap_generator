@@ -127,6 +127,9 @@ public class DetailedSiteswapActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_detailed_siteswap, menu);
+        if (mSiteswap.getNumberOfJugglers() == 2) {
+            menu.add(0, R.id.action_generate_compatible, 0, R.string.detailed_siteswap__option_generate_compatible);
+        }
         MenuItem item = menu.findItem(R.id.menu_item_share_detailed);
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
         setShareIntent();
@@ -149,6 +152,9 @@ public class DetailedSiteswapActivity extends AppCompatActivity
             mSiteswap.rotateToBestStartingPosition();
             updateTextViews();
         }
+        else if (id == R.id.action_generate_compatible) {
+            generate_compatible_siteswap();
+        }
         else if (id == R.id.action_add_to_favorites)
         {
             addToFavorites();
@@ -161,6 +167,11 @@ public class DetailedSiteswapActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public  void generate_compatible_siteswap() {
+        new GenerateCompatibleSiteswapDialog().show(getSupportFragmentManager(),
+                getString(R.string.generate_compatible_siteswaps__dialog_tag), mSiteswap);
     }
 
     private void createFromExplicitIntent(Intent intent) {
