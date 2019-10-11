@@ -220,7 +220,7 @@ public class DetailedSiteswapActivity extends AppCompatActivity
         String siteswapString = "";
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("http://siteswap/" + mSiteswap.toParsableString() + "\n");
+        stringBuilder.append("https://siteswap.de/" + mSiteswap.getCurrentStringVersion() + "/" + mSiteswap.toParsableString() + "\n");
         stringBuilder.append(getString(R.string.detailed_siteswap__share_global) + " ");
         Siteswap getin = mSiteswap.calculateGetin();
         if (getin.period_length() != 0) {

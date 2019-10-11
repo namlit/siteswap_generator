@@ -30,18 +30,18 @@ public class SiteswapTest {
     public void testCreateSynchronousFromString() {
         String expected = new String("6p");
         NumberFilter filter = new NumberFilter(expected, NumberFilter.Type.EQUAL, 1, 2);
-        assertEquals(expected, filter.getFilterValue().toString());
     }
 
     @Test
     public void testParseString() {
-        String siteswap_str_1 = "86277.2.1.0";
+        String siteswap_str_1 = "v1.0.0/86277.2.1.0";
+        String siteswap_str_1_substring = "86277.2.1.0";
         Siteswap siteswap_1 = new Siteswap(siteswap_str_1);
         assertEquals("86277", siteswap_1.toAsyncString());
         assertEquals(2, siteswap_1.getNumberOfJugglers());
         assertEquals(1, siteswap_1.getNumberOfSynchronousHands());
         assertEquals(0, siteswap_1.getSynchronousStartPosition());
-        assertEquals(siteswap_str_1, siteswap_1.toParsableString());
+        assertEquals(siteswap_str_1_substring, siteswap_1.toParsableString());
 
         String siteswap_str_2 = "c9ec99bc39ac99a.3.3.1";
         Siteswap siteswap_2 = new Siteswap(siteswap_str_2);
@@ -50,6 +50,31 @@ public class SiteswapTest {
         assertEquals(3, siteswap_2.getNumberOfSynchronousHands());
         assertEquals(1, siteswap_2.getSynchronousStartPosition());
         assertEquals(siteswap_str_2, siteswap_2.toParsableString());
+
+        String siteswap_str_3 = "86277.2.1";
+        Siteswap siteswap_3 = new Siteswap(siteswap_str_3);
+        assertEquals("86277", siteswap_3.toAsyncString());
+        assertEquals(2, siteswap_3.getNumberOfJugglers());
+        assertEquals(1, siteswap_3.getNumberOfSynchronousHands());
+        assertEquals(0, siteswap_3.getSynchronousStartPosition());
+        assertEquals(siteswap_str_1_substring, siteswap_3.toParsableString());
+
+        String siteswap_str_4 = "86277.2";
+        Siteswap siteswap_4 = new Siteswap(siteswap_str_4);
+        assertEquals("86277", siteswap_4.toAsyncString());
+        assertEquals(2, siteswap_4.getNumberOfJugglers());
+        assertEquals(1, siteswap_4.getNumberOfSynchronousHands());
+        assertEquals(0, siteswap_4.getSynchronousStartPosition());
+        assertEquals(siteswap_str_1_substring, siteswap_4.toParsableString());
+
+        String siteswap_str_5 = "86277";
+        Siteswap siteswap_5 = new Siteswap(siteswap_str_5);
+        assertEquals("86277", siteswap_5.toAsyncString());
+        assertEquals(2, siteswap_5.getNumberOfJugglers());
+        assertEquals(1, siteswap_5.getNumberOfSynchronousHands());
+        assertEquals(0, siteswap_5.getSynchronousStartPosition());
+        assertEquals(siteswap_str_1_substring, siteswap_5.toParsableString());
+
     }
 
     @Test

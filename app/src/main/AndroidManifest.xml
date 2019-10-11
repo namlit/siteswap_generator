@@ -28,6 +28,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="http" android:host="siteswap" />
+                <data android:scheme="http" android:host="siteswap.de" />
+                <data android:scheme="https" android:host="siteswap.de" />
             </intent-filter>
         </activity>
     </application>
