@@ -754,7 +754,39 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		return str;
 	}
 
+	static public String getCurrentStringVersion() {
+		return new String("v1.0.0");
+	}
+
+	// /v1.0.0/86277.[nr_jugglers].[nr_sync_hands].[sync_start_pos]"
+	// async two jugglers: 86277.2.1.0
 	public boolean fromParsableString(String str) {
+		String[] version_splitted_arr = str.split("/");
+
+		if (version_splitted_arr.length == 0) {
+			return false;
+		}
+		if (version_splitted_arr.length == 1) {
+			return parseStringLatestVersion(version_splitted_arr[0]);
+		}
+		if (version_splitted_arr.length == 2) {
+			return parseStringLatestVersion(version_splitted_arr[1]);
+		}
+		return false; // length > 2
+	}
+
+	public boolean parseVersionedString(String version, String siteswapStr) {
+		if (version.equals("v1.0.0")) {
+			return parseStringVersion_1_0_0(siteswapStr);
+		}
+		return false; // invalid version
+	}
+
+	private boolean parseStringLatestVersion(String str) {
+		return parseStringVersion_1_0_0(str);
+	}
+
+	private boolean parseStringVersion_1_0_0(String str) {
 		String[] arr = str.split("\\.");
 		int i = 0;
 		try {
