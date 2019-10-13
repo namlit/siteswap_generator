@@ -33,6 +33,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -41,11 +42,16 @@ import java.util.List;
 
 public class ChooseRemoveFavoriteDialog extends DialogFragment {
 
+    private static final String STATE_SITESWAP_ENTITY_LIST = "STATE_SITESWAP_ENTITY_LIST";
     private ListView mListView;
     private List<SiteswapEntity> mSiteswapEntityList;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        if(savedInstanceState != null) {
+            mSiteswapEntityList = (List<SiteswapEntity>) savedInstanceState.getSerializable(STATE_SITESWAP_ENTITY_LIST);
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -84,6 +90,13 @@ public class ChooseRemoveFavoriteDialog extends DialogFragment {
 
     }
 
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(STATE_SITESWAP_ENTITY_LIST, (Serializable) mSiteswapEntityList);
+    }
 
     @Override
     public void onStop() {

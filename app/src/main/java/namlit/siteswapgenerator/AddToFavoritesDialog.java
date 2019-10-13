@@ -48,6 +48,7 @@ public class AddToFavoritesDialog extends DialogFragment {
         public void databaseTransactionComplete();
     }
 
+    private static final String STATE_SITESWAP = "STATE_SITESWAP";
     private EditText mSiteswapNameTextEdit;
     private AutoCompleteTextView mJugglerNameTextEdit;
     private AutoCompleteTextView mLocationTextEdit;
@@ -64,6 +65,10 @@ public class AddToFavoritesDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        if(savedInstanceState != null) {
+            mSiteswap     = (Siteswap) savedInstanceState.getSerializable(STATE_SITESWAP);
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         mDatabaseTransactionComplete = (DatabaseTransactionComplete) getActivity();
@@ -102,6 +107,13 @@ public class AddToFavoritesDialog extends DialogFragment {
         mDateTextEdit.setText(DateFormat.getDateInstance().format(new Date()));
     }
 
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(STATE_SITESWAP, mSiteswap);
+    }
 
     @Override
     public void onStop() {
