@@ -38,11 +38,16 @@ import siteswaplib.Siteswap;
 
 public class SaveGenerationParametersDialog extends DialogFragment {
 
+    private static final String STATE_GENERATION_PARAMETER_ENTITY = "STATE_GENERATION_PARAMETER_ENTITY";
     private EditText mGenerationParameterNameTextEdit;
     private GenerationParameterEntity mGenerationParameterEntity;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        if(savedInstanceState != null) {
+            mGenerationParameterEntity = (GenerationParameterEntity) savedInstanceState.getSerializable(STATE_GENERATION_PARAMETER_ENTITY);
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -92,6 +97,13 @@ public class SaveGenerationParametersDialog extends DialogFragment {
         mGenerationParameterNameTextEdit = (EditText) getDialog().findViewById(R.id.generation_parameter_name_text_edit_text_edit);
     }
 
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(STATE_GENERATION_PARAMETER_ENTITY, mGenerationParameterEntity);
+    }
 
     @Override
     public void onStop() {

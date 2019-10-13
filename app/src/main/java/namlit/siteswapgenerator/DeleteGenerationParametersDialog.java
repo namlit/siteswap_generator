@@ -30,7 +30,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.io.Serializable;
 import java.util.List;
+
+import siteswaplib.Siteswap;
 
 /**
  * Created by tilman on 29.10.17.
@@ -38,11 +41,16 @@ import java.util.List;
 
 public class DeleteGenerationParametersDialog extends DialogFragment {
 
+    private static final String STATE_GENERATION_PARAMETER_ENTITY = "STATE_GENERATION_PARAMETER_ENTITY";
     private ListView mListView;
     private List<GenerationParameterEntity> mGenerationParameterEntityList;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        if(savedInstanceState != null) {
+            mGenerationParameterEntityList = (List<GenerationParameterEntity>) savedInstanceState.getSerializable(STATE_GENERATION_PARAMETER_ENTITY);
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -76,6 +84,13 @@ public class DeleteGenerationParametersDialog extends DialogFragment {
                 dismiss();
             }
         });
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(STATE_GENERATION_PARAMETER_ENTITY, (Serializable) mGenerationParameterEntityList);
     }
 
     @Override

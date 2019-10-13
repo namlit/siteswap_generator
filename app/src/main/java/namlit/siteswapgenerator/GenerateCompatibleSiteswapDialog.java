@@ -45,6 +45,7 @@ public class GenerateCompatibleSiteswapDialog extends DialogFragment {
         public void databaseTransactionComplete();
     }
 
+    private static final String STATE_SITESWAP = "STATE_SITESWAP";
     private EditText mNumberOfObjectsTextEdit;
     private EditText mMinThrow;
     private EditText mMaxThrow;
@@ -55,6 +56,10 @@ public class GenerateCompatibleSiteswapDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        if(savedInstanceState != null) {
+            mSiteswap = (Siteswap) savedInstanceState.getSerializable(STATE_SITESWAP);
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -92,6 +97,13 @@ public class GenerateCompatibleSiteswapDialog extends DialogFragment {
         mIsHoldsCheckbox.setChecked(false);
     }
 
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(STATE_SITESWAP, mSiteswap);
+    }
 
     @Override
     public void onStop() {

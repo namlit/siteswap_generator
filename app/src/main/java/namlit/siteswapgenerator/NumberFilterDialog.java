@@ -43,6 +43,11 @@ import siteswaplib.Siteswap;
 
 public class NumberFilterDialog extends AddFilterDialog {
 
+    private static final String STATE_OLD_FILTER = "STATE_OLD_FILTER";
+    private static final String STATE_MIN_THROW = "STATE_MIN_THROW";
+    private static final String STATE_MAX_THROW = "STATE_MAX_THROW";
+    private static final String STATE_PERIOD_LENGTH = "STATE_PERIOD_LENGTH";
+    private static final String STATE_NUMBER_OF_SYNCHRONOUS_HANDS = "STATE_NUMBER_OF_SYNCHRONOUS_HANDS";
     private RadioButton mAtLeastRadioButton;
     private RadioButton mNotMoreRadioButton;
     private RadioButton mExactlyRadioButton;
@@ -56,6 +61,14 @@ public class NumberFilterDialog extends AddFilterDialog {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        if(savedInstanceState != null) {
+            mOldFilter = (Filter) savedInstanceState.getSerializable(STATE_OLD_FILTER);
+            mMinThrow = savedInstanceState.getInt(STATE_MIN_THROW);
+            mMaxThrow = savedInstanceState.getInt(STATE_MAX_THROW);
+            mPeriodLength = savedInstanceState.getInt(STATE_PERIOD_LENGTH);
+            mNumberOfSynchronousHands = savedInstanceState.getInt(STATE_NUMBER_OF_SYNCHRONOUS_HANDS);
+        }
 
         int positiveButtonStringId = R.string.filter__add_button;
         if (mOldFilter != null)
@@ -184,6 +197,17 @@ public class NumberFilterDialog extends AddFilterDialog {
         mNumberSpinner.setSelection(numberIndex);
     }
 
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(STATE_OLD_FILTER, mOldFilter);
+        outState.putInt(STATE_MIN_THROW, mMinThrow);
+        outState.putInt(STATE_MAX_THROW, mMaxThrow);
+        outState.putInt(STATE_PERIOD_LENGTH, mPeriodLength);
+        outState.putInt(STATE_NUMBER_OF_SYNCHRONOUS_HANDS, mNumberOfSynchronousHands);
+    }
 
     @Override
     public void onStop() {

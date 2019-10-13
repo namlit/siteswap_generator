@@ -46,6 +46,8 @@ import siteswaplib.Siteswap;
 
 public class PatternFilterDialog extends AddFilterDialog {
 
+    private static final String STATE_OLD_FILTER = "STATE_OLD_FILTER";
+    private static final String STATE_NUMBER_OF_JUGGLERS = "STATE_NUMBER_OF_JUGGLERS";
     private RadioButton mPatternRadioButton;
     private RadioButton mInterfaceRadioButton;
     private RadioButton mGlobalRadioButton;
@@ -60,6 +62,11 @@ public class PatternFilterDialog extends AddFilterDialog {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
+
+        if(savedInstanceState != null) {
+            mOldFilter = (Filter) savedInstanceState.getSerializable(STATE_OLD_FILTER);
+            mNumberOfJugglers = savedInstanceState.getInt(STATE_NUMBER_OF_JUGGLERS);
+        }
         int positiveButtonStringId = R.string.filter__add_button;
         if (mOldFilter != null)
             positiveButtonStringId = R.string.filter__replace_button;
@@ -173,6 +180,13 @@ public class PatternFilterDialog extends AddFilterDialog {
 
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(STATE_OLD_FILTER, mOldFilter);
+        outState.putInt(STATE_NUMBER_OF_JUGGLERS, mNumberOfJugglers);
+    }
 
     @Override
     public void onStop() {

@@ -41,11 +41,16 @@ import siteswaplib.Siteswap;
 
 public class ConfirmRemoveFavoriteDialog extends DialogFragment {
 
+    private static final String STATE_SITESWAP_ENTIIY = "STATE_SITESWAP_ENTIIY";
     private TextView mFavoriteTextView;
     private SiteswapEntity mSiteswapEntity;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        if(savedInstanceState != null) {
+            mSiteswapEntity = (SiteswapEntity) savedInstanceState.getSerializable(STATE_SITESWAP_ENTIIY);
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -87,6 +92,13 @@ public class ConfirmRemoveFavoriteDialog extends DialogFragment {
 
     }
 
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(STATE_SITESWAP_ENTIIY, mSiteswapEntity);
+    }
 
     @Override
     public void onStop() {

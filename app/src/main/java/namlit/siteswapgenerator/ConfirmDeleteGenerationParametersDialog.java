@@ -30,17 +30,24 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import siteswaplib.Siteswap;
+
 /**
  * Created by tilman on 29.10.17.
  */
 
 public class ConfirmDeleteGenerationParametersDialog extends DialogFragment {
 
+    private static final String STATE_GENERATION_PARAMETER_ENTITY = "STATE_GENERATION_PARAMETER_ENTITY";
     private TextView mGenerationParametersTextView;
     private GenerationParameterEntity mGenerationParameterEntity;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        if(savedInstanceState != null) {
+            mGenerationParameterEntity = (GenerationParameterEntity) savedInstanceState.getSerializable(STATE_GENERATION_PARAMETER_ENTITY);
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -88,6 +95,13 @@ public class ConfirmDeleteGenerationParametersDialog extends DialogFragment {
                 }
             }
         }).start();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(STATE_GENERATION_PARAMETER_ENTITY, mGenerationParameterEntity);
     }
 
     @Override
