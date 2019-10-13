@@ -18,7 +18,10 @@
 
 package namlit.siteswapgenerator;
 
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -28,8 +31,14 @@ import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 import java.util.List;
 import java.util.Vector;
@@ -165,8 +174,19 @@ public class DetailedSiteswapActivity extends AppCompatActivity
             removeFromFavorites();
             updateTextViews();
         }
+        else if (id == R.id.action_show_qr_code) {
+
+            showQRCode();
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showQRCode() {
+
+        new QRCodeDialog().show(getSupportFragmentManager(),
+                getString(R.string.show_qr_code__dialog_tag), getSiteswapLink());
+
     }
 
     public  void generate_compatible_siteswap() {
@@ -214,13 +234,17 @@ public class DetailedSiteswapActivity extends AppCompatActivity
         }
     }
 
+    private String getSiteswapLink() {
+        return "https://siteswap.de/" + mSiteswap.getCurrentStringVersion() + "/" + mSiteswap.toParsableString();
+    }
+
     private void setShareIntent() {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         String siteswapString = "";
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("https://siteswap.de/" + mSiteswap.getCurrentStringVersion() + "/" + mSiteswap.toParsableString() + "\n");
+        stringBuilder.append(getSiteswapLink() + "\n");
         stringBuilder.append(getString(R.string.detailed_siteswap__share_global) + " ");
         Siteswap getin = mSiteswap.calculateGetin();
         if (getin.period_length() != 0) {
