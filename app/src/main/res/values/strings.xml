@@ -100,7 +100,7 @@
     <string name="generate">generate</string>
 
     <string name="named_siteswaps__title">Named Siteswaps</string>
-    <string name="favorites__title_siteswaps">Favorites</string>
+    <string name="favorites__title_siteswaps">All Saved Siteswaps</string>
     <string name="favorites__title_jugglers">Favorites by Jugglers</string>
     <string name="favorites__title_locations">Favorites by Locations</string>
     <string name="favorites__title_dates">Favorites by Date</string>
@@ -109,6 +109,9 @@
     <string name="favorites__option_show_jugglers">Show Jugglers</string>
     <string name="favorites__option_show_locations">Show Locations</string>
     <string name="favorites__option_show_dates">Show Dates</string>
+    <string name="favorites__preference_filter_type">FAVORITES_FILTER_TYPE</string>
+    <string name="favorites__preference_database_search_key">FAVORITES_DATABASE_SEARCH_KEY</string>
+    <string name="favorites__preference_is_view_siteswaps">FAVORITES_IS_VIEW_SITESWAPS</string>
 
     <string name="option_about__source_code_at">Source Code at:</string>
     <string name="option_about__github_address">https://github.com/namlit/siteswap_generator</string>

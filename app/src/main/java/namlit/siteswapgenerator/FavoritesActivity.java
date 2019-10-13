@@ -18,7 +18,9 @@
 
 package namlit.siteswapgenerator;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -28,27 +30,49 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.io.Serializable;
 import java.util.List;
 
 import siteswaplib.Siteswap;
 
 public class FavoritesActivity extends AppCompatActivity {
 
+    private static final String STATE_SITESWAPS = "STATE_SITESWAPS";
+    private static final String STATE_FILTER_TYPE = "STATE_FILTER_TYPE";
+    private static final String STATE_DATABASE_SEARCH_KEY = "STATE_DATABASE_SEARCH_KEY";
+    private static final String STATE_IS_VIEW_SITESWAPS = "STATE_IS_VIEW_SITESWAPS";
     ListView mSiteswapListView;
     private List<SiteswapEntity> mSiteswaps;
-    private List<String> mJugglers;
-    private List<String> mLocations;
-    private List<String> mDates;
+    private List<String> mDatabaseColumnStrings;
+    private enum FilterType {ALL, JUGGLER_NAME, LOCATION, DATE};
+    private FilterType mFilterType;
+    private String mDatabaseSearchKey;
+    private Boolean mIsViewSiteswaps;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(savedInstanceState != null) {
+            mSiteswaps = (List<SiteswapEntity>) savedInstanceState.getSerializable(STATE_SITESWAPS);
+            mFilterType = (FilterType) savedInstanceState.getSerializable(STATE_FILTER_TYPE);
+            mDatabaseSearchKey = savedInstanceState.getString(STATE_DATABASE_SEARCH_KEY);
+            mIsViewSiteswaps = savedInstanceState.getBoolean(STATE_IS_VIEW_SITESWAPS);
+        }
+
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        mDatabaseSearchKey  = sharedPref.getString(getString(R.string.favorites__preference_database_search_key),  "");
+        mIsViewSiteswaps  = sharedPref.getBoolean(getString(R.string.favorites__preference_is_view_siteswaps),  true);
+        try {
+            mFilterType = FilterType.valueOf(sharedPref.getString(getString(R.string.favorites__preference_filter_type), ""));
+        } catch (Exception ex) {
+            mFilterType = FilterType.ALL;
+        }
+
         setContentView(R.layout.activity_show_siteswaps);
 
         setTitle(String.format(getString(R.string.favorites__title_waiting_for_database_query)));
         mSiteswapListView = (ListView) findViewById(R.id.siteswap_list);
-        loadAllFavorites();
 
     }
 
@@ -68,139 +92,138 @@ public class FavoritesActivity extends AppCompatActivity {
 
         if (id == R.id.action_show_all)
         {
-            loadAllFavorites();
+            mFilterType = FilterType.ALL;
         }
         else if (id == R.id.action_show_jugglers)
         {
-            loadJugglers();
+            mFilterType = FilterType.JUGGLER_NAME;
         }
         else if (id == R.id.action_show_locations)
         {
-            loadLocations();
+            mFilterType = FilterType.LOCATION;
         }
         else if (id == R.id.action_show_dates)
         {
-            loadDates();
+            mFilterType = FilterType.DATE;
         }
+        mIsViewSiteswaps = false;
+        loadData();
 
         return super.onOptionsItemSelected(item);
     }
 
-    void loadAllFavorites() {
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(STATE_SITESWAPS, (Serializable) mSiteswaps);
+        outState.putSerializable(STATE_FILTER_TYPE, mFilterType);
+        outState.putString(STATE_DATABASE_SEARCH_KEY, mDatabaseSearchKey);
+        outState.putBoolean(STATE_IS_VIEW_SITESWAPS, mIsViewSiteswaps);
+    }
+
+    @Override
+    protected void onStart () {
+        super.onStart();
+        loadData();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(getString(R.string.favorites__preference_filter_type), mFilterType.toString());
+        editor.putString(getString(R.string.favorites__preference_database_search_key), mDatabaseSearchKey);
+        editor.putBoolean(getString(R.string.favorites__preference_is_view_siteswaps), mIsViewSiteswaps);
+        editor.commit();
+    }
+
+    private void loadData() {
+        if (mIsViewSiteswaps || mFilterType == FilterType.ALL) {
+            loadSiteswaps();
+        }
+        else {
+            loadDatabaseColumn();
+        }
+    }
+
+    private void loadSiteswaps() {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 AppDatabase db = AppDatabase.getAppDatabase(getApplicationContext());
-                mSiteswaps = db.siteswapDao().getAllFavorites();
+                final String title;
+                switch (mFilterType) {
+                    case ALL:
+                        mSiteswaps = db.siteswapDao().getAllFavorites();
+                        String.format(getString(R.string.favorites__title_siteswaps));
+                        title = String.format(getString(R.string.favorites__title_siteswaps));
+                        break;
+                    case JUGGLER_NAME:
+                        mSiteswaps = db.siteswapDao().getSiteswapsOfJuggler(mDatabaseSearchKey);
+                        title = mDatabaseSearchKey;
+                        break;
+                    case LOCATION:
+                        mSiteswaps = db.siteswapDao().getSiteswapsOfLocation(mDatabaseSearchKey);
+                        title = mDatabaseSearchKey;
+                        break;
+                    case DATE:
+                        mSiteswaps = db.siteswapDao().getSiteswapsOfDate(mDatabaseSearchKey);
+                        title = mDatabaseSearchKey;
+                        break;
+                    default:
+                        title = mDatabaseSearchKey;
+                }
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        setSiteswaps();
+                        setSiteswaps(title);
                     }
                 });
             }
         }).start();
     }
 
-    void loadJugglers() {
+
+    private void loadDatabaseColumn() {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 AppDatabase db = AppDatabase.getAppDatabase(getApplicationContext());
-                mJugglers = db.siteswapDao().getJugglers();
+                final String title;
+                switch (mFilterType) {
+                    case JUGGLER_NAME:
+                        mDatabaseColumnStrings = db.siteswapDao().getJugglers();
+                        title = String.format(getString(R.string.favorites__title_jugglers));
+                        break;
+                    case LOCATION:
+                        mDatabaseColumnStrings = db.siteswapDao().getLocations();
+                        title = String.format(getString(R.string.favorites__title_locations));
+                        break;
+                    case DATE:
+                        mDatabaseColumnStrings = db.siteswapDao().getDates();
+                        title = String.format(getString(R.string.favorites__title_dates));
+                        break;
+                    default:
+                        title = "";
+                }
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        setJugglers();
+                        setDatabaseColumn(title);
                     }
                 });
             }
         }).start();
-    }
 
-    void loadLocations() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                AppDatabase db = AppDatabase.getAppDatabase(getApplicationContext());
-                mLocations = db.siteswapDao().getLocations();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setLocations();
-                    }
-                });
-            }
-        }).start();
-    }
-
-    void loadDates() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                AppDatabase db = AppDatabase.getAppDatabase(getApplicationContext());
-                mDates = db.siteswapDao().getDates();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setDates();
-                    }
-                });
-            }
-        }).start();
     }
 
 
-    void loadByJugglers(final String jugglers) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                AppDatabase db = AppDatabase.getAppDatabase(getApplicationContext());
-                mSiteswaps = db.siteswapDao().getSiteswapsOfJuggler(jugglers);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setSiteswaps();
-                    }
-                });
-            }
-        }).start();
-    }
-
-    void loadByLocation(final String location) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                AppDatabase db = AppDatabase.getAppDatabase(getApplicationContext());
-                mSiteswaps = db.siteswapDao().getSiteswapsOfLocation(location);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setSiteswaps();
-                    }
-                });
-            }
-        }).start();
-    }
-
-    void loadByDate(final String date) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                AppDatabase db = AppDatabase.getAppDatabase(getApplicationContext());
-                mSiteswaps = db.siteswapDao().getSiteswapsOfDate(date);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setSiteswaps();
-                    }
-                });
-            }
-        }).start();
-    }
-
-    private void setSiteswaps() {
-        setTitle(String.format(getString(R.string.favorites__title_siteswaps)));
+    private void setSiteswaps(String title) {
+        setTitle(title);
         ArrayAdapter adapter = new ArrayAdapter(
                 FavoritesActivity.this, android.R.layout.simple_list_item_1, mSiteswaps);
         mSiteswapListView.setAdapter(adapter);
@@ -218,47 +241,18 @@ public class FavoritesActivity extends AppCompatActivity {
         });
     }
 
-    private void setJugglers() {
-        setTitle(String.format(getString(R.string.favorites__title_jugglers)));
+    private void setDatabaseColumn(String title) {
+        setTitle(title);
         ArrayAdapter adapter = new ArrayAdapter(
-                FavoritesActivity.this, android.R.layout.simple_list_item_1, mJugglers);
+                FavoritesActivity.this, android.R.layout.simple_list_item_1, mDatabaseColumnStrings);
         mSiteswapListView.setAdapter(adapter);
         mSiteswapListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String jugglers = ((String) parent.getItemAtPosition(position));
-                loadByJugglers(jugglers);
+                mDatabaseSearchKey = ((String) parent.getItemAtPosition(position));
+                mIsViewSiteswaps = true;
+                loadSiteswaps();
             }
         });
     }
-
-    private void setLocations() {
-        setTitle(String.format(getString(R.string.favorites__title_locations)));
-        ArrayAdapter adapter = new ArrayAdapter(
-                FavoritesActivity.this, android.R.layout.simple_list_item_1, mLocations);
-        mSiteswapListView.setAdapter(adapter);
-        mSiteswapListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String locations = ((String) parent.getItemAtPosition(position));
-                loadByLocation(locations);
-            }
-        });
-    }
-
-    private void setDates() {
-        setTitle(String.format(getString(R.string.favorites__title_dates)));
-        ArrayAdapter adapter = new ArrayAdapter(
-                FavoritesActivity.this, android.R.layout.simple_list_item_1, mDates);
-        mSiteswapListView.setAdapter(adapter);
-        mSiteswapListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String date = ((String) parent.getItemAtPosition(position));
-                loadByDate(date);
-            }
-        });
-    }
-
-
 }
