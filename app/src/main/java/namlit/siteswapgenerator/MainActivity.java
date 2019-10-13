@@ -204,21 +204,16 @@ public class MainActivity extends AppCompatActivity
             private int invalid_filter_list_length = 0;
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() == 0) {
-                    was_invalid = true;
-                    invalid_filter_list_length = 0;
-                    return;
-                }
-                if (!updateAutoFilters()) {
-                    was_invalid = true;
-                    invalid_filter_list_length = mFilterList.size();
-                }
+
+                // Add Default Filters, if new text is not empty
+                if (count != 0 || start != 0)
+                    updateAutoFilters();
             }
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                if (was_invalid && invalid_filter_list_length == mFilterList.size()) {
-                    was_invalid = false;
+                // Remove Default Filters, if old text was not empty
+                if (count == 0 && start == 0) {
                     return;
                 }
                 updateFromTextEdits();
