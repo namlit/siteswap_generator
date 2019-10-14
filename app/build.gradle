@@ -7,8 +7,8 @@ android {
         applicationId "namlit.siteswapgenerator"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 30
-        versionName "1.1.13-beta"
+        versionCode 31
+        versionName "1.1.14-beta"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
