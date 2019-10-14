@@ -207,7 +207,13 @@ public class DetailedSiteswapActivity extends AppCompatActivity
 
     private void createFromImplicitIntent(Intent intent) {
         Uri uri = intent.getData();
-        String siteswapString = uri.getPath().substring(1); // Starting / is ommited
+        String siteswapString = uri.getPath();
+        if (siteswapString.length() == 0) {
+            return;
+        }
+        if (siteswapString.charAt(0) == '/') {
+            siteswapString = siteswapString.substring(1); // Starting / is ommited
+        }
         mSiteswap = new Siteswap(siteswapString);
         if (mSiteswap.isParsingError()) {
             Toast.makeText(getApplicationContext(), getString(R.string.detailed_siteswap__parsing_error) + " " +
