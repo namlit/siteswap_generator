@@ -191,7 +191,7 @@
     <string name="generate_compatible_siteswaps__dialog_tag">GENERATE_COMPATIBLE_SITESWAPS__DIALOG_TAG</string>
     <string name="show_qr_code__dialog_tag">SHOW_QR_CODE__DIALOG_TAG</string>
 
-    <string name="detailed_siteswap__title">Siteswap Info</string>
+    <string name="detailed_siteswap__title">Siteswap</string>
     <string name="detailed_siteswap__rotate_left">&lt;</string>
     <string name="detailed_siteswap__rotate_right">&gt;</string>
     <string name="detailed_siteswap__add_to_favorites">Add to Favorites</string>
