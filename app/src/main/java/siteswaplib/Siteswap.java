@@ -156,6 +156,8 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 	}
 
 	public boolean setNumberOfSynchronousHands(int numberOfSynchronousHands) {
+		if (numberOfSynchronousHands < 1)
+			numberOfSynchronousHands = 1;
 		if (getNumberOfHands() % numberOfSynchronousHands != 0)
 			return false;
 		mNumberOfSynchronousHands = numberOfSynchronousHands;
@@ -770,7 +772,7 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 			return parseStringLatestVersion(version_splitted_arr[0]);
 		}
 		if (version_splitted_arr.length == 2) {
-			return parseStringLatestVersion(version_splitted_arr[1]);
+			return parseVersionedString(version_splitted_arr[0], version_splitted_arr[1]);
 		}
 		return false; // length > 2
 	}
@@ -779,6 +781,8 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		if (version.equals("v1.0.0")) {
 			return parseStringVersion_1_0_0(siteswapStr);
 		}
+		mIsParsingError = true;
+		mInvalidCharacters = version;
 		return false; // invalid version
 	}
 

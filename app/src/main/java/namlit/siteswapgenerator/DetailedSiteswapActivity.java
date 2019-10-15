@@ -207,11 +207,14 @@ public class DetailedSiteswapActivity extends AppCompatActivity
 
     private void createFromImplicitIntent(Intent intent) {
         Uri uri = intent.getData();
-        String siteswapString = uri.getPath();
-        if (siteswapString.length() == 0) {
-            return;
+        String siteswapString = null;
+        if (uri != null) {
+            siteswapString = uri.getPath();
         }
-        if (siteswapString.charAt(0) == '/') {
+        if (siteswapString == null) {
+            siteswapString = "";
+        }
+        if (siteswapString.length() != 0 && siteswapString.charAt(0) == '/') {
             siteswapString = siteswapString.substring(1); // Starting / is ommited
         }
         mSiteswap = new Siteswap(siteswapString);
