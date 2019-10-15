@@ -54,7 +54,6 @@ public class DetailedSiteswapActivity extends AppCompatActivity
     private TextView mGlobalSiteswapTextview;
     private TextView mLocalSiteswapTextview;
     private TextView mNameTextview;
-    private TextView mInterfaceTextview;
     private TextView mInterfacePatternTextview;
     private TextView mNumberOfObjectsTextview;
     private TextView mPeriodLengthTextview;
@@ -87,7 +86,6 @@ public class DetailedSiteswapActivity extends AppCompatActivity
         mGlobalSiteswapTextview = (TextView) findViewById(R.id.global_siteswap_textview);
         mLocalSiteswapTextview = (TextView) findViewById(R.id.local_siteswap_textview);
         mNameTextview = (TextView) findViewById(R.id.name_textview);
-        mInterfaceTextview = (TextView) findViewById(R.id.interface_textview);
         mInterfacePatternTextview = (TextView) findViewById(R.id.interface_pattern_text_view);
         mNumberOfObjectsTextview = (TextView) findViewById(R.id.number_of_objects_textview);
         mPeriodLengthTextview = (TextView) findViewById(R.id.period_length_textview);
@@ -281,7 +279,6 @@ public class DetailedSiteswapActivity extends AppCompatActivity
 
         String name = (mSiteswap.getSiteswapName() == "") ? "Unnamed" : mSiteswap.getSiteswapName();
         mNameTextview.setText(name);
-        mInterfaceTextview.setText(mSiteswap.toInterface().toString());
         mInterfacePatternTextview.setText(mSiteswap.toInterface().toPattern().toString());
         mNumberOfObjectsTextview.setText(String.valueOf(mSiteswap.getNumberOfObjects()));
         mPeriodLengthTextview.setText(String.valueOf(mSiteswap.period_length()));

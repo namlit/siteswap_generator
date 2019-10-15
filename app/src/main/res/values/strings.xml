@@ -198,7 +198,7 @@
     <string name="detailed_siteswap__remove_from_favorites">Remove from Favorites</string>
     <string name="detailed_siteswap__name">Name: </string>
     <string name="detailed_siteswap__interface">Interface: </string>
-    <string name="detailed_siteswap__interface_pattern">Interface Pattern: </string>
+    <string name="detailed_siteswap__interface_pattern">Interface: </string>
     <string name="detailed_siteswap__number_of_objects">Number of Objects: </string>
     <string name="detailed_siteswap__period_length">Period Length: </string>
     <string name="detailed_siteswap__is_valid">Is Valid: </string>
