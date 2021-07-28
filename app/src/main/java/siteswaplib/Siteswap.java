@@ -69,6 +69,17 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 		fromParsableString(siteswap);
 	}
 
+	public Siteswap(String siteswap, String host, String query) {
+		// set default value for number of jugglers
+		setNumberOfJugglers(2);
+		if (host.equals("siteswap.de")) {
+			fromParsableString(siteswap);
+		}
+		if (host.equals("passist.org")) {
+			fromPassistString(siteswap, query);
+		}
+	}
+
 	public Siteswap(String siteswap) {
 		this(siteswap, 2);
 	}
@@ -758,6 +769,24 @@ public class Siteswap implements Comparable<Siteswap>, Iterable<Byte>, Serializa
 
 	static public String getCurrentStringVersion() {
 		return new String("v1.0.0");
+	}
+
+	// str: siteswap/86777
+	// query: jugglers=2
+	public boolean fromPassistString(String str, String query) {
+		String[] url_splitted_arr = str.split("/");
+		if (url_splitted_arr.length != 2 || !url_splitted_arr[0].equals("siteswap")) {
+			return false;
+		}
+		String pattern = url_splitted_arr[1];
+		String[] query_splitted = query.split("=");
+		if (query_splitted.length != 2 || !query_splitted[0].equals("jugglers") ) {
+			return false;
+		}
+		String number_of_jugglers = query_splitted[1];
+
+		String parsableString = pattern + "." + number_of_jugglers + ".1.0";
+		return fromParsableString(parsableString);
 	}
 
 	// /v1.0.0/86277.[nr_jugglers].[nr_sync_hands].[sync_start_pos]"

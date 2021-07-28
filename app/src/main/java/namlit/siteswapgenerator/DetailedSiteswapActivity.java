@@ -206,8 +206,12 @@ public class DetailedSiteswapActivity extends AppCompatActivity
     private void createFromImplicitIntent(Intent intent) {
         Uri uri = intent.getData();
         String siteswapString = null;
+        String host = null;
+        String query = null;
         if (uri != null) {
             siteswapString = uri.getPath();
+            host = uri.getHost();
+            query = uri.getQuery();
         }
         if (siteswapString == null) {
             siteswapString = "";
@@ -215,7 +219,7 @@ public class DetailedSiteswapActivity extends AppCompatActivity
         if (siteswapString.length() != 0 && siteswapString.charAt(0) == '/') {
             siteswapString = siteswapString.substring(1); // Starting / is ommited
         }
-        mSiteswap = new Siteswap(siteswapString);
+        mSiteswap = new Siteswap(siteswapString, host, query);
         if (mSiteswap.isParsingError()) {
             Toast.makeText(getApplicationContext(), getString(R.string.detailed_siteswap__parsing_error) + " " +
                     mSiteswap.getInvalidCharactersFromParsing(), Toast.LENGTH_LONG).show();

@@ -28,8 +28,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="http" android:host="siteswap" />
-                <data android:scheme="http" android:host="siteswap.de" />
-                <data android:scheme="https" android:host="siteswap.de" />
+                <data android:scheme="http" android:host="siteswap.de" android:pathPattern="/v1.0.0/.*" />
+                <data android:scheme="https" android:host="siteswap.de" android:pathPattern="/v1.0.0/.*" />
+                <data android:scheme="http" android:host="passist.org" android:pathPattern="/siteswap/.*" />
+                <data android:scheme="https" android:host="passist.org" android:pathPattern="/siteswap/.*" />
             </intent-filter>
         </activity>
     </application>
