@@ -19,7 +19,7 @@
 package namlit.siteswapgenerator;
 
 import android.content.Context;
-import android.support.v4.app.DialogFragment;
+import androidx.fragment.app.DialogFragment;
 
 import siteswaplib.Filter;
 

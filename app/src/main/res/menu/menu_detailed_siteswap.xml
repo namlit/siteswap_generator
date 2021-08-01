@@ -6,7 +6,7 @@
         android:id="@+id/menu_item_share_detailed"
         app:showAsAction="ifRoom"
         app:actionProviderClass=
-            "android.support.v7.widget.ShareActionProvider" />
+            "androidx.appcompat.widget.ShareActionProvider" />
     <item android:id="@+id/action_show_qr_code" android:title="@string/detailed_siteswap__option_show_as_qr_code"
         android:orderInCategory="100" app:showAsAction="ifRoom" android:icon="@drawable/qr_menu_icon" />
     <item android:id="@+id/action_add_to_favorites" android:title="@string/detailed_siteswap__option_add_to_favorites"
