@@ -66,7 +66,16 @@ public class NamedSiteswaps {
             new Siteswap("9969788", 2, "Poem"),
             new Siteswap("9968897", 2, "Real Fake Clean Finish"),
             new Siteswap("97428", 2, "The One to Concentrate"),
-            new Siteswap("86277", 2, "why not")
+            new Siteswap("86277", 2, "why not"),
+            new Siteswap("7284554", 2, "The forgotten Flip"),
+            new Siteswap("7796686", 2, "Das Schöne"),
+            new Siteswap("9789268", 2, "Das Schirche"),
+            new Siteswap("996882777", 2, "Great Chaos"),
+            new Siteswap("7786867", 2, "7 club Vitoria"),
+            new Siteswap("99494", 2, "Peanut Flips"),
+            new Siteswap("9969968", 2, "Ollerup"),
+            new Siteswap("9792688", 2, "Good Morning"),
+            new Siteswap("7788289247772", 2, "The missing elevator button")
     );
 
     static public List<Siteswap> getListOfNamedSiteswaps() {
