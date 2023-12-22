@@ -377,7 +377,7 @@ public class MainActivity extends AppCompatActivity
                                 R.string.main_activity__successfully_exported_database_toast), dest_path.toString());
                         break;
                     case FILE_NOT_FOUND:
-                        user_msg = getString(R.string.main_activity__file_not_found_toast);
+                        user_msg = String.format(getString(R.string.main_activity__file_not_found_toast), dest_path.toString());
                         break;
                     case IO_ERROR:
                         user_msg = getString(R.string.main_activity__io_exeption_toast);
@@ -428,7 +428,7 @@ public class MainActivity extends AppCompatActivity
                                 R.string.main_activity__successfully_imported_database_toast), source_path.toString());
                         break;
                     case FILE_NOT_FOUND:
-                        user_msg = getString(R.string.main_activity__file_not_found_toast);
+                        user_msg = String.format(getString(R.string.main_activity__file_not_found_toast), source_path.toString());
                         break;
                     case IO_ERROR:
                         user_msg = getString(R.string.main_activity__io_exeption_toast);

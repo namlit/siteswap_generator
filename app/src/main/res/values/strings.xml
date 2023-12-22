@@ -49,7 +49,7 @@
     <string name="main_activity__invalid_site_swap">The siteswap is invalid:</string>
     <string name="main_activity__jugglers">jugglers</string>
     <string name="main_activity__io_exeption_toast">IO Exeption</string>
-    <string name="main_activity__file_not_found_toast">File not found exeption</string>
+    <string name="main_activity__file_not_found_toast">File not found exception %s</string>
     <string name="main_activity__successfully_exported_database_toast">Exported Database to %s</string>
     <string name="main_activity__successfully_imported_database_toast">Imported Database from %s</string>
     <string name="main_activity__import_database_confirmation">Override Favorites and Generation Parameters from %s?</string>
