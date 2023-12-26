@@ -167,6 +167,10 @@ public class DetailedSiteswapActivity extends AppCompatActivity
 
             showQRCode();
         }
+        else if (id == R.id.action_open_in_passist) {
+
+            openInPassist();
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -176,6 +180,16 @@ public class DetailedSiteswapActivity extends AppCompatActivity
         new QRCodeDialog().show(getSupportFragmentManager(),
                 getString(R.string.show_qr_code__dialog_tag), getSiteswapLink());
 
+    }
+
+    private void openInPassist() {
+        if (mSiteswap.isSynchronous()) {
+            Toast.makeText(getApplicationContext(), getString(R.string.detailed_siteswap__toast_synchronous_siteswap), Toast.LENGTH_LONG).show();
+            return;
+        }
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("https://passist.org/siteswap/" + mSiteswap.toString() + "?jugglers=" + mSiteswap.getNumberOfJugglers()));
+        startActivity(intent);
     }
 
     public  void generate_compatible_siteswap() {

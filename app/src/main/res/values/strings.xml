@@ -49,9 +49,11 @@
     <string name="main_activity__invalid_site_swap">The siteswap is invalid:</string>
     <string name="main_activity__jugglers">jugglers</string>
     <string name="main_activity__io_exeption_toast">IO Exeption</string>
-    <string name="main_activity__file_not_found_toast">File not found exeption</string>
-    <string name="main_activity__successfully_exported_database_toast">Exported Database to %s</string>
-    <string name="main_activity__successfully_imported_database_toast">Imported Database from %s</string>
+    <string name="main_activity__file_not_found_toast">File not found exception %s</string>
+    <string name="main_activity__file_permission_not_granted_for_export">File permission not granted. Cannot export database.</string>
+    <string name="main_activity__file_permission_not_granted_for_import">File permission not granted. Cannot import database.</string>
+    <string name="main_activity__successfully_exported_database_msg">Successfully Exported Database to %s</string>
+    <string name="main_activity__successfully_imported_database_msg">Successfully Imported Database from %s</string>
     <string name="main_activity__import_database_confirmation">Override Favorites and Generation Parameters from %s?</string>
     <string name="main_activity__serialization_error_toast">Error during filter list serialization</string>
     <string name="main_activity__deserialization_error_toast">Error during filter list deserialization</string>
@@ -213,10 +215,13 @@
     <string name="detailed_siteswap__invalid_siteswap">Siteswap is invalid:</string>
 
     <string name="detailed_siteswap__option_rotate_default">Rotate to default starting position</string>
+    <string name="detailed_siteswap__option_open_in_passist">Open in passist</string>
     <string name="detailed_siteswap__option_generate_compatible">Generate Compatible Siteswap</string>
     <string name="detailed_siteswap__option_add_to_favorites">Add to Favorites</string>
     <string name="detailed_siteswap__option_remove_from_favorites">Remove from Favorites</string>
     <string name="detailed_siteswap__option_show_as_qr_code">Show as QR-Code</string>
+
+    <string name="detailed_siteswap__toast_synchronous_siteswap">Passist does not support synchronous siteswaps</string>
 
     <string name="detailed_siteswap__dialog_generate_compatible_title">Generate Compatible Siteswap</string>
     <string name="generate_compatible__invalid_number_of_objects">Invalid number of Objects, the average number of objects needs to be a whole number</string>

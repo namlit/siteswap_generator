@@ -27,7 +27,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Environment;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
@@ -354,30 +354,27 @@ public class MainActivity extends AppCompatActivity
         }).start();
     }
 
+    private File getDatabaseBackupFile() {
+        return new File(getExternalFilesDir(null), "backup_" + AppDatabase.database_name);
+    }
+
     public void exportAppDatabase() {
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
-                PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
-            return;
-        }
         new Thread(new Runnable() {
             @Override
             public void run() {
                 AppDatabase.getAppDatabase(getApplicationContext()).siteswapDao().checkpoint(new SimpleSQLiteQuery("pragma wal_checkpoint(full)"));
                 File source_path = getDatabasePath(AppDatabase.database_name);
-                File dest_path = new File(Environment.getExternalStorageDirectory(), "backup_" + AppDatabase.database_name);
+                File dest_path = getDatabaseBackupFile();
                 COPY_FILE_STATE status = copyFile(source_path, dest_path);
                 final String user_msg;
                 switch (status) {
                     case SUCCESS:
                         user_msg = String.format(getString(
-                                R.string.main_activity__successfully_exported_database_toast), dest_path.toString());
+                                R.string.main_activity__successfully_exported_database_msg), dest_path.toString());
                         break;
                     case FILE_NOT_FOUND:
-                        user_msg = getString(R.string.main_activity__file_not_found_toast);
+                        user_msg = String.format(getString(R.string.main_activity__file_not_found_toast), dest_path.toString());
                         break;
                     case IO_ERROR:
                         user_msg = getString(R.string.main_activity__io_exeption_toast);
@@ -388,8 +385,7 @@ public class MainActivity extends AppCompatActivity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(), user_msg,
-                                Toast.LENGTH_LONG).show();
+                        showMessageDialog(user_msg);
                     }
                 });
             }
@@ -398,13 +394,6 @@ public class MainActivity extends AppCompatActivity
 
     public void importAppDatabase() {
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) !=
-                PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
-            return;
-        }
         confirmDatabaseImportDialog();
     }
 
@@ -414,7 +403,7 @@ public class MainActivity extends AppCompatActivity
             public void run() {
                 AppDatabase.getAppDatabase(getApplicationContext()).siteswapDao().checkpoint(new SimpleSQLiteQuery("pragma wal_checkpoint(full)"));
                 AppDatabase.destroyInstance();
-                File source_path = new File(Environment.getExternalStorageDirectory(), "backup_" + AppDatabase.database_name);
+                File source_path = getDatabaseBackupFile();
                 File dest_path = getDatabasePath(AppDatabase.database_name);
                 File dbwal = new File(getDatabasePath(AppDatabase.database_name).getAbsolutePath() + "-wal");
                 File dbshm = new File(getDatabasePath(AppDatabase.database_name).getAbsolutePath() + "-shm");
@@ -425,10 +414,10 @@ public class MainActivity extends AppCompatActivity
                 switch (status) {
                     case SUCCESS:
                         user_msg = String.format(getString(
-                                R.string.main_activity__successfully_imported_database_toast), source_path.toString());
+                                R.string.main_activity__successfully_imported_database_msg), source_path.toString());
                         break;
                     case FILE_NOT_FOUND:
-                        user_msg = getString(R.string.main_activity__file_not_found_toast);
+                        user_msg = String.format(getString(R.string.main_activity__file_not_found_toast), source_path.toString());
                         break;
                     case IO_ERROR:
                         user_msg = getString(R.string.main_activity__io_exeption_toast);
@@ -470,26 +459,26 @@ public class MainActivity extends AppCompatActivity
         return COPY_FILE_STATE.SUCCESS;
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    importAppDatabase();
+    private void showMessageDialog(String message)
+    {
+        try
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            builder.setMessage(message);
+            builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
                 }
-                return;
-            }
-            case PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    exportAppDatabase();
-                }
-                return;
-            }
+            });
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+        } catch (Throwable t) {
+
+            t.printStackTrace();
         }
     }
 
@@ -500,7 +489,7 @@ public class MainActivity extends AppCompatActivity
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-            String source = Environment.getExternalStorageDirectory().toString() + "/backup_" + AppDatabase.database_name.toString();
+            String source = getDatabaseBackupFile().toString();
             builder.setMessage(getString(R.string.main_activity__import_database_confirmation, source));
             builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
