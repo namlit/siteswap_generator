@@ -360,13 +360,6 @@ public class MainActivity extends AppCompatActivity
 
     public void exportAppDatabase() {
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
-                PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
-            return;
-        }
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -401,13 +394,6 @@ public class MainActivity extends AppCompatActivity
 
     public void importAppDatabase() {
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) !=
-                PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
-            return;
-        }
         confirmDatabaseImportDialog();
     }
 
@@ -471,37 +457,6 @@ public class MainActivity extends AppCompatActivity
             return COPY_FILE_STATE.FILE_NOT_FOUND;
         }
         return COPY_FILE_STATE.SUCCESS;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0) {
-                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        importAppDatabase();
-                    }
-                    else {
-                        showMessageDialog(getString(R.string.main_activity__file_permission_not_granted_for_import));
-                    }
-                }
-                return;
-            }
-            case PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0) {
-                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        exportAppDatabase();
-                    }
-                    else {
-                        showMessageDialog(getString(R.string.main_activity__file_permission_not_granted_for_export));
-                    }
-                }
-                return;
-            }
-        }
     }
 
     private void showMessageDialog(String message)
