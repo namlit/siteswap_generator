@@ -43,8 +43,6 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
     private LinkedList<Siteswap> mSiteswapList = null;
     private SiteswapGenerator.Status mGenerationStatus = SiteswapGenerator.Status.GENERATING;
     private SiteswapGenerationFragment mSiteswapGenerationFragment;
-    private ShareActionProvider mShareActionProvider;
-
 
     ListView mSiteswapListView;
 
@@ -79,20 +77,37 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
     @Override
     protected void onRestart() {
         super.onRestart();
-        setShareIntent();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_siteswap_list, menu);
-        MenuItem item = menu.findItem(R.id.menu_item_share);
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-        setShareIntent();
 
         return true;
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-    private void setShareIntent() {
+        if (id == R.id.menu_item_share)
+        {
+            Intent shareIntent = createShareIntent();
+            Intent chooserIntent = Intent.createChooser(shareIntent, getString(R.string.share_via));
+
+            // Check if there are apps available to handle the intent
+            if (shareIntent.resolveActivity(getPackageManager()) != null) {
+                startActivity(chooserIntent);
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    private Intent createShareIntent() {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         String siteswapString = "";
@@ -113,9 +128,7 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
         }
         shareIntent.putExtra(Intent.EXTRA_TEXT, siteswapString);
         shareIntent.setType("text/plain");
-        if (mShareActionProvider != null) {
-            mShareActionProvider.setShareIntent(shareIntent);
-        }
+        return shareIntent;
     }
 
     private void loadSiteswaps() {
@@ -171,7 +184,6 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
         mGenerator = generator;
         mGenerationStatus = status;
         loadSiteswaps();
-        setShareIntent();
 
     }
 }
