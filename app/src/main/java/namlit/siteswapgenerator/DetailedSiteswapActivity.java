@@ -51,7 +51,6 @@ public class DetailedSiteswapActivity extends AppCompatActivity
     private TextView mLocalSiteswapLegendTextview;
     private CausalDiagram mCausalDiagram;
     private CausalDiagram mLadderDiagram;
-    private ShareActionProvider mShareActionProvider;
     private SiteswapEntity mFavorite;
 
     @Override
@@ -112,7 +111,6 @@ public class DetailedSiteswapActivity extends AppCompatActivity
     @Override
     protected void onRestart() {
         super.onRestart();
-        setShareIntent();
     }
 
     @Override
@@ -128,9 +126,6 @@ public class DetailedSiteswapActivity extends AppCompatActivity
         if (mSiteswap.getNumberOfJugglers() == 2) {
             menu.add(0, R.id.action_generate_compatible, 0, R.string.detailed_siteswap__option_generate_compatible);
         }
-        MenuItem item = menu.findItem(R.id.menu_item_share_detailed);
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-        setShareIntent();
         return true;
     }
 
@@ -143,8 +138,13 @@ public class DetailedSiteswapActivity extends AppCompatActivity
 
         if (id == R.id.menu_item_share_detailed)
         {
-            mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-            setShareIntent();
+            Intent shareIntent = createShareIntent();
+            Intent chooserIntent = Intent.createChooser(shareIntent, getString(R.string.share_via));
+
+            // Check if there are apps available to handle the intent
+            if (shareIntent.resolveActivity(getPackageManager()) != null) {
+                startActivity(chooserIntent);
+            }
         }
         else if (id == R.id.action_rotate_default) {
             mSiteswap.rotateToBestStartingPosition();
@@ -254,7 +254,7 @@ public class DetailedSiteswapActivity extends AppCompatActivity
         return "https://siteswap.de/" + mSiteswap.getCurrentStringVersion() + "/" + mSiteswap.toParsableString();
     }
 
-    private void setShareIntent() {
+    private Intent createShareIntent() {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         String siteswapString = "";
@@ -279,9 +279,7 @@ public class DetailedSiteswapActivity extends AppCompatActivity
         siteswapString = stringBuilder.toString();
         shareIntent.putExtra(Intent.EXTRA_TEXT, siteswapString);
         shareIntent.setType("text/plain");
-        if (mShareActionProvider != null) {
-            mShareActionProvider.setShareIntent(shareIntent);
-        }
+        return shareIntent;
     }
 
     public void updateTextViews() {
@@ -309,7 +307,6 @@ public class DetailedSiteswapActivity extends AppCompatActivity
 
         mCausalDiagram.invalidate();
         mLadderDiagram.invalidate();
-        setShareIntent();
 
         mLocalSiteswapLegendTextview.setText(Html.fromHtml(getString(R.string.detailed_siteswap__legend_html)));
     }

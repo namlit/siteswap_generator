@@ -2,11 +2,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".DetailedSiteswapActivity">
     <item
-        android:title="@string/share"
-        android:id="@+id/menu_item_share_detailed"
-        app:showAsAction="ifRoom"
-        app:actionProviderClass=
-            "androidx.appcompat.widget.ShareActionProvider" />
+        android:id="@+id/menu_item_share_detailed" android:title="@string/share"
+        android:orderInCategory="100" app:showAsAction="ifRoom" android:icon="@android:drawable/ic_menu_share" />
     <item android:id="@+id/action_show_qr_code" android:title="@string/detailed_siteswap__option_show_as_qr_code"
         android:orderInCategory="100" app:showAsAction="ifRoom" android:icon="@drawable/qr_menu_icon" />
     <item android:id="@+id/action_open_in_passist" android:title="@string/detailed_siteswap__option_open_in_passist"

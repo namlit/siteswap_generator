@@ -2,9 +2,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".ShowSiteswaps">
     <item
-        android:title="@string/share"
         android:id="@+id/menu_item_share"
+        android:title="@string/share"
+        android:orderInCategory="100"
         app:showAsAction="ifRoom"
-        app:actionProviderClass=
-            "androidx.appcompat.widget.ShareActionProvider" />
+        android:icon="@android:drawable/ic_menu_share" />
 </menu>
