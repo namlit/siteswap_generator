@@ -94,8 +94,9 @@ public class SiteswapGenerator implements Serializable{
 			siteswap.setSynchronousStartPosition(i);
 			siteswapInterface = new Siteswap(interfaceArray, mNumberOfJugglers);
 			status = backtracking(siteswap, siteswapInterface, 0, 0);
-			if (status != Status.GENERATING || mIsRandomGeneration)
+			if (status != Status.GENERATING || mIsRandomGeneration) {
 				break;
+			}
             status = Status.ALL_SITESWAPS_FOUND;
 		}
 
