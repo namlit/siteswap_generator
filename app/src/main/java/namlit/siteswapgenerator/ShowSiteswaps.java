@@ -24,12 +24,15 @@ import androidx.core.view.MenuItemCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.ShareActionProvider;
+
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 import java.util.LinkedList;
 
@@ -45,6 +48,7 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
     private SiteswapGenerationFragment mSiteswapGenerationFragment;
 
     ListView mSiteswapListView;
+    SearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,7 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
         }
 
         mSiteswapListView = (ListView) findViewById(R.id.siteswap_list);
+        mSearchView = (SearchView) findViewById(R.id.search_view);
 
         FragmentManager fm = getFragmentManager();
         mSiteswapGenerationFragment = (SiteswapGenerationFragment) fm.findFragmentByTag(TAG_SITESWAP_GENERATION_TASK_FRAGMENT);
@@ -175,6 +180,23 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
                 setTitle(String.format(getString(R.string.show_siteswaps__title_cancelled)));
                 break;
         }
+
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (TextUtils.isEmpty(newText)) {
+                    adapter.getFilter().filter(null);
+                } else {
+                    adapter.getFilter().filter(newText);
+                }
+                return true;
+            }
+        });
     }
 
     public SiteswapGenerator getSiteswapGenerator() {

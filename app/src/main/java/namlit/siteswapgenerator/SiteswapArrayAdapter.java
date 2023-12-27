@@ -10,14 +10,15 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import siteswaplib.NamedSiteswap;
 import siteswaplib.Siteswap;
 
-public class SiteswapArrayAdapter extends ArrayAdapter<Siteswap> {
+public class SiteswapArrayAdapter extends ArrayAdapter<NamedSiteswap> {
 
     private final LayoutInflater mInflater;
     private final int mResource;
 
-    public SiteswapArrayAdapter (Context context, int resource, List<Siteswap> siteswaps) {
+    public SiteswapArrayAdapter (Context context, int resource, List<NamedSiteswap> siteswaps) {
 
         super(context, resource, siteswaps);
         mInflater = LayoutInflater.from(context);
@@ -44,9 +45,8 @@ public class SiteswapArrayAdapter extends ArrayAdapter<Siteswap> {
             throw new IllegalStateException(
                     "ArrayAdapter requires the resource ID to be a TextView", e);
         }
-        final Siteswap siteswap = getItem(position);
-        String name = siteswap.getSiteswapName() == "" ? "" : siteswap.getSiteswapName() + ": ";
-        text.setText(name + siteswap.toString());
+        final NamedSiteswap siteswap = getItem(position);
+        text.setText(siteswap.toString());
         return view;
     }
 }

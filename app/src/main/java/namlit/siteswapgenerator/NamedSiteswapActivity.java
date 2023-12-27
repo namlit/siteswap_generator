@@ -21,19 +21,24 @@ package namlit.siteswapgenerator;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 import java.util.List;
 
+import siteswaplib.NamedSiteswap;
 import siteswaplib.NamedSiteswaps;
 import siteswaplib.Siteswap;
 
 public class NamedSiteswapActivity extends AppCompatActivity {
 
-    static final private List<Siteswap> mSiteswapList = NamedSiteswaps.getListOfNamedSiteswaps();
+    static final private List<NamedSiteswap> mSiteswapList = NamedSiteswaps.getListOfNamedSiteswaps();
 
+    SearchView mSearchView;
     ListView mSiteswapListView;
 
 
@@ -45,6 +50,8 @@ public class NamedSiteswapActivity extends AppCompatActivity {
         setTitle(String.format(getString(R.string.named_siteswaps__title)));
 
         mSiteswapListView = (ListView) findViewById(R.id.siteswap_list);
+        mSearchView = (SearchView) findViewById(R.id.search_view);
+
         SiteswapArrayAdapter adapter = new SiteswapArrayAdapter(
                 NamedSiteswapActivity.this, android.R.layout.simple_list_item_1, mSiteswapList);
         mSiteswapListView.setAdapter(adapter);
@@ -59,8 +66,22 @@ public class NamedSiteswapActivity extends AppCompatActivity {
             }
         });
 
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (TextUtils.isEmpty(newText)) {
+                    adapter.getFilter().filter(null);
+                } else {
+                    adapter.getFilter().filter(newText);
+                }
+                return true;
+            }
+        });
     }
-
 
 }
