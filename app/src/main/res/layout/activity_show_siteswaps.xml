@@ -11,6 +11,14 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <SearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:iconifiedByDefault="false"
+            android:queryHint="Search..."
+            app:defaultQueryHint="Search..." />
+
         <ListView
             android:id="@+id/siteswap_list"
             android:layout_width="match_parent"

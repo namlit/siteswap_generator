@@ -23,12 +23,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 import java.io.Serializable;
 import java.util.List;
@@ -48,6 +51,8 @@ public class FavoritesActivity extends AppCompatActivity {
     private FilterType mFilterType;
     private String mDatabaseSearchKey;
     private Boolean mIsViewSiteswaps;
+
+    SearchView mSearchView;
 
 
     @Override
@@ -73,6 +78,7 @@ public class FavoritesActivity extends AppCompatActivity {
 
         setTitle(String.format(getString(R.string.favorites__title_waiting_for_database_query)));
         mSiteswapListView = (ListView) findViewById(R.id.siteswap_list);
+        mSearchView = (SearchView) findViewById(R.id.search_view);
 
     }
 
@@ -239,6 +245,23 @@ public class FavoritesActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (TextUtils.isEmpty(newText)) {
+                    adapter.getFilter().filter(null);
+                } else {
+                    adapter.getFilter().filter(newText);
+                }
+                return true;
+            }
+        });
     }
 
     private void setDatabaseColumn(String title) {
@@ -252,6 +275,22 @@ public class FavoritesActivity extends AppCompatActivity {
                 mDatabaseSearchKey = ((String) parent.getItemAtPosition(position));
                 mIsViewSiteswaps = true;
                 loadSiteswaps();
+            }
+        });
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (TextUtils.isEmpty(newText)) {
+                    adapter.getFilter().filter(null);
+                } else {
+                    adapter.getFilter().filter(newText);
+                }
+                return true;
             }
         });
     }
