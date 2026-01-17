@@ -13,7 +13,9 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Create and push tag
         run: |
@@ -21,3 +23,5 @@ jobs:
           git config --local user.name "GitHub Action"
           ./create_tag.sh
           git push origin --tags
+
+
