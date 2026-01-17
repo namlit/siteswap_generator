@@ -4,7 +4,7 @@ android {
     compileSdk 36
     defaultConfig {
         applicationId "namlit.siteswapgenerator"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 36
         versionCode 37
         versionName "1.5.0"
@@ -27,17 +27,18 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test:runner:1.6.2'
+    androidTestImplementation 'androidx.test:rules:1.6.1'
     def room_version = "1.1.1"
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
-    implementation 'com.google.android.material:material:1.12.0'
-    implementation 'androidx.room:room-runtime:2.7.2'
-    implementation 'com.google.zxing:core:3.5.3'
-    annotationProcessor 'androidx.room:room-compiler:2.7.2'
+    implementation 'com.google.android.material:material:1.13.0'
+    implementation 'androidx.room:room-runtime:2.8.4'
+    implementation 'com.google.zxing:core:3.5.4'
+    annotationProcessor 'androidx.room:room-compiler:2.8.4'
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'androidx.room:room-testing:2.7.2'
+    testImplementation 'androidx.room:room-testing:2.8.4'
 
 }
