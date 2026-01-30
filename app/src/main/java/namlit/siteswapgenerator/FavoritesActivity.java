@@ -76,6 +76,10 @@ public class FavoritesActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_show_siteswaps);
 
+        // Set up the toolbar
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         setTitle(String.format(getString(R.string.favorites__title_waiting_for_database_query)));
         mSiteswapListView = (ListView) findViewById(R.id.siteswap_list);
         mSearchView = (SearchView) findViewById(R.id.search_view);
