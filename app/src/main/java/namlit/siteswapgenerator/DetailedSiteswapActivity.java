@@ -57,6 +57,11 @@ public class DetailedSiteswapActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detailed_siteswap);
+
+        // Set up the toolbar
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         setTitle(R.string.detailed_siteswap__title);
 
         if (savedInstanceState != null) {

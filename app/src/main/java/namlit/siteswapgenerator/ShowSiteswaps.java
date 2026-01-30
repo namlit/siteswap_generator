@@ -55,6 +55,10 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_siteswaps);
 
+        // Set up the toolbar
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         setTitle(String.format(getString(R.string.show_siteswaps__title_generating)));
 
         Intent intent = getIntent();
