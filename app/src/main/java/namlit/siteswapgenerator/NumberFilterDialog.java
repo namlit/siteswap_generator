@@ -59,6 +59,7 @@ public class NumberFilterDialog extends AddFilterDialog {
     int mPeriodLength = 0;
     int mNumberOfSynchronousHands = 1;
 
+    @SuppressWarnings("deprecation")
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 

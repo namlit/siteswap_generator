@@ -18,11 +18,15 @@
 
 package namlit.siteswapgenerator;
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Fragment;
+import androidx.fragment.app.Fragment;
+import android.os.Handler;
+import android.os.Looper;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import siteswaplib.SiteswapGenerator;
 
@@ -38,7 +42,12 @@ public class SiteswapGenerationFragment extends Fragment {
     }
 
     private SiteswapGenerationCallbacks mCallbacks;
-    private SiteswapGenerationTask mTask;
+    private ExecutorService mExecutor;
+    private Future<?> mFuture;
+    private SiteswapGenerator mGenerator;
+    private SiteswapGenerator.Status mGenerationStatus;
+    private boolean mIsError = false;
+    private final Handler mMainHandler = new Handler(Looper.getMainLooper());
 
     @Override
     public void onAttach(Context context) {
@@ -46,21 +55,17 @@ public class SiteswapGenerationFragment extends Fragment {
         mCallbacks = (SiteswapGenerationCallbacks) context;
     }
 
-    @Override
-    public void onAttach(Activity context) {
-        super.onAttach(context);
-        mCallbacks = (SiteswapGenerationCallbacks) context;
-    }
-
+    @SuppressWarnings("deprecation")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Retain this fragment across configuration changes
         setRetainInstance(true);
 
         // Create and execute the background task.
-        mTask = new SiteswapGenerationTask();
-        mTask.execute();
+        mExecutor = Executors.newSingleThreadExecutor();
+        startGeneration();
     }
 
     /**
@@ -76,68 +81,67 @@ public class SiteswapGenerationFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mTask.mGenerator.cancelGeneration();
-        mTask.cancel(true);
-        mTask.mGenerator = null;
-        mTask = null;
+        if (mGenerator != null) {
+            mGenerator.cancelGeneration();
+        }
+        if (mFuture != null) {
+            mFuture.cancel(true);
+        }
+        if (mExecutor != null) {
+            mExecutor.shutdown();
+        }
+        mGenerator = null;
     }
 
     public void getSiteswapGenerator() {
         if (isError()) {
-            mTask = new SiteswapGenerationTask();
-            mTask.execute();
+            startGeneration();
             return;
         }
-        if (mTask.getStatus() == AsyncTask.Status.FINISHED) {
-            mTask.generationComplete();
+        if (mFuture != null && mFuture.isDone()) {
+            generationComplete();
         }
     }
 
     public boolean isError() {
-        if(mTask.mGenerator == null)
+        if(mGenerator == null)
             return true;
-        return mTask.mIsError;
+        return mIsError;
     }
 
-    private class SiteswapGenerationTask extends AsyncTask<Void, Integer, Void> {
-
-        private SiteswapGenerator mGenerator;
-        private SiteswapGenerator.Status mGenerationStatus;
-        private boolean mIsError = false;
-
-        @Override
-        protected void onPreExecute() {
-            if (mCallbacks != null) {
-                mGenerator = mCallbacks.getSiteswapGenerator();
-            }
+    private void startGeneration() {
+        mIsError = false;
+        if (mCallbacks != null) {
+            mGenerator = mCallbacks.getSiteswapGenerator();
         }
 
-        @Override
-        protected Void doInBackground(Void... ignore) {
-            try {
-                mGenerationStatus = mGenerator.generateSiteswaps();
+        mFuture = mExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    mGenerationStatus = mGenerator.generateSiteswaps();
+                } catch (java.lang.RuntimeException e) {
+                    mIsError = true;
+                    // This exception occurs if the Android system recycles the memory of the
+                    // activity, but the background task is still executed.
+                }
+
+                mMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        generationComplete();
+                    }
+                });
             }
-            catch (java.lang.RuntimeException e) {
-                mIsError = true;
-                // This exceptions occurs, if the Andoid system recycles the memory of the
-                // activity, but doInBackgound is still executed in background.
-            }
-            return null;
+        });
+    }
+
+    private void generationComplete() {
+        if (mIsError) {
+            return;
         }
-
-        @Override
-        protected void onPostExecute(Void ignore) {
-
-            generationComplete();
-        }
-
-        private void generationComplete() {
-            if (mIsError) {
-                return;
-            }
-            if (mCallbacks != null) {
-                mCallbacks.onGenerationComplete(mGenerator, mGenerationStatus);
-            }
+        if (mCallbacks != null) {
+            mCallbacks.onGenerationComplete(mGenerator, mGenerationStatus);
         }
     }
 }

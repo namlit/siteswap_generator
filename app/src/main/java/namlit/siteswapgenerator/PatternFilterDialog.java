@@ -59,6 +59,7 @@ public class PatternFilterDialog extends AddFilterDialog {
     private Filter mOldFilter = null;
     private int mNumberOfJugglers;
 
+    @SuppressWarnings("deprecation")
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -129,7 +130,11 @@ public class PatternFilterDialog extends AddFilterDialog {
         mPatternEditText = (EditText) getDialog().findViewById(R.id.pattern_text_edit);
         mDescriptionTextView = (TextView) getDialog().findViewById(R.id.description_text_view);
 
-        mDescriptionTextView.setText(Html.fromHtml(getString(R.string.pattern_filter__description_html)));
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            mDescriptionTextView.setText(Html.fromHtml(getString(R.string.pattern_filter__description_html), Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            mDescriptionTextView.setText(Html.fromHtml(getString(R.string.pattern_filter__description_html)));
+        }
 
         SharedPreferences sharedPref = getContext().getSharedPreferences(
                 getString(R.string.pattern_filter__shared_preferences), Context.MODE_PRIVATE);

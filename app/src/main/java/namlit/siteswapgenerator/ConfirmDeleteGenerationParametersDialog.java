@@ -39,6 +39,7 @@ public class ConfirmDeleteGenerationParametersDialog extends DialogFragment {
     private TextView mGenerationParametersTextView;
     private GenerationParameterEntity mGenerationParameterEntity;
 
+    @SuppressWarnings("deprecation")
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 

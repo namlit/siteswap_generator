@@ -56,16 +56,25 @@ public class QRCodeDialog extends DialogFragment {
         super.onStop();
     }
 
+    @SuppressWarnings("deprecation")
     private ImageView createQRCodeView() {
 
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         try {
-            WindowManager manager = (WindowManager) getActivity().getSystemService(WINDOW_SERVICE);
-            Display display = manager.getDefaultDisplay();
-            Point point = new Point();
-            display.getSize(point);
-            int width = point.x;
-            int height = point.y;
+            int width, height;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                android.view.WindowMetrics windowMetrics = getActivity().getWindowManager().getCurrentWindowMetrics();
+                android.graphics.Rect bounds = windowMetrics.getBounds();
+                width = bounds.width();
+                height = bounds.height();
+            } else {
+                WindowManager manager = (WindowManager) getActivity().getSystemService(WINDOW_SERVICE);
+                Display display = manager.getDefaultDisplay();
+                Point point = new Point();
+                display.getSize(point);
+                width = point.x;
+                height = point.y;
+            }
             int smallerDimension = width < height ? width : height;
             smallerDimension = smallerDimension * 3/4;
 

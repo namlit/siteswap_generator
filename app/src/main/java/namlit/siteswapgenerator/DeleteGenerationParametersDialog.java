@@ -31,6 +31,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,6 +44,7 @@ public class DeleteGenerationParametersDialog extends DialogFragment {
     private ListView mListView;
     private List<GenerationParameterEntity> mGenerationParameterEntityList;
 
+    @SuppressWarnings("deprecation")
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -76,7 +78,7 @@ public class DeleteGenerationParametersDialog extends DialogFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 GenerationParameterEntity generationParameterEntity = ((GenerationParameterEntity) parent.getItemAtPosition(position));
-                new ConfirmDeleteGenerationParametersDialog().show(getFragmentManager(),
+                new ConfirmDeleteGenerationParametersDialog().show(getParentFragmentManager(),
                         getString(R.string.confirm_delete_generation_parameters__dialog_tag),
                         generationParameterEntity);
                 dismiss();

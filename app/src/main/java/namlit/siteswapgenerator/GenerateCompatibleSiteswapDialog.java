@@ -54,6 +54,7 @@ public class GenerateCompatibleSiteswapDialog extends DialogFragment {
     private CheckBox mIsHoldsCheckbox;
     private Siteswap mSiteswap;
 
+    @SuppressWarnings("deprecation")
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 

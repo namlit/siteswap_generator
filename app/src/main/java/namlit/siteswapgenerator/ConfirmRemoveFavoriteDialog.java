@@ -40,6 +40,7 @@ public class ConfirmRemoveFavoriteDialog extends DialogFragment {
     private TextView mFavoriteTextView;
     private SiteswapEntity mSiteswapEntity;
 
+    @SuppressWarnings("deprecation")
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 

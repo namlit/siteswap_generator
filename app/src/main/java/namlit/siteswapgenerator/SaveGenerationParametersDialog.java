@@ -39,6 +39,7 @@ public class SaveGenerationParametersDialog extends DialogFragment {
     private EditText mGenerationParameterNameTextEdit;
     private GenerationParameterEntity mGenerationParameterEntity;
 
+    @SuppressWarnings("deprecation")
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 

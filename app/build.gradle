@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdk 36
+    compileSdk = 36
     defaultConfig {
-        applicationId "namlit.siteswapgenerator"
-        minSdkVersion 23
-        targetSdkVersion 36
+        applicationId = "namlit.siteswapgenerator"
+        minSdkVersion = 23
+        targetSdkVersion = 36
         versionCode 37
         versionName "1.5.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -22,7 +22,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    namespace 'namlit.siteswapgenerator'
+    namespace = 'namlit.siteswapgenerator'
 }
 
 dependencies {

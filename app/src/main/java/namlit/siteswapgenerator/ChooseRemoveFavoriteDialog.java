@@ -31,6 +31,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,6 +44,7 @@ public class ChooseRemoveFavoriteDialog extends DialogFragment {
     private ListView mListView;
     private List<SiteswapEntity> mSiteswapEntityList;
 
+    @SuppressWarnings("deprecation")
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -77,7 +79,7 @@ public class ChooseRemoveFavoriteDialog extends DialogFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 SiteswapEntity siteswapEntity = ((SiteswapEntity) parent.getItemAtPosition(position));
 
-                new ConfirmRemoveFavoriteDialog().show(getFragmentManager(),
+                new ConfirmRemoveFavoriteDialog().show(getParentFragmentManager(),
                         getString(R.string.confirm_remove_favorite__dialog_tag),
                         siteswapEntity);
                 dismiss();

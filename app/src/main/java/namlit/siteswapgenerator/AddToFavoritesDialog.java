@@ -59,14 +59,15 @@ public class AddToFavoritesDialog extends DialogFragment {
     private String mDate;
     private DatabaseTransactionComplete mDatabaseTransactionComplete;
     private Activity mActivity;
-    private ArrayAdapter mJugglerAdapter;
-    private ArrayAdapter mLocationAdapter;
+    private ArrayAdapter<String> mJugglerAdapter;
+    private ArrayAdapter<String> mLocationAdapter;
 
+    @SuppressWarnings("deprecation")
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         if(savedInstanceState != null) {
-            mSiteswap     = (Siteswap) savedInstanceState.getSerializable(STATE_SITESWAP);
+            mSiteswap = (Siteswap) savedInstanceState.getSerializable(STATE_SITESWAP);
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -156,9 +157,9 @@ public class AddToFavoritesDialog extends DialogFragment {
                     AppDatabase db = AppDatabase.getAppDatabase(getContext());
                     List<String> jugglers = db.siteswapDao().getJugglers();
                     List<String> locations = db.siteswapDao().getLocations();
-                    mJugglerAdapter = new ArrayAdapter(
+                    mJugglerAdapter = new ArrayAdapter<String>(
                             getContext(), android.R.layout.simple_list_item_1, jugglers);
-                    mLocationAdapter = new ArrayAdapter(
+                    mLocationAdapter = new ArrayAdapter<String>(
                             getContext(), android.R.layout.simple_list_item_1, locations);
                     mActivity.runOnUiThread(new Runnable() {
                         @Override

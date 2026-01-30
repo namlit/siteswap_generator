@@ -53,6 +53,7 @@ public class DetailedSiteswapActivity extends AppCompatActivity
     private CausalDiagram mLadderDiagram;
     private SiteswapEntity mFavorite;
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -197,6 +198,7 @@ public class DetailedSiteswapActivity extends AppCompatActivity
                 getString(R.string.generate_compatible_siteswaps__dialog_tag), mSiteswap);
     }
 
+    @SuppressWarnings("deprecation")
     private void createFromExplicitIntent(Intent intent) {
         mSiteswap = (Siteswap) intent.getSerializableExtra(getString(R.string.intent_detailed_siteswap_view__siteswap));
         boolean skipRotationToStartingPosition = intent.getBooleanExtra(getString(R.string.intent_detailed_siteswap_view__skip_rotation_to_starting_position), false);
@@ -274,7 +276,11 @@ public class DetailedSiteswapActivity extends AppCompatActivity
             stringBuilder.append(getout.toString());
         }
         stringBuilder.append("\n");
-        stringBuilder.append(Html.fromHtml(createLocalHtmlString("|")).toString());
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            stringBuilder.append(Html.fromHtml(createLocalHtmlString("|"), Html.FROM_HTML_MODE_LEGACY).toString());
+        } else {
+            stringBuilder.append(Html.fromHtml(createLocalHtmlString("|")).toString());
+        }
 
         siteswapString = stringBuilder.toString();
         shareIntent.putExtra(Intent.EXTRA_TEXT, siteswapString);
@@ -298,17 +304,29 @@ public class DetailedSiteswapActivity extends AppCompatActivity
                 "<font color=\"grey\">" +
                 mSiteswap.calculateGetout().toString() +
                 "</font> ";
-        mGlobalSiteswapTextview.setText(Html.fromHtml(globalHtmlString));
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            mGlobalSiteswapTextview.setText(Html.fromHtml(globalHtmlString, Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            mGlobalSiteswapTextview.setText(Html.fromHtml(globalHtmlString));
+        }
 
         String localHtmlString = createLocalHtmlString();
 
-        mLocalSiteswapTextview.setText(Html.fromHtml(localHtmlString));
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            mLocalSiteswapTextview.setText(Html.fromHtml(localHtmlString, Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            mLocalSiteswapTextview.setText(Html.fromHtml(localHtmlString));
+        }
         //mLocalSiteswapTextview.setText(Html.fromHtml("Juggler A: 4 2.5 3.5"));
 
         mCausalDiagram.invalidate();
         mLadderDiagram.invalidate();
 
-        mLocalSiteswapLegendTextview.setText(Html.fromHtml(getString(R.string.detailed_siteswap__legend_html)));
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            mLocalSiteswapLegendTextview.setText(Html.fromHtml(getString(R.string.detailed_siteswap__legend_html), Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            mLocalSiteswapLegendTextview.setText(Html.fromHtml(getString(R.string.detailed_siteswap__legend_html)));
+        }
     }
 
     private String createLocalHtmlString() {

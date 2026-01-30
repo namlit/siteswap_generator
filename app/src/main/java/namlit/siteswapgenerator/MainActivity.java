@@ -553,8 +553,13 @@ public class MainActivity extends AppCompatActivity
         }
         else if (id == R.id.action_help) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(Html.fromHtml(getString(R.string.help_activity__help_html_text)))
-                    .setNeutralButton(getString(R.string.back), null);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                builder.setMessage(Html.fromHtml(getString(R.string.help_activity__help_html_text), Html.FROM_HTML_MODE_LEGACY))
+                        .setNeutralButton(getString(R.string.back), null);
+            } else {
+                builder.setMessage(Html.fromHtml(getString(R.string.help_activity__help_html_text)))
+                        .setNeutralButton(getString(R.string.back), null);
+            }
             builder.create().show();
         }
 

@@ -31,6 +31,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,6 +49,7 @@ public class LoadGenerationParametersDialog extends DialogFragment {
         public void updateGenerationParameters(GenerationParameterEntity entity);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 

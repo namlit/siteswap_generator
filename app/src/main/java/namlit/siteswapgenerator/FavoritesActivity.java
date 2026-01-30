@@ -34,6 +34,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import siteswaplib.Siteswap;
@@ -55,6 +56,7 @@ public class FavoritesActivity extends AppCompatActivity {
     SearchView mSearchView;
 
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -230,7 +232,7 @@ public class FavoritesActivity extends AppCompatActivity {
 
     private void setSiteswaps(String title) {
         setTitle(title);
-        ArrayAdapter adapter = new ArrayAdapter(
+        ArrayAdapter<SiteswapEntity> adapter = new ArrayAdapter<>(
                 FavoritesActivity.this, android.R.layout.simple_list_item_1, mSiteswaps);
         mSiteswapListView.setAdapter(adapter);
         mSiteswapListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -266,7 +268,7 @@ public class FavoritesActivity extends AppCompatActivity {
 
     private void setDatabaseColumn(String title) {
         setTitle(title);
-        ArrayAdapter adapter = new ArrayAdapter(
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 FavoritesActivity.this, android.R.layout.simple_list_item_1, mDatabaseColumnStrings);
         mSiteswapListView.setAdapter(adapter);
         mSiteswapListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

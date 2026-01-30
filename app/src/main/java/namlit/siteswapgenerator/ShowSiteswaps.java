@@ -18,7 +18,7 @@
 
 package namlit.siteswapgenerator;
 
-import android.app.FragmentManager;
+import androidx.fragment.app.FragmentManager;
 import android.content.Intent;
 import androidx.core.view.MenuItemCompat;
 import androidx.appcompat.app.AppCompatActivity;
@@ -50,6 +50,7 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
     ListView mSiteswapListView;
     SearchView mSearchView;
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +66,7 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
         mSiteswapListView = (ListView) findViewById(R.id.siteswap_list);
         mSearchView = (SearchView) findViewById(R.id.search_view);
 
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getSupportFragmentManager();
         mSiteswapGenerationFragment = (SiteswapGenerationFragment) fm.findFragmentByTag(TAG_SITESWAP_GENERATION_TASK_FRAGMENT);
 
         // If the Fragment is non-null, then it is currently being
