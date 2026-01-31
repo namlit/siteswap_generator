@@ -47,6 +47,10 @@ public class NamedSiteswapActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_siteswaps);
 
+        // Set up the toolbar
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         setTitle(String.format(getString(R.string.named_siteswaps__title)));
 
         mSiteswapListView = (ListView) findViewById(R.id.siteswap_list);
