@@ -18,7 +18,6 @@
 
 package namlit.siteswapgenerator;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 import android.content.Context;
@@ -28,8 +27,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -44,8 +41,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.CheckBox;
-import android.text.TextWatcher;
-import android.text.Editable;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -57,6 +52,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.List;
 
 import siteswaplib.*;
@@ -68,6 +64,8 @@ public class MainActivity extends AppCompatActivity
     final static int PATTERN_FILTER_ITEM_NUMBER = 0;
     final static int PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
     final static int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 2;
+    final static int MIN_NUMBER_OF_OBJECTS = 1;
+    final static int MAX_NUMBER_OF_OBJECTS = 35;
 
     private FilterList mFilterList;
 
@@ -76,6 +74,7 @@ public class MainActivity extends AppCompatActivity
     private int mMaxThrow;
     private int mMinThrow;
     private int mNumberOfJugglers;
+    private int mPreviousNumberOfJugglers; // Track previous value for filter updates
     private int mMaxResults;
     private int mTimeout;
     private boolean mIsSyncPattern;
@@ -84,11 +83,11 @@ public class MainActivity extends AppCompatActivity
     private boolean mIsZaps;
     private boolean mIsHolds;
     private int mFilterSpinnerPosition;
-    private EditText mNumberOfObjectsEditText;
+    private Spinner mNumberOfObjectsSpinner;
     private EditText mPeriodLengthEditText;
-    private EditText mMaxThrowEditText;
-    private EditText mMinThrowEditText;
-    private EditText mNumberOfJugglersEditText;
+    private Spinner mMaxThrowSpinner;
+    private Spinner mMinThrowSpinner;
+    private Spinner mNumberOfJugglersSpinner;
     private EditText mMaxResultsEditText;
     private EditText mTimeoutEditText;
     private CheckBox mSyncModeCheckbox;
@@ -111,11 +110,23 @@ public class MainActivity extends AppCompatActivity
 
         populateDatabaseWithDefaultGenerationParameters();
 
-        mNumberOfObjectsEditText = (EditText) findViewById(R.id.number_of_objects);
+        mNumberOfObjectsSpinner = (Spinner) findViewById(R.id.number_of_objects);
+
+        // Populate spinner with "any" option followed by integer values
+        List<String> numberOfObjectsOptions = new ArrayList<>();
+        numberOfObjectsOptions.add(getString(R.string.main_activity__number_of_objects_any));
+        for (int i = MIN_NUMBER_OF_OBJECTS; i <= MAX_NUMBER_OF_OBJECTS; ++i) {
+            numberOfObjectsOptions.add(String.valueOf(i));
+        }
+        ArrayAdapter<String> numberOfObjectsAdapter = new ArrayAdapter<>(
+                this, R.layout.spinner_item, numberOfObjectsOptions);
+        numberOfObjectsAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        mNumberOfObjectsSpinner.setAdapter(numberOfObjectsAdapter);
+
+        mNumberOfJugglersSpinner = (Spinner) findViewById(R.id.number_of_jugglers);
+        mMaxThrowSpinner = (Spinner) findViewById(R.id.max_throw);
+        mMinThrowSpinner = (Spinner) findViewById(R.id.min_throw);
         mPeriodLengthEditText = (EditText) findViewById(R.id.period_length);
-        mMaxThrowEditText = (EditText) findViewById(R.id.max_throw);
-        mMinThrowEditText = (EditText) findViewById(R.id.min_throw);
-        mNumberOfJugglersEditText = (EditText) findViewById(R.id.number_of_jugglers);
         mMaxResultsEditText = (EditText) findViewById(R.id.max_results);
         mTimeoutEditText = (EditText) findViewById(R.id.timeout);
         mZipsCheckbox       = (CheckBox) findViewById(R.id.include_zips_checkbox);
@@ -160,11 +171,22 @@ public class MainActivity extends AppCompatActivity
         }
 
 
-        mNumberOfObjectsEditText.setText(String.valueOf(mNumberOfObjects));
+        // Set spinner selection: 0 -> index 0 ("any"), 1-35 -> index 1-35
+        mNumberOfObjectsSpinner.setSelection(mNumberOfObjects);
+
+        // Initialize the number of jugglers spinner (1-10)
+        populateNumberOfJugglersSpinner();
+        setSpinnerSelectionByValue(mNumberOfJugglersSpinner, mNumberOfJugglers);
+        mPreviousNumberOfJugglers = mNumberOfJugglers; // Initialize previous value
+
+        // Initialize max and min throw spinners
+        populateMaxThrowSpinner();
+        setSpinnerSelectionByValue(mMaxThrowSpinner, mMaxThrow);
+
+        populateMinThrowSpinner();
+        setSpinnerSelectionByValue(mMinThrowSpinner, mMinThrow);
+
         mPeriodLengthEditText.setText(String.valueOf(mPeriodLength));
-        mMaxThrowEditText.setText(String.valueOf(mMaxThrow));
-        mMinThrowEditText.setText(String.valueOf(mMinThrow));
-        mNumberOfJugglersEditText.setText(String.valueOf(mNumberOfJugglers));
         mMaxResultsEditText.setText(String.valueOf(mMaxResults));
         mTimeoutEditText.setText(String.valueOf(mTimeout));
         mSyncModeCheckbox.setChecked(mIsSyncPattern);
@@ -173,6 +195,56 @@ public class MainActivity extends AppCompatActivity
         mZapsCheckbox.setChecked(mIsZaps);
         mHoldsCheckbox.setChecked(mIsHolds);
         mFilterTypeSpinner.setSelection(mFilterSpinnerPosition);
+
+        // Add listeners to update dependent spinners
+        mNumberOfObjectsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Update max and min throw spinners when number of objects changes
+                int currentMaxThrow = getSpinnerIntValue(mMaxThrowSpinner);
+                int currentMinThrow = getSpinnerIntValue(mMinThrowSpinner);
+
+                populateMaxThrowSpinner();
+                populateMinThrowSpinner();
+
+                // Try to maintain current selections if still valid
+                setSpinnerSelectionByValue(mMaxThrowSpinner, currentMaxThrow);
+                setSpinnerSelectionByValue(mMinThrowSpinner, currentMinThrow);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        mMaxThrowSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Update min throw spinner when max throw changes
+                int currentMinThrow = getSpinnerIntValue(mMinThrowSpinner);
+                populateMinThrowSpinner();
+                setSpinnerSelectionByValue(mMinThrowSpinner, currentMinThrow);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        mMinThrowSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Update max throw spinner when min throw changes
+                int currentMaxThrow = getSpinnerIntValue(mMaxThrowSpinner);
+                populateMaxThrowSpinner();
+                setSpinnerSelectionByValue(mMaxThrowSpinner, currentMaxThrow);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
 
 
         mFilterListAdapter = new ArrayAdapter<Filter>(
@@ -202,36 +274,213 @@ public class MainActivity extends AppCompatActivity
 
         updateAutoFilters();
 
-        mNumberOfJugglersEditText.addTextChangedListener(new TextWatcher() {
-            private boolean was_invalid = false;
-            private int invalid_filter_list_length = 0;
+        mNumberOfJugglersSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Get the new value from the spinner
+                int newNumberOfJugglers = getSpinnerIntValue(mNumberOfJugglersSpinner);
 
-                // Add Default Filters, if new text is not empty
-                if (count != 0 || start != 0)
-                    updateAutoFilters();
-            }
+                // Only update filters if the value actually changed
+                if (newNumberOfJugglers != mPreviousNumberOfJugglers) {
+                    // Remove filters with the old number of jugglers
+                    int numberOfSynchronousHands = getNumberOfSynchronousHands();
+                    mFilterList.removeDefaultFilters(mPreviousNumberOfJugglers, mMinThrow, numberOfSynchronousHands);
+                    mFilterList.addZips(mPreviousNumberOfJugglers, numberOfSynchronousHands);
+                    mFilterList.addZaps(mPreviousNumberOfJugglers, numberOfSynchronousHands);
+                    mFilterList.addHolds(mPreviousNumberOfJugglers, numberOfSynchronousHands);
 
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // Remove Default Filters, if old text was not empty
-                if (count == 0 && start == 0) {
-                    return;
+                    // Update the current value and ensure all related values are current
+                    mNumberOfJugglers = newNumberOfJugglers;
+                    mPreviousNumberOfJugglers = newNumberOfJugglers;
+                    mMinThrow = getSpinnerIntValue(mMinThrowSpinner);
+
+                    // Add filters with the new number of jugglers
+                    addAutoFilters();
+                    mFilterListAdapter.notifyDataSetChanged();
                 }
-                updateFromTextEdits();
-                mFilterList.removeDefaultFilters(mNumberOfJugglers, getNumberOfSynchronousHands());
-                mFilterList.addZips(mNumberOfJugglers, getNumberOfSynchronousHands());
-                mFilterList.addZaps(mNumberOfJugglers, getNumberOfSynchronousHands());
-                mFilterList.addHolds(mNumberOfJugglers, getNumberOfSynchronousHands());
-                mFilterListAdapter.notifyDataSetChanged();
             }
+
             @Override
-            public void afterTextChanged(Editable s) {
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
 
 
+    }
+
+    /**
+     * Populates the number of jugglers spinner with values 1-10
+     */
+    private void populateNumberOfJugglersSpinner() {
+        List<String> options = new ArrayList<>();
+        for (int i = 1; i <= 10; i++) {
+            options.add(String.valueOf(i));
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this, R.layout.spinner_item, options);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        mNumberOfJugglersSpinner.setAdapter(adapter);
+    }
+
+    /**
+     * Populates the max throw spinner based on current number of objects and min throw
+     */
+    private void populateMaxThrowSpinner() {
+        List<String> options = new ArrayList<>();
+        int numberOfObjects = getSpinnerIntValue(mNumberOfObjectsSpinner);
+        int minThrow = getSpinnerIntValue(mMinThrowSpinner);
+
+        int minValue;
+        String minValueLabel;
+        if (numberOfObjects == 0) {
+            // "any" selected - range from min throw to 35
+            minValue = minThrow > 0 ? minThrow : 1;
+            minValueLabel = getString(R.string.main_activity__max_throw_min_value_min_throw);
+        } else {
+            // Range from number of objects to 35
+            minValue = numberOfObjects;
+            minValueLabel = getString(R.string.main_activity__max_throw_min_value_number_of_objects);
+        }
+
+        // Add the first item with descriptive label
+        options.add(minValueLabel);
+
+        // Add the rest as numbers
+        for (int i = minValue + 1; i <= MAX_NUMBER_OF_OBJECTS; i++) {
+            options.add(String.valueOf(i));
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this, R.layout.spinner_item, options);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        mMaxThrowSpinner.setAdapter(adapter);
+    }
+
+    /**
+     * Populates the min throw spinner based on current number of objects and max throw
+     */
+    private void populateMinThrowSpinner() {
+        List<String> options = new ArrayList<>();
+        int numberOfObjects = getSpinnerIntValue(mNumberOfObjectsSpinner);
+        int maxThrow = getSpinnerIntValue(mMaxThrowSpinner);
+
+        int maxValue;
+        String maxValueLabel;
+        if (numberOfObjects == 0) {
+            // "any" selected - range from 0 to max throw
+            maxValue = maxThrow > 0 ? maxThrow : MAX_NUMBER_OF_OBJECTS;
+            maxValueLabel = getString(R.string.main_activity__min_throw_max_value_max_throw);
+        } else {
+            // Range from 0 to number of objects
+            maxValue = numberOfObjects;
+            maxValueLabel = getString(R.string.main_activity__min_throw_max_value_number_of_objects);
+        }
+
+        // Add all values from 0 to maxValue - 1 as numbers
+        for (int i = 0; i < maxValue; i++) {
+            options.add(String.valueOf(i));
+        }
+
+        // Add the last item with descriptive label
+        options.add(maxValueLabel);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this, R.layout.spinner_item, options);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        mMinThrowSpinner.setAdapter(adapter);
+    }
+
+    /**
+     * Gets the integer value from a spinner, handling the special "any" case for number of objects
+     * and descriptive labels for max throw and min throw boundary values
+     */
+    private int getSpinnerIntValue(Spinner spinner) {
+        if (spinner.getSelectedItem() == null) {
+            return 0;
+        }
+
+        String value = spinner.getSelectedItem().toString();
+
+        // Handle "any" case for number of objects
+        if (spinner == mNumberOfObjectsSpinner &&
+            value.equals(getString(R.string.main_activity__number_of_objects_any))) {
+            return 0;
+        }
+
+        // Handle descriptive labels for max throw
+        if (spinner == mMaxThrowSpinner) {
+            if (value.equals(getString(R.string.main_activity__max_throw_min_value_number_of_objects))) {
+                return getSpinnerIntValue(mNumberOfObjectsSpinner);
+            } else if (value.equals(getString(R.string.main_activity__max_throw_min_value_min_throw))) {
+                return getSpinnerIntValue(mMinThrowSpinner);
+            }
+        }
+
+        // Handle descriptive labels for min throw
+        if (spinner == mMinThrowSpinner) {
+            if (value.equals(getString(R.string.main_activity__min_throw_max_value_number_of_objects))) {
+                return getSpinnerIntValue(mNumberOfObjectsSpinner);
+            } else if (value.equals(getString(R.string.main_activity__min_throw_max_value_max_throw))) {
+                return getSpinnerIntValue(mMaxThrowSpinner);
+            }
+        }
+
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    /**
+     * Sets spinner selection to match a specific integer value
+     * Handles both numeric strings and descriptive labels
+     */
+    private void setSpinnerSelectionByValue(Spinner spinner, int value) {
+        if (spinner.getAdapter() == null) {
+            return;
+        }
+
+        for (int i = 0; i < spinner.getAdapter().getCount(); i++) {
+            String item = spinner.getAdapter().getItem(i).toString();
+
+            // Check if this item represents the target value
+            int itemValue;
+            try {
+                itemValue = Integer.parseInt(item);
+            } catch (NumberFormatException e) {
+                // Handle descriptive labels
+                if (spinner == mMaxThrowSpinner) {
+                    if (item.equals(getString(R.string.main_activity__max_throw_min_value_number_of_objects))) {
+                        itemValue = getSpinnerIntValue(mNumberOfObjectsSpinner);
+                    } else if (item.equals(getString(R.string.main_activity__max_throw_min_value_min_throw))) {
+                        itemValue = getSpinnerIntValue(mMinThrowSpinner);
+                    } else {
+                        continue;
+                    }
+                } else if (spinner == mMinThrowSpinner) {
+                    if (item.equals(getString(R.string.main_activity__min_throw_max_value_number_of_objects))) {
+                        itemValue = getSpinnerIntValue(mNumberOfObjectsSpinner);
+                    } else if (item.equals(getString(R.string.main_activity__min_throw_max_value_max_throw))) {
+                        itemValue = getSpinnerIntValue(mMaxThrowSpinner);
+                    } else {
+                        continue;
+                    }
+                } else {
+                    continue;
+                }
+            }
+
+            if (itemValue == value) {
+                spinner.setSelection(i);
+                return;
+            }
+        }
+
+        // If value not found, select first item
+        if (spinner.getAdapter().getCount() > 0) {
+            spinner.setSelection(0);
+        }
     }
 
     @Override
@@ -306,11 +555,25 @@ public class MainActivity extends AppCompatActivity
 
     public void updateGenerationParameters(GenerationParameterEntity generationParameters) {
 
-        mNumberOfObjectsEditText.setText(String.valueOf(generationParameters.getNumberOfObjects()));
+        // Set spinner selection: 0 -> index 0 ("any"), 1-35 -> index 1-35
+        int numberOfObjects = generationParameters.getNumberOfObjects();
+        mNumberOfObjectsSpinner.setSelection(numberOfObjects);
+
+        // Initialize the spinners with the saved values
+        populateNumberOfJugglersSpinner();
+        setSpinnerSelectionByValue(mNumberOfJugglersSpinner, generationParameters.getNumberOfJugglers());
+
+        populateMaxThrowSpinner();
+        setSpinnerSelectionByValue(mMaxThrowSpinner, generationParameters.getMaxThrow());
+
+        populateMinThrowSpinner();
+        setSpinnerSelectionByValue(mMinThrowSpinner, generationParameters.getMinThrow());
+
+        // Update internal values from loaded parameters
+        mNumberOfJugglers = generationParameters.getNumberOfJugglers();
+        mPreviousNumberOfJugglers = mNumberOfJugglers; // Prevent unwanted filter updates
+
         mPeriodLengthEditText.setText(String.valueOf(generationParameters.getPeriodLength()));
-        mMaxThrowEditText.setText(String.valueOf(generationParameters.getMaxThrow()));
-        mMinThrowEditText.setText(String.valueOf(generationParameters.getMinThrow()));
-        mNumberOfJugglersEditText.setText(String.valueOf(generationParameters.getNumberOfJugglers()));
         mMaxResultsEditText.setText(String.valueOf(generationParameters.getMaxResults()));
         mTimeoutEditText.setText(String.valueOf(generationParameters.getTimeout()));
         mSyncModeCheckbox.setChecked(generationParameters.isSynchronous());
@@ -568,11 +831,16 @@ public class MainActivity extends AppCompatActivity
     private boolean updateFromTextEdits() {
 
         try {
-            mNumberOfObjects = Integer.valueOf(mNumberOfObjectsEditText.getText().toString());
+            String selectedNumberOfObjects = (String) mNumberOfObjectsSpinner.getSelectedItem();
+            if (selectedNumberOfObjects.equals(getString(R.string.main_activity__number_of_objects_any))) {
+                mNumberOfObjects = 0;
+            } else {
+                mNumberOfObjects = Integer.valueOf(selectedNumberOfObjects);
+            }
             mPeriodLength = Integer.valueOf(mPeriodLengthEditText.getText().toString());
-            mMaxThrow = Integer.valueOf(mMaxThrowEditText.getText().toString());
-            mMinThrow = Integer.valueOf(mMinThrowEditText.getText().toString());
-            mNumberOfJugglers = Integer.valueOf(mNumberOfJugglersEditText.getText().toString());
+            mMaxThrow = getSpinnerIntValue(mMaxThrowSpinner);
+            mMinThrow = getSpinnerIntValue(mMinThrowSpinner);
+            mNumberOfJugglers = getSpinnerIntValue(mNumberOfJugglersSpinner);
             mMaxResults = Integer.valueOf(mMaxResultsEditText.getText().toString());
             mTimeout = Integer.valueOf(mTimeoutEditText.getText().toString());
             mIsSyncPattern = mSyncModeCheckbox.isChecked();
@@ -585,16 +853,18 @@ public class MainActivity extends AppCompatActivity
             if (mPeriodLength < 1)
                 throw new IllegalArgumentException(getString(R.string.main_activity__invalid_period_length));
 
-            if (mNumberOfObjects < 1)
+            if (mNumberOfObjects < 0)
                 throw new IllegalArgumentException(getString(R.string.main_activity__invalid_number_of_objects));
 
             if (mNumberOfJugglers < 1 || mNumberOfJugglers > 10)
                 throw new IllegalArgumentException(getString(R.string.main_activity__invalid_number_of_jugglers));
 
-            if (mMaxThrow < mNumberOfObjects)
+            // number_of_objects == 0 means "any", so there is no restriction for max throw
+            if (mNumberOfObjects > 0 && mMaxThrow < mNumberOfObjects)
                 throw new IllegalArgumentException(getString(R.string.main_activity__invalid_max_throw_smaller_average));
 
-            if (mMinThrow > mNumberOfObjects)
+            // number_of_object == 0 means "any", so there is no restriction for min throw
+            if (mNumberOfObjects > 0 && mMinThrow > mNumberOfObjects)
                 throw new IllegalArgumentException(getString(R.string.main_activity__invalid_min_throw_greater_average));
         }
         catch (NumberFormatException e) {

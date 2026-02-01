@@ -41,6 +41,12 @@
         <item>Number filter</item>
     </string-array>
 
+    <string name="main_activity__number_of_objects_any">any</string>
+    <string name="main_activity__max_throw_min_value_number_of_objects">number of objects</string>
+    <string name="main_activity__max_throw_min_value_min_throw">min throw</string>
+    <string name="main_activity__min_throw_max_value_number_of_objects">number of objects</string>
+    <string name="main_activity__min_throw_max_value_max_throw">max throw</string>
+
     <string name="main_activity__add_filter_button">Add</string>
     <string name="main_activity__enter_siteswap_button">Enter Siteswap</string>
     <string name="main_activity__generate_siteswaps_button">Generate Siteswaps</string>
