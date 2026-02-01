@@ -11,4 +11,6 @@
     android:paddingBottom="16dp"
     android:ellipsize="marquee"
     android:gravity="start|center_vertical"
-    android:minHeight="48dp" />
+    android:minHeight="48dp"
+    android:background="@drawable/spinner_item_background" />
+
