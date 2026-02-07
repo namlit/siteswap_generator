@@ -31,6 +31,10 @@ import android.content.pm.PackageManager;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Base64;
@@ -103,11 +107,36 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Enable edge-to-edge display
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
         setContentView(R.layout.activity_main);
 
         // Set up the toolbar
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // Handle window insets to avoid content being hidden behind system bars
+        View rootView = findViewById(R.id.main_coordinator_layout);
+        View appBarLayout = findViewById(R.id.appBarLayout);
+        View bottomButtonLayout = findViewById(R.id.bottom_button_layout);
+
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+
+            // Apply top inset to AppBarLayout
+            ViewCompat.setPaddingRelative(appBarLayout, 0, insets.top, 0, 0);
+
+            // Apply bottom inset to button layout
+            ViewCompat.setPaddingRelative(bottomButtonLayout,
+                insets.left,
+                bottomButtonLayout.getPaddingTop(),
+                insets.right,
+                insets.bottom);
+
+            return WindowInsetsCompat.CONSUMED;
+        });
 
         populateDatabaseWithDefaultGenerationParameters();
 
