@@ -23,6 +23,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import android.text.TextUtils;
 import android.view.Menu;
@@ -58,6 +62,10 @@ public class FavoritesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Enable edge-to-edge display
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
         if(savedInstanceState != null) {
             mSiteswaps = (List<SiteswapEntity>) savedInstanceState.getSerializable(STATE_SITESWAPS);
             mFilterType = (FilterType) savedInstanceState.getSerializable(STATE_FILTER_TYPE);
@@ -83,6 +91,23 @@ public class FavoritesActivity extends AppCompatActivity {
         setTitle(String.format(getString(R.string.favorites__title_waiting_for_database_query)));
         mSiteswapListView = (ListView) findViewById(R.id.siteswap_list);
         mSearchView = (SearchView) findViewById(R.id.search_view);
+
+        // Handle window insets
+        View rootView = findViewById(R.id.show_siteswaps_coordinator);
+        View appBarLayout = findViewById(R.id.appBarLayout);
+
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+
+            // Apply top inset to AppBarLayout
+            ViewCompat.setPaddingRelative(appBarLayout, 0, insets.top, 0, 0);
+
+            // Apply bottom inset to ListView
+            mSiteswapListView.setPadding(0, 0, 0, insets.bottom);
+            mSiteswapListView.setClipToPadding(false);
+
+            return WindowInsetsCompat.CONSUMED;
+        });
 
     }
 
