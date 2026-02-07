@@ -21,6 +21,10 @@ package namlit.siteswapgenerator;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import android.text.TextUtils;
 import android.view.View;
@@ -45,6 +49,10 @@ public class NamedSiteswapActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Enable edge-to-edge display
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
         setContentView(R.layout.activity_show_siteswaps);
 
         // Set up the toolbar
@@ -55,6 +63,23 @@ public class NamedSiteswapActivity extends AppCompatActivity {
 
         mSiteswapListView = (ListView) findViewById(R.id.siteswap_list);
         mSearchView = (SearchView) findViewById(R.id.search_view);
+
+        // Handle window insets
+        View rootView = findViewById(R.id.show_siteswaps_coordinator);
+        View appBarLayout = findViewById(R.id.appBarLayout);
+
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+
+            // Apply top inset to AppBarLayout
+            ViewCompat.setPaddingRelative(appBarLayout, 0, insets.top, 0, 0);
+
+            // Apply bottom inset to ListView
+            mSiteswapListView.setPadding(0, 0, 0, insets.bottom);
+            mSiteswapListView.setClipToPadding(false);
+
+            return WindowInsetsCompat.CONSUMED;
+        });
 
         SiteswapArrayAdapter adapter = new SiteswapArrayAdapter(
                 NamedSiteswapActivity.this, android.R.layout.simple_list_item_1, mSiteswapList);

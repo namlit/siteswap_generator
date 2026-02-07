@@ -20,7 +20,11 @@ package namlit.siteswapgenerator;
 
 import android.content.Intent;
 import android.net.Uri;
+import androidx.core.graphics.Insets;
 import androidx.core.view.MenuItemCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.ShareActionProvider;
@@ -56,11 +60,37 @@ public class DetailedSiteswapActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Enable edge-to-edge display
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
         setContentView(R.layout.activity_detailed_siteswap);
 
         // Set up the toolbar
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // Handle window insets
+        View rootView = findViewById(R.id.detailed_siteswap_coordinator);
+        View appBarLayout = findViewById(R.id.appBarLayout);
+        View contentLayout = findViewById(R.id.detailed_content_layout);
+
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+
+            // Apply top inset to AppBarLayout
+            ViewCompat.setPaddingRelative(appBarLayout, 0, insets.top, 0, 0);
+
+            // Apply bottom inset to content layout (add to existing padding)
+            contentLayout.setPadding(
+                contentLayout.getPaddingLeft() + insets.left,
+                contentLayout.getPaddingTop(),
+                contentLayout.getPaddingRight() + insets.right,
+                contentLayout.getPaddingBottom() + insets.bottom
+            );
+
+            return WindowInsetsCompat.CONSUMED;
+        });
 
         setTitle(R.string.detailed_siteswap__title);
 

@@ -20,7 +20,11 @@ package namlit.siteswapgenerator;
 
 import android.app.FragmentManager;
 import android.content.Intent;
+import androidx.core.graphics.Insets;
 import androidx.core.view.MenuItemCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.ShareActionProvider;
@@ -53,11 +57,33 @@ public class ShowSiteswaps extends AppCompatActivity implements SiteswapGenerati
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Enable edge-to-edge display
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
         setContentView(R.layout.activity_show_siteswaps);
 
         // Set up the toolbar
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // Handle window insets
+        View rootView = findViewById(R.id.show_siteswaps_coordinator);
+        View appBarLayout = findViewById(R.id.appBarLayout);
+        ListView listView = findViewById(R.id.siteswap_list);
+
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+
+            // Apply top inset to AppBarLayout
+            ViewCompat.setPaddingRelative(appBarLayout, 0, insets.top, 0, 0);
+
+            // Apply bottom inset to ListView
+            listView.setPadding(0, 0, 0, insets.bottom);
+            listView.setClipToPadding(false);
+
+            return WindowInsetsCompat.CONSUMED;
+        });
 
         setTitle(String.format(getString(R.string.show_siteswaps__title_generating)));
 
